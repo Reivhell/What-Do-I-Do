@@ -1,26 +1,16 @@
-import { Habit } from '../../types/habits';
 import { HabitCard } from './HabitCard';
 import { HabitForm } from './HabitForm';
+import type { Habit, HabitLogStatus, CreateHabitInput, UpdateHabitInput } from '@whatdo/shared';
 
 interface HabitListProps {
   habits: Habit[];
-  todayLogs: Record<string, 'done' | 'skipped' | 'missed' | null>;
-  onLog: (habitId: string, status: 'done' | 'skipped' | 'missed') => void;
+  todayLogs: Record<string, HabitLogStatus | null>;
+  onLog: (habitId: string, status: HabitLogStatus) => void;
   onEdit: (habit: Habit) => void;
   onDelete: (habitId: string) => void;
-  onCreate: (data: any) => void;
+  onCreate: (data: CreateHabitInput | 'cancel' | null) => void;
   isCreating?: boolean;
   isEditing?: Habit | null;
-}
-
-function habitToUpdateInput(habit: Habit) {
-  return {
-    name: habit.name,
-    targetFrequency: habit.targetFrequency,
-    repeatRule: habit.repeatRule,
-    notes: habit.notes ?? undefined,
-    linkedGoalId: habit.linkedGoalId ?? undefined,
-  };
 }
 
 export function HabitList({
@@ -33,58 +23,79 @@ export function HabitList({
   isCreating,
   isEditing,
 }: HabitListProps) {
-  if (habits.length === 0) {
+  // Empty state
+  if (habits.length === 0 && !isCreating) {
     return (
-      <div className="habit-list-empty" style={{
-        textAlign: 'center', padding: '48px 24px', color: 'var(--color-text-muted)',
-      }}>
-        <div style={{ fontSize: '3rem', marginBottom: '16px' }}>🌱</div>
-        <h3 style={{ margin: '0 0 8px', fontSize: '1.25rem', color: 'var(--color-text)' }}>
-          No habits yet
-        </h3>
-        <p style={{ margin: '0 0 24px', fontSize: '0.875rem' }}>
-          Start building consistency by creating your first habit
-        </p>
-        <button
-          onClick={() => onCreate(null)}
-          style={{
-            padding: '12px 24px', borderRadius: '8px', border: 'none',
-            background: 'var(--color-primary)', color: 'white', fontSize: '1rem',
-            fontWeight: 500, cursor: 'pointer',
-          }}
-        >
-          + Create Habit
-        </button>
+      <div className="clay-card p-6">
+        <div className="flex flex-col items-center justify-center gap-4 py-16 text-center">
+          <div className="flex size-20 items-center justify-center rounded-[--radius-xl] bg-blue-50 clay-inset">
+            <span className="text-3xl">🌱</span>
+          </div>
+          <div className="max-w-[280px]">
+            <p className="font-display text-lg font-semibold clr-text-primary">No habits yet</p>
+            <p className="mt-1 font-body text-[15px] clr-text-secondary">
+              Start building consistency by creating your first habit
+            </p>
+          </div>
+          <button
+            onClick={() => onCreate(null)}
+            className="clay-button rounded-[--radius-md] bg-clr-primary clr-on-primary px-6 py-2.5 font-body text-sm font-semibold mt-2"
+          >
+            + Create Habit
+          </button>
+        </div>
       </div>
     );
   }
 
   return (
-    <div className="habit-list" style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
-      {habits.map(habit => (
-        <HabitCard
-          key={habit.id}
-          habit={habit}
-          todayLog={todayLogs[habit.id] || null}
-          onLog={onLog}
-          onEdit={onEdit}
-          onDelete={onDelete}
-        />
-      ))}
+    <div className="flex flex-col gap-4">
+      {/* Create form */}
       {isCreating && (
         <HabitForm
-          onSubmit={onCreate}
+          onSubmit={(data) => onCreate(data as CreateHabitInput)}
           onCancel={() => onCreate('cancel')}
         />
       )}
-      {isEditing && (
-        <HabitForm
-          initialData={habitToUpdateInput(isEditing)}
-          onSubmit={onCreate}
-          onCancel={() => onCreate('cancel')}
-          isEditing
-        />
+
+      {/* Header count */}
+      {habits.length > 0 && (
+        <p className="font-body text-[13px] clr-text-secondary px-1">
+          {habits.length} {habits.length === 1 ? 'habit' : 'habits'}
+        </p>
       )}
+
+      {/* Habit cards */}
+      {habits.map((habit) => (
+        <div key={habit.id}>
+          {isEditing && isEditing.id === habit.id ? (
+            <HabitForm
+              initialData={{
+                name: habit.name,
+                targetFrequency: habit.targetFrequency,
+                repeatRule: habit.repeatRule,
+                notes: habit.notes ?? undefined,
+                linkedGoalId: habit.linkedGoalId ?? undefined,
+              }}
+              onSubmit={(data) => {
+                onEdit(habit);
+                // The parent will use the data
+                onEdit(habit);
+              }}
+              onCancel={() => onEdit(habit)}
+              isEditing
+            />
+          ) : (
+            <HabitCard
+              habit={habit}
+              todayLog={todayLogs[habit.id] ?? null}
+              onLog={onLog}
+              onEdit={onEdit}
+              onDelete={onDelete}
+            />
+          )}
+        </div>
+      ))}
     </div>
   );
 }

@@ -1,5 +1,8 @@
-import { Habit, HabitLogStatus } from '../../types/habits';
+import { useState } from 'react';
+import { MoreVertical, Trash2, PenSquare } from 'lucide-react';
 import { HabitLogButtons } from './HabitLogButtons';
+import { HabitStreakDisplay } from './HabitStreakDisplay';
+import type { Habit, HabitLogStatus } from '@whatdo/shared';
 
 interface HabitCardProps {
   habit: Habit;
@@ -10,6 +13,7 @@ interface HabitCardProps {
 }
 
 export function HabitCard({ habit, todayLog, onLog, onEdit, onDelete }: HabitCardProps) {
+  const [showMenu, setShowMenu] = useState(false);
   const isDoneToday = todayLog === 'done';
 
   const getFrequencyLabel = (freq: string, rule: Habit['repeatRule']) => {
@@ -28,74 +32,84 @@ export function HabitCard({ habit, todayLog, onLog, onEdit, onDelete }: HabitCar
   };
 
   return (
-    <div className="habit-card" style={{
-      background: 'var(--color-surface)',
-      border: '1px solid var(--color-border)',
-      borderRadius: '12px',
-      padding: '16px',
-      display: 'flex',
-      flexDirection: 'column',
-      gap: '12px',
-      opacity: isDoneToday ? 0.7 : 1,
-    }}>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: '12px' }}>
-        <div style={{ flex: 1, minWidth: 0 }}>
-          <h3 style={{ margin: '0 0 4px', fontSize: '1.125rem', fontWeight: 600 }}>
-            {habit.name}
-          </h3>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '12px', fontSize: '0.8rem', color: 'var(--color-text-muted)' }}>
-            <span>{getFrequencyLabel(habit.targetFrequency, habit.repeatRule)}</span>
-            {habit.linkedGoalId && <span>🎯 Linked to goal</span>}
+    <div className={`relative rounded-[--radius-lg] bg-clay-surface clay-l1 p-5 clay-transition hover:clay-l2 ${isDoneToday ? 'opacity-60' : ''}`}>
+      {/* Top row: title + menu */}
+      <div className="flex items-start justify-between gap-3">
+        <div className="flex-1 min-w-0">
+          <div className="flex items-start gap-2">
+            <h3 className="font-display text-lg font-semibold clr-text-primary">{habit.name}</h3>
+            {isDoneToday && <span className="text-lg shrink-0">✅</span>}
+          </div>
+          <div className="flex items-center gap-3 mt-1">
+            <span className="rounded-[--radius-sm] bg-clay-surface-alt clay-inset px-3 py-1 font-body text-[12px] clr-text-secondary">
+              {getFrequencyLabel(habit.targetFrequency, habit.repeatRule)}
+            </span>
+            {habit.linkedGoalId && (
+              <span className="rounded-[--radius-sm] bg-primary/10 clr-primary px-3 py-1 font-body text-[12px] font-medium">
+                🎯 Linked to goal
+              </span>
+            )}
           </div>
         </div>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+
+        {/* Menu */}
+        <div className="relative shrink-0">
           <button
-            onClick={() => onEdit(habit)}
-            style={{
-              background: 'none', border: 'none', color: 'var(--color-text-muted)',
-              cursor: 'pointer', padding: '4px', borderRadius: '4px',
-            }}
-            onMouseEnter={(e) => { e.currentTarget.style.background = 'var(--color-border)'; }}
-            onMouseLeave={(e) => { e.currentTarget.style.background = 'none'; }}
+            onClick={() => setShowMenu(!showMenu)}
+            className="tap-target rounded-[--radius-md] clay-l1 bg-clay-surface hover:clay-pressed clay-transition"
+            aria-label="More options"
           >
-            ✏️
+            <MoreVertical className="size-5 clr-text-secondary" />
           </button>
-          <button
-            onClick={() => onDelete(habit.id)}
-            style={{
-              background: 'none', border: 'none', color: 'var(--color-text-muted)',
-              cursor: 'pointer', padding: '4px', borderRadius: '4px',
-            }}
-            onMouseEnter={(e) => { e.currentTarget.style.background = 'rgba(239,68,68,0.1)'; }}
-            onMouseLeave={(e) => { e.currentTarget.style.background = 'none'; }}
-          >
-            🗑️
-          </button>
+          {showMenu && (
+            <>
+              <div className="fixed inset-0 z-10" onClick={() => setShowMenu(false)} />
+              <div className="absolute right-0 top-full z-20 mt-1 w-40 rounded-[--radius-md] bg-clay-surface clay-l2 p-1">
+                <button
+                  onClick={() => { onEdit(habit); setShowMenu(false); }}
+                  className="flex w-full items-center gap-2 rounded-[--radius-sm] p-2 font-body text-[13px] clr-text-primary hover:bg-clay-surface-alt clay-transition"
+                >
+                  <PenSquare className="size-4" />
+                  Edit
+                </button>
+                <button
+                  onClick={() => { onDelete(habit.id); setShowMenu(false); }}
+                  className="flex w-full items-center gap-2 rounded-[--radius-sm] p-2 font-body text-[13px] text-danger hover:bg-danger/10 clay-transition"
+                >
+                  <Trash2 className="size-4" />
+                  Delete
+                </button>
+              </div>
+            </>
+          )}
         </div>
       </div>
 
-      <div style={{ display: 'flex', alignItems: 'center', gap: '16px', flexWrap: 'wrap' }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-          <span style={{ fontSize: '2rem', fontWeight: 700, color: isDoneToday ? 'var(--color-success)' : 'var(--color-primary)' }}>
-            {habit.currentStreak}
-          </span>
-          <span style={{ color: 'var(--color-text-muted)', fontSize: '0.875rem' }}>🔥 day streak</span>
-        </div>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: 'var(--color-text-muted)', fontSize: '0.875rem' }}>
-          <span>Best: {habit.bestStreak}</span>
-          <span style={{ margin: '0 8px' }}>|</span>
-          <span>✅ {habit.completionCount}</span>
-          <span style={{ margin: '0 8px' }}>|</span>
-          <span>❌ {habit.missedCount}</span>
-        </div>
+      {/* Streak + Stats row */}
+      <div className="mt-4">
+        <HabitStreakDisplay
+          current={habit.currentStreak}
+          best={habit.bestStreak}
+          completionCount={habit.completionCount}
+          missedCount={habit.missedCount}
+        />
       </div>
 
-      <HabitLogButtons
-        habitId={habit.id}
-        todayLog={todayLog ?? undefined}
-        onLog={(status: HabitLogStatus) => onLog(habit.id, status)}
-        disabled={isDoneToday}
-      />
+      {/* Log buttons */}
+      <div className="mt-4">
+        <HabitLogButtons
+          habitId={habit.id}
+          todayLog={todayLog ?? undefined}
+          onLog={(status) => onLog(habit.id, status)}
+        />
+      </div>
+
+      {/* Notes */}
+      {habit.notes && (
+        <p className="mt-3 font-body text-[13px] clr-text-secondary italic border-t brd-clr-divider-soft pt-3">
+          {habit.notes}
+        </p>
+      )}
     </div>
   );
 }

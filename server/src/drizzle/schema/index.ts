@@ -10,4 +10,6 @@ export { statisticsCache } from './statistics';
 export { lifeLogAnnotations } from './life-log';
 export { habits, habitLogs } from './habits';
 export { analyticsSnapshots } from './analytics';
+export { insights } from './insights';
 export { achievementDefinitions, userAchievements } from './achievements';
+export { layoutPresets } from './workspace';

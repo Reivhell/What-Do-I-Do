@@ -13,6 +13,7 @@ import { AnalyticsModule } from './modules/analytics/analytics.module';
 import { StatisticsModule } from './modules/statistics/statistics.module';
 import { InsightsModule } from './modules/insights/insights.module';
 import { AchievementsModule } from './modules/achievements/achievements.module';
+import { WorkspaceModule } from './modules/workspace/workspace.module';
 
 @Module({
   imports: [
@@ -30,6 +31,7 @@ import { AchievementsModule } from './modules/achievements/achievements.module';
     StatisticsModule,
     InsightsModule,
     AchievementsModule,
+    WorkspaceModule,
   ],
 })
 export class AppModule {}

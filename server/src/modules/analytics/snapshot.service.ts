@@ -43,8 +43,9 @@ export class SnapshotService {
    * Generate all daily snapshots for all users, then trigger derived snapshots
    * if today is the trigger day (Monday for weekly, 1st for monthly, Jan 1 for yearly).
    */
-  async generateAllDailyAndDerived(): Promise<{ usersProcessed: number }> {
+  async generateAllDailyAndDerived(): Promise<{ usersProcessed: number; userIds: string[] }> {
     const users = await this.db.select({ id: schema.users.id }).from(schema.users);
+    const userIds = users.map(u => u.id);
     const today = new Date();
     const yesterday = this.yesterdayDateStr();
 
@@ -70,7 +71,7 @@ export class SnapshotService {
       }
     }
 
-    return { usersProcessed: users.length };
+    return { usersProcessed: users.length, userIds };
   }
 
   // ── Internal ──

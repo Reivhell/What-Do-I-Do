@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { useTheme } from "../providers";
 import { Link, useNavigate } from "react-router-dom";
 import { Sidebar } from "../components/layout";
+import { TopInsightWidget } from "../components/dashboard/TopInsightWidget";
 
 /* ── Helpers ── */
 function formatTimer(totalSeconds: number) {
@@ -287,6 +288,9 @@ export function Dashboard() {
               </div>
             </div>
           </section>
+
+          {/* Top Insight — span 3 */}
+          <TopInsightWidget />
 
           {/* Today's Plan — span 5 (widest — highest content density) */}
           <section className="clay-card p-[24px] lg:col-span-5">

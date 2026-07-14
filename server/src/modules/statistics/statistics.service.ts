@@ -40,6 +40,10 @@ export class StatisticsService {
     const data = await computeFn();
 
     const now = new Date().toISOString();
+    // Delete old cache row first, then insert fresh (avoids SQLite ON CONFLICT
+    // composite-target limitation exposed by Drizzle's query builder).
+    await this.db.delete(schema.statisticsCache)
+      .where(and(eq(schema.statisticsCache.userId, userId), eq(schema.statisticsCache.scope, scope)));
     await this.db
       .insert(schema.statisticsCache)
       .values({
@@ -50,10 +54,6 @@ export class StatisticsService {
         data: JSON.stringify(data),
         createdAt: now,
         updatedAt: now,
-      })
-      .onConflictDoUpdate({
-        target: [schema.statisticsCache.userId, schema.statisticsCache.scope],
-        set: { data: JSON.stringify(data), computedAt: now, updatedAt: now },
       });
 
     return data;
@@ -104,8 +104,8 @@ export class StatisticsService {
     );
     const totalHoursTrackedFinal = totalMinutes / 60;
 
-    const totalTasks = await this.count(tasks, userId, isNull(tasks.deletedAt));
-    const totalCompletedTasks = await this.count(tasks, userId, isNull(tasks.deletedAt), eq(tasks.isCompleted, true));
+    const totalTasks = await this.count(tasks, userId);
+    const totalCompletedTasks = await this.count(tasks, userId, eq(tasks.status, 'completed'));
 
     const totalTransactions = await this.count(transactions, userId, isNull(transactions.deletedAt));
     const totalIncome = await this.sum(
@@ -118,16 +118,31 @@ export class StatisticsService {
     );
 
     const totalHabits = await this.count(habits, userId);
-    const totalHabitCompletions = await this.count(
-      habitLogs, userId,
-      eq(habitLogs.status, 'done'),
-    );
+    // habit_logs and milestones lack userId — query through parent table
+    const [hlRow] = await this.db
+      .select({ cnt: sql<number>`COUNT(*)` })
+      .from(habitLogs)
+      .innerJoin(habits, eq(habitLogs.habitId, habits.id))
+      .where(and(eq(habits.userId, userId), eq(habitLogs.status, 'done')));
+    const totalHabitCompletions = hlRow?.cnt ?? 0;
 
     const totalGoals = await this.count(goals, userId);
     const totalCompletedGoals = await this.count(goals, userId, eq(goals.status, 'completed'));
 
-    const totalMilestones = await this.count(milestones, userId);
-    const totalCompletedMilestones = await this.count(milestones, userId, eq(milestones.isCompleted, true));
+    // milestones has no userId — join through goals
+    const [msRow] = await this.db
+      .select({ cnt: sql<number>`COUNT(*)` })
+      .from(milestones)
+      .innerJoin(goals, eq(milestones.goalId, goals.id))
+      .where(eq(goals.userId, userId));
+    const totalMilestones = msRow?.cnt ?? 0;
+
+    const [doneMsRow] = await this.db
+      .select({ cnt: sql<number>`COUNT(*)` })
+      .from(milestones)
+      .innerJoin(goals, eq(milestones.goalId, goals.id))
+      .where(and(eq(goals.userId, userId), eq(milestones.isCompleted, true)));
+    const totalCompletedMilestones = doneMsRow?.cnt ?? 0;
 
     return {
       totalActivitySessions,

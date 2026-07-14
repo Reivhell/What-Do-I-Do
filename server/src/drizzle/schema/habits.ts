@@ -1,4 +1,4 @@
-import { sqliteTable, text, integer, uniqueIndex } from 'drizzle-orm/sqlite-core';
+import { sqliteTable, text, integer, uniqueIndex, index } from 'drizzle-orm/sqlite-core';
 import { users } from './users';
 import { plannerEvents } from './planner';
 import { activitySessions } from './activity-tracker';
@@ -19,7 +19,9 @@ export const habits = sqliteTable('habits', {
   linkedGoalId: text('linked_goal_id').references(() => goals.id, { onDelete: 'set null' }),
   createdAt: text('created_at').notNull().$defaultFn(() => new Date().toISOString()),
   updatedAt: text('updated_at').notNull().$defaultFn(() => new Date().toISOString()),
-});
+}, (table) => ({
+  userCreatedAtIdx: index('idx_habits_user_created_at').on(table.userId, table.createdAt),
+}));
 
 export const habitLogs = sqliteTable('habit_logs', {
   id: text('id').primaryKey().$defaultFn(() => randomUUID()),

@@ -15,6 +15,7 @@ import { formatDate, isToday, isOverdue } from '../../lib/dateUtils';
 interface TaskListProps {
   view?: TaskView;
   onTaskClick?: (task: Task) => void;
+  onViewChange?: (view: TaskView) => void;
 }
 
 function getViewForTask(task: Task): TaskView {
@@ -35,7 +36,7 @@ function getFilteredTaskIds(tasks: Task[], view: TaskView): string[] {
     .map(t => t.id);
 }
 
-export function TaskList({ view = 'inbox', onTaskClick }: TaskListProps) {
+export function TaskList({ view = 'inbox', onTaskClick, onViewChange }: TaskListProps) {
   const [selectedTask, setSelectedTask] = useState<Task | null>(null);
   const [scheduleTaskId, setScheduleTaskId] = useState<string | null>(null);
   const [expandedTasks, setExpandedTasks] = useState<Set<string>>(new Set());
@@ -84,24 +85,24 @@ export function TaskList({ view = 'inbox', onTaskClick }: TaskListProps) {
       {/* Quick Add */}
       <TaskQuickAdd defaultView={view} onTaskCreated={() => {}} />
 
-      {/* View Tabs */}
-      <div className="flex gap-2 flex-wrap">
-        {(['inbox', 'today', 'upcoming', 'completed'] as TaskView[]).map((v) => (
+      {/* View switcher tabs — claymorphism */}
+      <div className="flex items-center gap-1 rounded-[--radius-lg] bg-clay-surface-alt p-1 self-start">
+        {([
+          { value: 'inbox' as TaskView, label: 'Inbox' },
+          { value: 'today' as TaskView, label: 'Today' },
+          { value: 'upcoming' as TaskView, label: 'Upcoming' },
+          { value: 'completed' as TaskView, label: 'Completed' },
+        ]).map((tab) => (
           <button
-            key={v}
-            onClick={() => window.location.href = `/tasks?view=${v}`}
-            className={`rounded-[--radius-pill] px-4 py-2 font-body text-[13px] font-semibold clay-transition ${
-              view === v
-                ? 'bg-primary text-white clay-l1'
-                : 'bg-clay-surface text-ink-500 hover:text-ink-900 clay-l1'
+            key={tab.value}
+            onClick={() => onViewChange?.(tab.value)}
+            className={`rounded-[--radius-md] px-5 py-2.5 font-body text-sm font-semibold clay-transition ${
+              view === tab.value
+                ? 'clay-pressed bg-clay-surface text-ink-900'
+                : 'clay-l1 bg-clay-surface text-ink-500 hover:text-ink-900'
             }`}
           >
-            {v.charAt(0).toUpperCase() + v.slice(1)}
-            {view === v && tasks.filter(t => getViewForTask(t) === v).length > 0 && (
-              <span className="ml-2 px-1.5 py-0.5 bg-white/20 text-white/80 rounded-[--radius-pill] text-[10px] font-medium">
-                {tasks.filter(t => getViewForTask(t) === v).length}
-              </span>
-            )}
+            {tab.label}
           </button>
         ))}
       </div>

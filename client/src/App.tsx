@@ -13,6 +13,8 @@ import { StatisticsPage } from "./pages/Statistics";
 import { AnalyticsPage } from "./pages/Analytics";
 import { PlaceholderPage } from "./pages/PlaceholderPage";
 import { AchievementsPage } from "./pages/Achievements";
+import { InsightsPage } from "./pages/Insights";
+import { WorkspacePage } from "./pages/Workspace";
 
 export default function App() {
   return (
@@ -32,8 +34,8 @@ export default function App() {
         <Route path="/analytics" element={<AnalyticsPage />} />
         <Route path="/statistics" element={<StatisticsPage />} />
         <Route path="/achievements" element={<AchievementsPage />} />
-        <Route path="/insights" element={<PlaceholderPage title="Insights" />} />
-        <Route path="/workspace" element={<PlaceholderPage title="Workspace" />} />
+        <Route path="/insights" element={<InsightsPage />} />
+        <Route path="/workspace" element={<WorkspacePage />} />
         <Route path="/settings" element={<PlaceholderPage title="Settings" />} />
       </Route>
     </Routes>

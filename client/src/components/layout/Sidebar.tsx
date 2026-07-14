@@ -20,6 +20,7 @@ const navItems: NavItem[] = [
   { label: "Statistics", path: "/statistics", icon: "pie_chart" },
   { label: "Achievements", path: "/achievements", icon: "emoji_events" },
   { label: "Insights", path: "/insights", icon: "lightbulb" },
+  { label: "Workspace", path: "/workspace", icon: "view_quilt" },
 ];
 
 export function Sidebar() {

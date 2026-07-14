@@ -1,4 +1,4 @@
-import { sqliteTable, text, integer } from 'drizzle-orm/sqlite-core';
+import { sqliteTable, text, integer, index } from 'drizzle-orm/sqlite-core';
 import { users } from './users';
 import { randomUUID } from 'crypto';
 
@@ -20,7 +20,10 @@ export const tasks = sqliteTable('tasks', {
   scheduledEventId: text('scheduled_event_id'), // FK → planner_events.id, validated in app layer
   createdAt: text('created_at').notNull().$defaultFn(() => new Date().toISOString()),
   updatedAt: text('updated_at').notNull().$defaultFn(() => new Date().toISOString()),
-});
+}, (table) => ({
+  userCreatedAtIdx: index('idx_tasks_user_created_at').on(table.userId, table.createdAt),
+  userStatusDueDateIdx: index('idx_tasks_user_status_due_date').on(table.userId, table.status, table.dueDate),
+}));
 
 export const subtasks = sqliteTable('subtasks', {
   id: text('id').primaryKey().$defaultFn(() => randomUUID()),

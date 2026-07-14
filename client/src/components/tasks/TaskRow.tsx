@@ -91,7 +91,7 @@ export function TaskRow({
   return (
     <div className="group">
       {/* Main Task Row */}
-      <Card level={1} className={`clay-transition relative overflow-hidden ${task.status === 'completed' ? 'opacity-60' : ''}`}>
+      <Card level={1} className={`clay-transition relative overflow-hidden hover:clay-l2 active:clay-pressed cursor-pointer ${task.status === 'completed' ? 'opacity-60' : ''}`}>
         <div className="flex items-start gap-4">
           {/* Checkbox / Status */}
           <div className="flex-shrink-0 mt-1">
@@ -100,7 +100,7 @@ export function TaskRow({
             ) : (
               <button
                 onClick={() => handleStatusChange(task.status === 'inbox' ? 'active' : 'completed')}
-                className="tap-target rounded-full border-2 border-ink-200 hover:border-primary hover:bg-blue-50 clay-transition"
+                className="tap-target rounded-full border-2 border-ink-200 clay-l1 hover:clay-pressed clay-transition"
                 aria-label={task.status === 'inbox' ? 'Mark as active' : 'Mark as completed'}
               >
                 <span className="size-5 rounded-full border-2 border-ink-300 flex items-center justify-center" />
@@ -142,7 +142,7 @@ export function TaskRow({
               <div className="relative">
                 <button
                   onClick={(e) => { e.stopPropagation(); setShowMenu(!showMenu); }}
-                  className="tap-target flex-shrink-0 rounded-[--radius-md] p-1.5 text-ink-300 hover:bg-blue-50 hover:text-blue-600 clay-transition"
+                  className="tap-target flex-shrink-0 rounded-[--radius-md] p-1.5 text-ink-300 clay-l1 bg-clay-surface hover:clay-pressed clay-transition"
                   aria-label="More options"
                 >
                   <MoreVertical className="size-4" />
@@ -203,7 +203,7 @@ export function TaskRow({
                 <span className="flex items-center gap-1 text-ink-400">
                   <Tag className="size-3.5" />
                   {task.tags.slice(0, 3).map((t) => (
-                    <span key={t} className="px-1.5 py-0.5 bg-ink-50 text-ink-600 rounded-[--radius-sm] font-medium">
+                    <span key={t} className="px-1.5 py-0.5 bg-clay-surface-alt clay-inset text-ink-600 rounded-[--radius-sm] font-medium">
                       {t}
                     </span>
                   ))}
@@ -228,7 +228,7 @@ export function TaskRow({
               <span>Subtasks</span>
               <span className="px-2 py-0.5 bg-clay-surface-alt rounded-[--radius-pill]">{completedSubtasks}/{totalSubtasks}</span>
             </div>
-            <div className="space-y-1.5 ml-6">
+            <div className="space-y-1.5 ml-6 bg-clay-surface-alt clay-inset rounded-[--radius-md] p-3">
               {task.subtasks?.map((subtask) => (
                 <label key={subtask.id} className="flex items-center gap-2 tap-target cursor-pointer group">
                   <input
@@ -251,7 +251,7 @@ export function TaskRow({
       {hasSubtasks && (
         <button
           onClick={() => onToggleSubtasks(task.id)}
-          className="flex items-center justify-center w-full mt-2 text-ink-400 hover:text-ink-600 clay-transition"
+          className="flex items-center justify-center w-full mt-2 rounded-full clay-l1 hover:clay-pressed clay-transition text-ink-500 hover:text-ink-700"
           aria-label={showSubtasks ? 'Collapse subtasks' : 'Expand subtasks'}
         >
           {showSubtasks ? (

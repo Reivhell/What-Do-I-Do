@@ -7,15 +7,25 @@ import { eq, and, desc, asc, sql } from 'drizzle-orm';
 import { randomUUID } from 'crypto';
 import { CreateAnnotationDto, UpdateAnnotationDto } from './dto/life-log.dto';
 
+interface TimelineQueryFilter {
+  date?: string;
+  dateFrom?: string;
+  dateTo?: string;
+  sources?: string[];
+  search?: string;
+}
+
 @Injectable()
 export class LifeLogService {
   constructor(@Inject(DRIZZLE) private db: DbInstance) {}
 
   /**
-   * Get aggregated timeline from all 4 sources + annotations.
-   * Uses UNION ALL via raw SQL — no duplicate storage per architecture.
+   * Build and execute the UNION ALL query across all 5 source tables.
+   * Every public timeline method delegates to this — single source of truth.
    */
-  async getTimeline(userId: string, date?: string, sources?: string[], search?: string) {
+  private _queryRawTimeline(userId: string, filter?: TimelineQueryFilter) {
+    const { date, dateFrom, dateTo, sources, search } = filter || {};
+
     const sourceAllowList = sources && sources.length > 0
       ? sources.map(s => `'${s.replace(/'/g, "''")}'`).join(',')
       : "'activity','planner','transaction','habit','annotation'";
@@ -24,8 +34,30 @@ export class LifeLogService {
       ? sql`AND t.title LIKE ${'%' + search + '%'}`
       : sql``;
 
-    const dateClause = date
-      ? sql`AND date(t.timestamp) = ${date}`
+    // Outer WHERE conditions for date filtering
+    const dateConditions: import('drizzle-orm').SQL[] = [];
+    if (date) dateConditions.push(sql`date(t.timestamp) = ${date}`);
+    if (dateFrom) dateConditions.push(sql`t.timestamp >= ${dateFrom}`);
+    if (dateTo) dateConditions.push(sql`t.timestamp <= ${dateTo}`);
+    const outerDateClause = dateConditions.length > 0
+      ? sql`AND ${sql.join(dateConditions, sql` AND `)}`
+      : sql``;
+
+    // ponytail: inner sub-query date filter only for exact date (optimization for single-day queries)
+    const innerDateFilter = date
+      ? sql`AND date(start_time) = ${date}`
+      : sql``;
+    const innerDateFilterPlanner = date
+      ? sql`AND date = ${date}`
+      : sql``;
+    const innerDateFilterHabit = date
+      ? sql`AND hl.date = ${date}`
+      : sql``;
+    const innerDateFilterAnnotation = date
+      ? sql`AND date(timestamp) = ${date}`
+      : sql``;
+    const innerDateFilterTxn = date
+      ? sql`AND date = ${date}`
       : sql``;
 
     // Use raw SQL with UNION ALL for performance
@@ -47,7 +79,7 @@ export class LifeLogService {
         FROM activity_sessions
         WHERE user_id = ${userId}
           AND deleted_at IS NULL
-          ${date ? sql`AND date(start_time) = ${date}` : sql``}
+          ${innerDateFilter}
           ${search ? sql`AND activity_name LIKE ${'%' + search + '%'}` : sql``}
 
         UNION ALL
@@ -68,7 +100,7 @@ export class LifeLogService {
         FROM planner_events
         WHERE user_id = ${userId}
           AND status = 'completed'
-          ${date ? sql`AND date = ${date}` : sql``}
+          ${innerDateFilterPlanner}
           ${search ? sql`AND title LIKE ${'%' + search + '%'}` : sql``}
 
         UNION ALL
@@ -89,7 +121,7 @@ export class LifeLogService {
         FROM transactions
         WHERE user_id = ${userId}
           AND deleted_at IS NULL
-          ${date ? sql`AND date = ${date}` : sql``}
+          ${innerDateFilterTxn}
           ${search ? sql`AND category LIKE ${'%' + search + '%'}` : sql``}
 
         UNION ALL
@@ -110,7 +142,7 @@ export class LifeLogService {
         FROM habit_logs hl
         JOIN habits h ON h.id = hl.habit_id
         WHERE h.user_id = ${userId}
-          ${date ? sql`AND hl.date = ${date}` : sql``}
+          ${innerDateFilterHabit}
           ${search ? sql`AND h.name LIKE ${'%' + search + '%'}` : sql``}
 
         UNION ALL
@@ -130,15 +162,24 @@ export class LifeLogService {
           NULL AS "sourceType"
         FROM life_log_annotations
         WHERE user_id = ${userId}
-          ${date ? sql`AND date(timestamp) = ${date}` : sql``}
+          ${innerDateFilterAnnotation}
           ${search ? sql`AND title LIKE ${'%' + search + '%'}` : sql``}
       ) t
       WHERE t.source IN (${sql.raw(sourceAllowList)})
+        ${outerDateClause}
+        ${searchClause}
       ORDER BY t.timestamp ASC
     `;
 
-    const result = this.db.all(query);
-    return result;
+    return this.db.all(query) as any[];
+  }
+
+  /**
+   * Get aggregated timeline from all 4 sources + annotations.
+   * Uses UNION ALL via raw SQL — no duplicate storage per architecture.
+   */
+  async getTimeline(userId: string, date?: string, sources?: string[], search?: string) {
+    return this._queryRawTimeline(userId, { date, sources, search });
   }
 
   async getDailySummary(userId: string, date: string) {
@@ -239,12 +280,7 @@ export class LifeLogService {
 
   // ── Export ──
 
-  async exportTimeline(userId: string, format: string, dateFrom?: string, dateTo?: string) {
-    const conditions: any[] = [eq(schema.plannerEvents.userId, userId)];
-    const events = await this.db.query.plannerEvents.findMany({
-      where: and(...conditions),
-      orderBy: [asc(schema.plannerEvents.date)],
-    });
-    return events;
+  async exportTimeline(userId: string, _format: string, dateFrom?: string, dateTo?: string) {
+    return this._queryRawTimeline(userId, { dateFrom, dateTo });
   }
 }

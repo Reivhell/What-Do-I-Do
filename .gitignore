@@ -1,37 +1,41 @@
+# Dependencies
 node_modules/
+
+# Build outputs
 dist/
 build/
-.env
+server/dist/
+client/dist/
+mobile/build/
+mobile/.gradle/
+mobile/local.properties
+
+# Database
 *.db
 *.db-journal
 *.db-wal
 *.db-shm
+
+# Environment
+.env
+
+# AI / Tooling
 .kilo
 .claude
 .superpowers
-.env.example
+.agent
 .impeccable
 claude.md
 design.md
 PRODUCT.md
 install.md
-task/
-
-
-# Server
-server/dist/
-
-# Client
-client/dist/
-
-# Mobile
-mobile/.gradle/
-mobile/build/
-mobile/local.properties
+Workspace.md
 
 # IDE
 .vscode/
 .idea/
 *.iml
+
+# OS
 .DS_Store
 Thumbs.db

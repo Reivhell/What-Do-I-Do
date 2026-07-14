@@ -1,4 +1,5 @@
-import { HabitLogStatus } from '../../types/habits';
+import { Check, Minus, X } from 'lucide-react';
+import type { HabitLogStatus } from '@whatdo/shared';
 
 interface HabitLogButtonsProps {
   habitId: string;
@@ -7,47 +8,31 @@ interface HabitLogButtonsProps {
   disabled?: boolean;
 }
 
-const statusConfig: Record<HabitLogStatus, { label: string; icon: string; color: string }> = {
-  done: { label: 'Done', icon: '✓', color: 'var(--color-success)' },
-  skipped: { label: 'Skip', icon: '⊘', color: 'var(--color-warning)' },
-  missed: { label: 'Missed', icon: '✕', color: 'var(--color-danger)' },
-};
+const STATUS_CONFIG: { value: HabitLogStatus; label: string; icon: React.ReactNode; activeClass: string }[] = [
+  { value: 'done', label: 'Done', icon: <Check className="size-4" />, activeClass: 'bg-semantic-green/20 text-semantic-green border-semantic-green clay-pressed' },
+  { value: 'skipped', label: 'Skip', icon: <Minus className="size-4" />, activeClass: 'bg-semantic-amber/20 text-semantic-amber border-semantic-amber clay-pressed' },
+  { value: 'missed', label: 'Missed', icon: <X className="size-4" />, activeClass: 'bg-semantic-red/20 text-semantic-red border-semantic-red clay-pressed' },
+];
 
 export function HabitLogButtons({ habitId, todayLog, onLog, disabled }: HabitLogButtonsProps) {
   return (
-    <div className="habit-log-buttons" style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
-      {(Object.keys(statusConfig) as HabitLogStatus[]).map(status => {
-        const config = statusConfig[status];
-        const isSelected = todayLog === status;
+    <div className="flex gap-2">
+      {STATUS_CONFIG.map((s) => {
+        const isSelected = todayLog === s.value;
         return (
           <button
-            key={status}
-            onClick={() => onLog(status)}
+            key={s.value}
+            onClick={() => onLog(s.value)}
             disabled={disabled || isSelected}
-            className="habit-log-btn"
-            style={{
-              flex: 1,
-              minWidth: '80px',
-              padding: '12px 16px',
-              border: `2px solid ${isSelected ? config.color : 'var(--color-border)'}`,
-              borderRadius: '10px',
-              background: isSelected ? `${config.color}20` : 'var(--color-surface)',
-              color: isSelected ? config.color : 'var(--color-text)',
-              fontWeight: isSelected ? 600 : 500,
-              cursor: disabled || isSelected ? 'not-allowed' : 'pointer',
-              display: 'flex',
-              flexDirection: 'column',
-              alignItems: 'center',
-              gap: '4px',
-              transition: 'all 0.15s ease',
-              opacity: disabled || isSelected ? 0.7 : 1,
-            }}
-            title={isSelected ? `Already marked as ${config.label.toLowerCase()}` : `Mark as ${config.label.toLowerCase()}`}
+            className={`flex-1 flex flex-col items-center gap-1 rounded-[--radius-md] px-3 py-2.5 font-body text-[13px] font-medium clay-transition ${
+              isSelected
+                ? s.activeClass
+                : 'bg-clay-surface clay-l1 hover:clay-l2 active:clay-pressed clr-text-secondary hover:clr-text-primary'
+            } disabled:cursor-not-allowed disabled:opacity-60`}
+            title={isSelected ? `Already ${s.value}` : `Mark as ${s.value}`}
           >
-            <span style={{ fontSize: '1.25rem', lineHeight: 1 }}>{config.icon}</span>
-            <span style={{ fontSize: '0.75rem', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
-              {config.label}
-            </span>
+            {s.icon}
+            <span>{s.label}</span>
           </button>
         );
       })}

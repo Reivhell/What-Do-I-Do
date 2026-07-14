@@ -1,9 +1,14 @@
 import { useSearchParams } from 'react-router-dom';
 import { TaskList } from '../components/tasks/TaskList';
+import type { TaskView } from '../types/tasks';
 
 export function TasksPage() {
-  const [searchParams] = useSearchParams();
-  const view = (searchParams.get('view') as 'inbox' | 'today' | 'upcoming' | 'completed') || 'inbox';
+  const [searchParams, setSearchParams] = useSearchParams();
+  const view = (searchParams.get('view') as TaskView) || 'inbox';
+
+  const handleViewChange = (newView: TaskView) => {
+    setSearchParams({ view: newView });
+  };
 
   return (
     <div className="flex flex-col gap-6">
@@ -28,7 +33,7 @@ export function TasksPage() {
 
       {/* Task List */}
       <div className="clay-card p-6">
-        <TaskList view={view} />
+        <TaskList view={view} onViewChange={handleViewChange} />
       </div>
     </div>
   );

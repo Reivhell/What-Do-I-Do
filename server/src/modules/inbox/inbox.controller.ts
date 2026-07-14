@@ -8,11 +8,15 @@ import {
   Param,
   Query,
   ParseUUIDPipe,
+  UsePipes,
+  ValidationPipe,
 } from '@nestjs/common';
-import { InboxService, CaptureSource, CaptureStatus, ConvertTargetType } from './inbox.service';
+import { InboxService, CaptureStatus } from './inbox.service';
+import { CreateCaptureDto, UpdateCaptureDto, ConvertCaptureDto } from './dto';
 
 const DEFAULT_USER_ID = 'default';
 
+@UsePipes(new ValidationPipe({ transform: true, whitelist: true }))
 @Controller('inbox')
 export class InboxController {
   constructor(private readonly inboxService: InboxService) {}
@@ -23,14 +27,14 @@ export class InboxController {
   }
 
   @Post()
-  create(@Body() body: { rawText: string; source?: CaptureSource; tags?: string[] }) {
+  create(@Body() body: CreateCaptureDto) {
     return this.inboxService.create(DEFAULT_USER_ID, body);
   }
 
   @Patch(':id')
   update(
     @Param('id', ParseUUIDPipe) id: string,
-    @Body() body: { rawText?: string; tags?: string[]; pinned?: boolean; status?: CaptureStatus },
+    @Body() body: UpdateCaptureDto,
   ) {
     return this.inboxService.update(id, DEFAULT_USER_ID, body);
   }
@@ -43,7 +47,7 @@ export class InboxController {
   @Post(':id/convert')
   convert(
     @Param('id', ParseUUIDPipe) id: string,
-    @Body() body: { targetType: ConvertTargetType },
+    @Body() body: ConvertCaptureDto,
   ) {
     return this.inboxService.convert(id, DEFAULT_USER_ID, body.targetType);
   }

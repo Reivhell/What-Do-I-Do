@@ -84,3 +84,20 @@ export type {
   LogHabitInput,
   HabitWithLogs,
 } from './types/habits';
+export type {
+  Insight,
+  InsightType,
+  InsightSeverity,
+  WeeklySummary,
+} from './types/insights';
+export type {
+  LayoutPreset,
+  WidgetConfigItem,
+  WidgetType,
+  CreatePresetInput,
+  UpdatePresetInput,
+} from './types/workspace';
+export {
+  DEFAULT_WIDGET_CONFIG,
+  WIDGET_TYPE_LABELS,
+} from './types/workspace';

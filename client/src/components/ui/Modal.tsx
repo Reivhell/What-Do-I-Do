@@ -51,7 +51,7 @@ export function Modal({ open, onClose, title, children }: ModalProps) {
             </h2>
             <button
               onClick={onClose}
-              className="tap-target rounded-[--radius-sm] text-ink-300 hover:bg-blue-50 hover:text-ink-900 clay-transition"
+              className="tap-target rounded-[--radius-sm] clay-l1 bg-clay-surface hover:clay-pressed text-ink-400 hover:text-ink-900 clay-transition"
               aria-label="Close"
             >
               ✕

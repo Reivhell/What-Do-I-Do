@@ -87,33 +87,26 @@ export function TaskDetailModal({ task, open, onClose, onSchedule }: TaskDetailM
   return (
     <Modal open={open} onClose={onClose} title="Task Details">
       <div className="flex flex-col h-[70vh] max-h-[600px]">
-        {/* Tab Bar */}
-        <div className="flex border-b brd-clr-divider-soft mb-4">
-          <button
-            onClick={() => setActiveTab('details')}
-            className={`flex-1 py-3 px-4 font-body text-[13px] font-semibold border-b-2 transition-colors ${
-              activeTab === 'details'
-                ? 'text-primary border-primary'
-                : 'text-ink-400 border-transparent hover:text-ink-700'
-            }`}
-          >
-            Details
-          </button>
-          <button
-            onClick={() => setActiveTab('subtasks')}
-            className={`flex-1 py-3 px-4 font-body text-[13px] font-semibold border-b-2 transition-colors ${
-              activeTab === 'subtasks'
-                ? 'text-primary border-primary'
-                : 'text-ink-400 border-transparent hover:text-ink-700'
-            }`}
-          >
-            Subtasks
-            {task.subtasks && task.subtasks.length > 0 && (
-              <span className="ml-2 px-1.5 py-0.5 bg-primary/10 text-primary rounded-[--radius-pill] text-[10px] font-medium">
-                {task.subtasks.length}
-              </span>
-            )}
-          </button>
+        {/* Tab Bar — claymorphism */}
+        <div className="flex items-center gap-1 rounded-[--radius-md] bg-clay-surface-alt p-1 mb-4 self-start">
+          {(['details', 'subtasks'] as const).map((tab) => (
+            <button
+              key={tab}
+              onClick={() => setActiveTab(tab)}
+              className={`rounded-[--radius-sm] px-4 py-2 font-body text-[13px] font-semibold clay-transition ${
+                activeTab === tab
+                  ? 'clay-pressed bg-clay-surface text-ink-900'
+                  : 'clay-l1 bg-clay-surface text-ink-500 hover:text-ink-900'
+              }`}
+            >
+              {tab === 'details' ? 'Details' : 'Subtasks'}
+              {tab === 'subtasks' && task.subtasks && task.subtasks.length > 0 && (
+                <span className="ml-2 px-1.5 py-0.5 bg-primary/10 text-primary rounded-[--radius-pill] text-[10px] font-medium">
+                  {task.subtasks.length}
+                </span>
+              )}
+            </button>
+          ))}
         </div>
 
         {/* Tab Content */}
@@ -258,7 +251,7 @@ export function TaskDetailModal({ task, open, onClose, onSchedule }: TaskDetailM
                       </span>
                       <button
                         onClick={() => handleDeleteSubtask(subtask.id)}
-                        className="tap-target flex-shrink-0 text-ink-300 hover:text-danger clay-transition"
+                        className="tap-target flex-shrink-0 rounded-[--radius-sm] clay-l1 bg-clay-surface hover:clay-pressed text-ink-400 hover:text-danger clay-transition"
                         aria-label="Delete subtask"
                       >
                         <Trash2 className="size-4" />
@@ -297,7 +290,7 @@ export function TaskDetailModal({ task, open, onClose, onSchedule }: TaskDetailM
                   <button
                     type="button"
                     onClick={() => setShowAddSubtask(true)}
-                    className="w-full tap-target flex items-center justify-center gap-2 rounded-[--radius-md] p-2 text-ink-400 hover:text-ink-700 hover:bg-blue-50 clay-transition font-body text-[13px] font-medium"
+                    className="w-full tap-target flex items-center justify-center gap-2 rounded-[--radius-md] p-2 clay-l1 bg-clay-surface hover:clay-l2 text-ink-500 hover:text-ink-700 clay-transition font-body text-[13px] font-medium"
                   >
                     <Plus className="size-4" />
                     Add subtask

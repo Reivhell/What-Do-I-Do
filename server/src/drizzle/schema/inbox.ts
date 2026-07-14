@@ -1,4 +1,4 @@
-import { sqliteTable, text, integer } from 'drizzle-orm/sqlite-core';
+import { sqliteTable, text, integer, index } from 'drizzle-orm/sqlite-core';
 import { users } from './users';
 import { randomUUID } from 'crypto';
 
@@ -18,4 +18,7 @@ export const captureItems = sqliteTable('capture_items', {
   pinned: integer('pinned', { mode: 'boolean' }).notNull().default(false),
   createdAt: text('created_at').notNull().$defaultFn(() => new Date().toISOString()),
   updatedAt: text('updated_at').notNull().$defaultFn(() => new Date().toISOString()),
-});
+}, (table) => ({
+  userStatusIdx: index('idx_capture_items_user_status').on(table.userId, table.status),
+  userCreatedAtIdx: index('idx_capture_items_user_created_at').on(table.userId, table.createdAt),
+}));

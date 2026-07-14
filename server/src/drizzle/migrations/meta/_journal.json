@@ -57,6 +57,20 @@
       "when": 1784036891472,
       "tag": "0007_free_toad_men",
       "breakpoints": true
+    },
+    {
+      "idx": 8,
+      "version": "6",
+      "when": 1784037824747,
+      "tag": "0008_green_apocalypse",
+      "breakpoints": true
+    },
+    {
+      "idx": 9,
+      "version": "6",
+      "when": 1784039957878,
+      "tag": "0009_crazy_rage",
+      "breakpoints": true
     }
   ]
 }

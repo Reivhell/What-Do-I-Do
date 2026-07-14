@@ -1,5 +1,6 @@
 import { Injectable, Logger, OnModuleInit } from '@nestjs/common';
 import { SnapshotService } from './snapshot.service';
+import { InsightService } from '../insights/insight.service';
 
 /**
  * Scheduled job runner for analytics snapshot generation.
@@ -10,7 +11,10 @@ import { SnapshotService } from './snapshot.service';
 export class AnalyticsScheduler implements OnModuleInit {
   private readonly logger = new Logger(AnalyticsScheduler.name);
 
-  constructor(private readonly snapshotService: SnapshotService) {}
+  constructor(
+    private readonly snapshotService: SnapshotService,
+    private readonly insightService: InsightService,
+  ) {}
 
   onModuleInit() {
     // Try to import node-cron — it's optional for local dev
@@ -27,6 +31,16 @@ export class AnalyticsScheduler implements OnModuleInit {
         try {
           const result = await this.snapshotService.generateAllDailyAndDerived();
           this.logger.log(`Daily snapshot complete: ${result.usersProcessed} user(s) processed`);
+
+          // Chain: Generate insights after snapshots complete
+          for (const userId of result.userIds) {
+            try {
+              await this.insightService.generateForUser(userId);
+            } catch (err) {
+              this.logger.error(`Insight generation failed for user ${userId}`, err);
+            }
+          }
+          this.logger.log('Insight generation complete');
         } catch (err) {
           this.logger.error('Daily snapshot failed', err);
         }

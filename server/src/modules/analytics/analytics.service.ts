@@ -88,7 +88,7 @@ export class AnalyticsService {
         sql`${schema.activitySessions.deletedAt} IS NULL`,
       ))
       .groupBy(schema.activitySessions.category)
-      .orderBy(sql`minutes DESC`);
+      .orderBy(sql`COALESCE(SUM(${schema.activitySessions.durationMinutes}), 0) DESC`);
 
     const totalMinutes = rows.reduce((s, r) => s + r.minutes, 0);
 
