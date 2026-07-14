@@ -1,7 +1,8 @@
 import { useState, type FormEvent } from 'react';
 import {
   Target, Plus, Trash2, CheckCircle2, Circle, Loader2,
-  Pencil, Calendar, ChevronDown, ChevronUp, AlertTriangle,
+  Pencil, Calendar, CalendarDays, ChevronDown, ChevronUp,
+  AlertTriangle, Link,
 } from 'lucide-react';
 import { Card, CardHeader, CardTitle, Badge, Button, Modal, ProgressBar, EmptyState } from '../components/ui';
 import {
@@ -12,6 +13,8 @@ import {
   useCreateMilestone,
   useUpdateMilestone,
   useDeleteMilestone,
+  useScheduleMilestone,
+  useLinkedItems,
   type GoalWithMilestones,
 } from '../api/goals';
 
@@ -31,6 +34,7 @@ function GoalCard({
   onDeleteMilestone,
   onArchive,
   onEdit,
+  onScheduleMilestone,
 }: {
   goal: GoalWithMilestones;
   onToggleComplete: (id: string) => void;
@@ -39,8 +43,11 @@ function GoalCard({
   onDeleteMilestone: (goalId: string, milestoneId: string) => void;
   onArchive: (id: string) => void;
   onEdit: (goal: GoalWithMilestones) => void;
+  onScheduleMilestone: (goalId: string, milestoneId: string) => void;
 }) {
   const [expanded, setExpanded] = useState(true);
+  const [showLinked, setShowLinked] = useState(false);
+  const { data: linkedItems = [] } = useLinkedItems(goal.id);
 
   return (
     <Card level={goal.status === 'at_risk' ? 2 : 1} className={`!p-5 ${goal.status === 'at_risk' ? 'ring-2 ring-semantic-red/20' : ''}`}>
@@ -79,7 +86,7 @@ function GoalCard({
           <span className="font-body text-[13px] font-semibold text-ink-500">Progress</span>
           <span className="font-body text-[13px] font-semibold text-ink-700">{goal.progressPercent}%</span>
         </div>
-        <ProgressBar value={goal.progressPercent} max={100} />
+        <ProgressBar value={goal.progressPercent} />
       </div>
 
       {/* Milestones */}
@@ -112,6 +119,19 @@ function GoalCard({
                 {m.targetDate && (
                   <span className="font-body text-[11px] text-ink-400">{m.targetDate}</span>
                 )}
+                {m.generatedEventId ? (
+                  <span className="shrink-0 text-blue-400" title="Scheduled to planner">
+                    <CalendarDays className="size-3.5" />
+                  </span>
+                ) : (
+                  <button
+                    onClick={() => onScheduleMilestone(goal.id, m.id)}
+                    className="shrink-0 opacity-0 group-hover:opacity-100 clay-transition text-ink-400 hover:text-blue-500"
+                    title="Schedule to planner"
+                  >
+                    <Calendar className="size-3.5" />
+                  </button>
+                )}
                 <button
                   onClick={() => onDeleteMilestone(goal.id, m.id)}
                   className="shrink-0 opacity-0 group-hover:opacity-100 clay-transition text-ink-400 hover:text-red-500"
@@ -120,13 +140,35 @@ function GoalCard({
                 </button>
               </div>
             ))}
-            <button
-              onClick={() => onAddMilestone(goal.id)}
-              className="flex items-center gap-1.5 rounded-[--radius-sm] px-3 py-1.5 font-body text-[13px] text-blue-600 hover:bg-blue-50 clay-transition"
-            >
-              <Plus className="size-3.5" />
-              Add milestone
-            </button>
+            <div className="flex items-center gap-2">
+              <button
+                onClick={() => onAddMilestone(goal.id)}
+                className="flex items-center gap-1.5 rounded-[--radius-sm] px-3 py-1.5 font-body text-[13px] text-blue-600 hover:bg-blue-50 clay-transition"
+              >
+                <Plus className="size-3.5" />
+                Add milestone
+              </button>
+              {linkedItems.length > 0 && (
+                <button
+                  onClick={() => setShowLinked(!showLinked)}
+                  className="flex items-center gap-1.5 rounded-[--radius-sm] px-3 py-1.5 font-body text-[13px] text-ink-500 hover:text-blue-600 hover:bg-blue-50 clay-transition"
+                >
+                  <Link className="size-3.5" />
+                  {linkedItems.length} linked
+                  {showLinked ? <ChevronUp className="size-3" /> : <ChevronDown className="size-3" />}
+                </button>
+              )}
+            </div>
+            {showLinked && linkedItems.length > 0 && (
+              <div className="mt-2 flex flex-col gap-1">
+                {linkedItems.map((item) => (
+                  <div key={`${item.type}-${item.id}`} className="flex items-center gap-2 rounded-[--radius-sm] bg-clay-surface-alt px-3 py-1.5">
+                    <span className="font-body text-[11px] font-semibold uppercase tracking-wider text-ink-400 w-8">{item.type}</span>
+                    <span className="font-body text-[13px] text-ink-700">{item.title}</span>
+                  </div>
+                ))}
+              </div>
+            )}
           </div>
         )}
       </div>
@@ -257,6 +299,74 @@ function MilestoneFormModal({
   );
 }
 
+/* ── Schedule Milestone Modal ── */
+function ScheduleMilestoneModal({
+  goalId,
+  milestoneId,
+  onClose,
+}: {
+  goalId: string;
+  milestoneId: string;
+  onClose: () => void;
+}) {
+  const [date, setDate] = useState('');
+  const [startTime, setStartTime] = useState('09:00');
+  const [endTime, setEndTime] = useState('10:00');
+  const schedule = useScheduleMilestone();
+
+  const handleSubmit = (e: FormEvent) => {
+    e.preventDefault();
+    if (!date || !startTime || !endTime) return;
+    schedule.mutate(
+      { goalId, milestoneId, date, startTime, endTime },
+      { onSuccess: onClose },
+    );
+  };
+
+  return (
+    <Modal open onClose={onClose} title="Schedule in Planner">
+      <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+        <div>
+          <label className="font-body text-[12px] font-semibold uppercase tracking-[0.04em] text-ink-500 mb-1 block">Date</label>
+          <input
+            type="date"
+            value={date}
+            onChange={(e) => setDate(e.target.value)}
+            className="w-full rounded-[--radius-md] bg-clay-surface-alt px-4 py-3 font-body text-[15px] clay-inset focus:outline-none focus:ring-4 focus:ring-blue-50"
+          />
+        </div>
+        <div className="grid grid-cols-2 gap-3">
+          <div>
+            <label className="font-body text-[12px] font-semibold uppercase tracking-[0.04em] text-ink-500 mb-1 block">Start</label>
+            <input
+              type="time"
+              value={startTime}
+              onChange={(e) => setStartTime(e.target.value)}
+              className="w-full rounded-[--radius-md] bg-clay-surface-alt px-4 py-3 font-body text-[15px] clay-inset focus:outline-none focus:ring-4 focus:ring-blue-50"
+            />
+          </div>
+          <div>
+            <label className="font-body text-[12px] font-semibold uppercase tracking-[0.04em] text-ink-500 mb-1 block">End</label>
+            <input
+              type="time"
+              value={endTime}
+              onChange={(e) => setEndTime(e.target.value)}
+              className="w-full rounded-[--radius-md] bg-clay-surface-alt px-4 py-3 font-body text-[15px] clay-inset focus:outline-none focus:ring-4 focus:ring-blue-50"
+            />
+          </div>
+        </div>
+        <div className="flex justify-end gap-2">
+          <Button type="button" variant="ghost" onClick={onClose}>Cancel</Button>
+          <Button type="submit" disabled={!date || schedule.isPending}>
+            {schedule.isPending ? <Loader2 className="size-5 animate-spin" /> : null}
+            Schedule
+          </Button>
+        </div>
+      </form>
+    </Modal>
+  );
+}
+
 /* ── Page ── */
 export function GoalsPage() {
   const { data: goals = [], isLoading, error } = useGoalsList();
@@ -268,6 +378,12 @@ export function GoalsPage() {
   const [showCreateGoal, setShowCreateGoal] = useState(false);
   const [editingGoal, setEditingGoal] = useState<GoalWithMilestones | null>(null);
   const [addingMilestoneTo, setAddingMilestoneTo] = useState<string | null>(null);
+  const [schedulingMilestone, setSchedulingMilestone] = useState<{ goalId: string; milestoneId: string } | null>(null);
+  const [showArchived, setShowArchived] = useState(false);
+
+  const visibleGoals = showArchived
+    ? goals
+    : goals.filter((g) => g.status !== 'archived');
 
   return (
     <div className="flex flex-col gap-6 pb-24">
@@ -279,10 +395,20 @@ export function GoalsPage() {
             Long-term targets and the milestones that get you there.
           </p>
         </div>
-        <Button onClick={() => setShowCreateGoal(true)}>
-          <Target className="size-5" />
-          New Goal
-        </Button>
+        <div className="flex items-center gap-3">
+          <button
+            onClick={() => setShowArchived(!showArchived)}
+            className={`font-body text-[13px] px-3 py-1.5 rounded-[--radius-sm] clay-transition ${
+              showArchived ? 'bg-blue-50 text-blue-700' : 'text-ink-400 hover:text-ink-700'
+            }`}
+          >
+            {showArchived ? 'Showing all' : 'Show archived'}
+          </button>
+          <Button onClick={() => setShowCreateGoal(true)}>
+            <Target className="size-5" />
+            New Goal
+          </Button>
+        </div>
       </div>
 
       {/* Loading */}
@@ -300,19 +426,19 @@ export function GoalsPage() {
       )}
 
       {/* Empty */}
-      {!isLoading && !error && goals.length === 0 && (
+      {!isLoading && !error && visibleGoals.length === 0 && (
         <EmptyState
           icon={<Target className="size-8" />}
-          title="No goals yet"
+          title={showArchived ? 'No archived goals' : 'No goals yet'}
           description="Set a long-term target to start tracking your progress."
-          action={<Button onClick={() => setShowCreateGoal(true)}>Create Goal</Button>}
+          action={!showArchived ? <Button onClick={() => setShowCreateGoal(true)}>Create Goal</Button> : undefined}
         />
       )}
 
       {/* Goals */}
-      {!isLoading && goals.length > 0 && (
+      {!isLoading && visibleGoals.length > 0 && (
         <div className="grid gap-4">
-          {goals.map((goal) => (
+          {visibleGoals.map((goal) => (
             <GoalCard
               key={goal.id}
               goal={goal}
@@ -322,6 +448,7 @@ export function GoalsPage() {
               onDeleteMilestone={(goalId, milestoneId) => deleteMilestone.mutate({ goalId, milestoneId })}
               onArchive={(id) => updateGoal.mutate({ id, status: 'archived' })}
               onEdit={setEditingGoal}
+              onScheduleMilestone={(goalId, milestoneId) => setSchedulingMilestone({ goalId, milestoneId })}
             />
           ))}
         </div>
@@ -331,6 +458,13 @@ export function GoalsPage() {
       {showCreateGoal && <GoalFormModal onClose={() => setShowCreateGoal(false)} />}
       {editingGoal && <GoalFormModal existing={editingGoal} onClose={() => setEditingGoal(null)} />}
       {addingMilestoneTo && <MilestoneFormModal goalId={addingMilestoneTo} onClose={() => setAddingMilestoneTo(null)} />}
+      {schedulingMilestone && (
+        <ScheduleMilestoneModal
+          goalId={schedulingMilestone.goalId}
+          milestoneId={schedulingMilestone.milestoneId}
+          onClose={() => setSchedulingMilestone(null)}
+        />
+      )}
     </div>
   );
 }
