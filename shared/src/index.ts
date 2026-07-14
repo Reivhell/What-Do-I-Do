@@ -22,6 +22,8 @@ export type {
   UpdateGoalInput,
   CreateMilestoneInput,
   UpdateMilestoneInput,
+  ScheduleMilestoneInput,
+  LinkedItem,
 } from './types/goals';
 export type {
   Task,
@@ -37,14 +39,18 @@ export type {
 } from './types/tasks';
 export type {
   Account,
-  AccountInput,
+  CreateAccountInput,
+  UpdateAccountInput,
   Transaction,
-  TransactionInput,
+  CreateTransactionInput,
+  UpdateTransactionInput,
   Budget,
-  BudgetInput,
+  CreateBudgetInput,
+  UpdateBudgetInput,
   RecurringBill,
-  RecurringBillInput,
-  PeriodSummary,
+  CreateRecurringBillInput,
+  UpdateRecurringBillInput,
+  MoneySummary,
 } from './types/money';
 export type {
   OverviewStats,
@@ -67,3 +73,14 @@ export type {
   CreateAnnotationInput,
   UpdateAnnotationInput,
 } from './types/life-log';
+export type {
+  Habit,
+  HabitLog,
+  HabitFrequency,
+  HabitLogStatus,
+  RepeatRule,
+  CreateHabitInput,
+  UpdateHabitInput,
+  LogHabitInput,
+  HabitWithLogs,
+} from './types/habits';

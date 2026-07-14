@@ -45,3 +45,15 @@ export interface UpdateMilestoneInput {
   targetDate?: string | null;
   isCompleted?: boolean;
 }
+
+export interface ScheduleMilestoneInput {
+  date: string;
+  startTime: string;
+  endTime: string;
+}
+
+export interface LinkedItem {
+  type: 'habit' | 'task';
+  id: string;
+  title: string;
+}

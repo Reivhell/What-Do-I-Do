@@ -6,6 +6,8 @@ import type {
   UpdateGoalInput,
   CreateMilestoneInput,
   UpdateMilestoneInput,
+  ScheduleMilestoneInput,
+  LinkedItem,
 } from '@whatdo/shared';
 
 const BASE = '/api/goals';
@@ -111,5 +113,25 @@ export function useDeleteMilestone() {
       qc.invalidateQueries({ queryKey: ['goals'] });
       qc.invalidateQueries({ queryKey: ['milestones'] });
     },
+  });
+}
+
+export function useScheduleMilestone() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: ({ goalId, milestoneId, ...input }: ScheduleMilestoneInput & { goalId: string; milestoneId: string }) =>
+      request(`${BASE}/${goalId}/milestones/${milestoneId}/schedule`, {
+        method: 'POST',
+        body: JSON.stringify(input),
+      }),
+    onSuccess: () => qc.invalidateQueries({ queryKey: ['goals'] }),
+  });
+}
+
+export function useLinkedItems(goalId: string) {
+  return useQuery<LinkedItem[]>({
+    queryKey: ['goals', goalId, 'linked-items'],
+    queryFn: () => request(`${BASE}/${goalId}/linked-items`),
+    enabled: !!goalId,
   });
 }
