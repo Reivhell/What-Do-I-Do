@@ -1,0 +1,37 @@
+node_modules/
+dist/
+build/
+.env
+*.db
+*.db-journal
+*.db-wal
+*.db-shm
+.kilo
+.claude
+.superpowers
+.env.example
+.impeccable
+claude.md
+design.md
+PRODUCT.md
+install.md
+task/
+
+
+# Server
+server/dist/
+
+# Client
+client/dist/
+
+# Mobile
+mobile/.gradle/
+mobile/build/
+mobile/local.properties
+
+# IDE
+.vscode/
+.idea/
+*.iml
+.DS_Store
+Thumbs.db
