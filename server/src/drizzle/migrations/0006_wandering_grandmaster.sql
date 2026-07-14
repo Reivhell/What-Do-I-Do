@@ -1,0 +1,1 @@
+CREATE INDEX `idx_habits_user_created_at` ON `habits` (`user_id`,`created_at`);

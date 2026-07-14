@@ -87,3 +87,17 @@ export interface GoalStats {
   completedMilestones: number;
   goals: GoalEntry[];
 }
+
+export type RecordScope = 'overall' | 'time' | 'activity' | 'money' | 'habit' | 'goal';
+
+export interface RecordItem {
+  label: string;
+  value: string | number;
+  display: 'text' | 'count' | 'minutes' | 'currency' | 'percent';
+  sublabel?: string;
+  scope: RecordScope;
+}
+
+export interface RecordsStats {
+  records: RecordItem[];
+}
