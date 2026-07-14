@@ -11,6 +11,8 @@ import { MoneyModule } from './modules/money/money.module';
 import { LifeLogModule } from './modules/life-log/life-log.module';
 import { AnalyticsModule } from './modules/analytics/analytics.module';
 import { StatisticsModule } from './modules/statistics/statistics.module';
+import { InsightsModule } from './modules/insights/insights.module';
+import { AchievementsModule } from './modules/achievements/achievements.module';
 
 @Module({
   imports: [
@@ -26,6 +28,8 @@ import { StatisticsModule } from './modules/statistics/statistics.module';
     LifeLogModule,
     AnalyticsModule,
     StatisticsModule,
+    InsightsModule,
+    AchievementsModule,
   ],
 })
 export class AppModule {}
