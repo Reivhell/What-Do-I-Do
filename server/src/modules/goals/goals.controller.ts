@@ -1,8 +1,21 @@
-import { Controller, Get, Post, Patch, Delete, Body, Param, ParseUUIDPipe } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Patch,
+  Delete,
+  Body,
+  Param,
+  ParseUUIDPipe,
+  UsePipes,
+  ValidationPipe,
+} from '@nestjs/common';
 import { GoalsService } from './goals.service';
+import { CreateGoalDto, UpdateGoalDto, CreateMilestoneDto, UpdateMilestoneDto, ScheduleMilestoneDto } from './dto';
 
 const DEFAULT_USER_ID = 'default';
 
+@UsePipes(new ValidationPipe({ transform: true, whitelist: true }))
 @Controller('goals')
 export class GoalsController {
   constructor(private readonly goalsService: GoalsService) {}
@@ -20,16 +33,16 @@ export class GoalsController {
   }
 
   @Post()
-  create(@Body() body: { title: string; description?: string; targetDate?: string }) {
-    return this.goalsService.createGoal(DEFAULT_USER_ID, body);
+  create(@Body() dto: CreateGoalDto) {
+    return this.goalsService.createGoal(DEFAULT_USER_ID, dto);
   }
 
   @Patch(':id')
   update(
     @Param('id', ParseUUIDPipe) id: string,
-    @Body() body: { title?: string; description?: string | null; targetDate?: string | null; status?: string; progressPercent?: number },
+    @Body() dto: UpdateGoalDto,
   ) {
-    return this.goalsService.updateGoal(DEFAULT_USER_ID, id, body);
+    return this.goalsService.updateGoal(DEFAULT_USER_ID, id, dto);
   }
 
   @Delete(':id')
@@ -37,7 +50,7 @@ export class GoalsController {
     return this.goalsService.deleteGoal(DEFAULT_USER_ID, id);
   }
 
-  /* ── Milestones (nested under /goals/:goalId/milestones) ── */
+  /* ── Milestones ── */
 
   @Get(':goalId/milestones')
   listMilestones(@Param('goalId', ParseUUIDPipe) goalId: string) {
@@ -47,18 +60,18 @@ export class GoalsController {
   @Post(':goalId/milestones')
   createMilestone(
     @Param('goalId', ParseUUIDPipe) goalId: string,
-    @Body() body: { title: string; targetDate?: string },
+    @Body() dto: CreateMilestoneDto,
   ) {
-    return this.goalsService.createMilestone(goalId, body);
+    return this.goalsService.createMilestone(goalId, dto);
   }
 
   @Patch(':goalId/milestones/:milestoneId')
   updateMilestone(
     @Param('goalId', ParseUUIDPipe) goalId: string,
     @Param('milestoneId', ParseUUIDPipe) milestoneId: string,
-    @Body() body: { title?: string; targetDate?: string | null; isCompleted?: boolean },
+    @Body() dto: UpdateMilestoneDto,
   ) {
-    return this.goalsService.updateMilestone(goalId, milestoneId, body);
+    return this.goalsService.updateMilestone(goalId, milestoneId, dto);
   }
 
   @Delete(':goalId/milestones/:milestoneId')
@@ -67,5 +80,21 @@ export class GoalsController {
     @Param('milestoneId', ParseUUIDPipe) milestoneId: string,
   ) {
     return this.goalsService.deleteMilestone(goalId, milestoneId);
+  }
+
+  /* ── Extended endpoints ── */
+
+  @Post(':goalId/milestones/:milestoneId/schedule')
+  scheduleMilestone(
+    @Param('goalId', ParseUUIDPipe) goalId: string,
+    @Param('milestoneId', ParseUUIDPipe) milestoneId: string,
+    @Body() dto: ScheduleMilestoneDto,
+  ) {
+    return this.goalsService.scheduleMilestone(DEFAULT_USER_ID, goalId, milestoneId, dto);
+  }
+
+  @Get(':id/linked-items')
+  linkedItems(@Param('id', ParseUUIDPipe) id: string) {
+    return this.goalsService.getLinkedItems(DEFAULT_USER_ID, id);
   }
 }

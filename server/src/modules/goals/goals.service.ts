@@ -1,10 +1,11 @@
-import { Injectable, Inject, NotFoundException, BadRequestException } from '@nestjs/common';
+import { Injectable, Inject, NotFoundException, forwardRef } from '@nestjs/common';
 import { DRIZZLE } from '../../common/database/drizzle.provider';
 import { schema } from '../../drizzle';
 import type { DbInstance } from '../../drizzle';
 import { eq, and, sql } from 'drizzle-orm';
 import { randomUUID } from 'crypto';
 import { StatisticsService } from '../statistics/statistics.service';
+import { PlannerService } from '../planner/planner.service';
 
 function computeProgress(db: DbInstance, goalId: string) {
   return db
@@ -26,6 +27,7 @@ export class GoalsService {
   constructor(
     @Inject(DRIZZLE) private db: DbInstance,
     private statisticsService: StatisticsService,
+    @Inject(forwardRef(() => PlannerService)) private plannerService: PlannerService,
   ) {}
 
   /* ── Goals ── */
@@ -206,5 +208,59 @@ export class GoalsService {
         return { ...goal, milestones };
       }),
     );
+  }
+
+  /* ── Extended ── */
+
+  async scheduleMilestone(
+    userId: string,
+    goalId: string,
+    milestoneId: string,
+    dto: { date: string; startTime: string; endTime: string },
+  ) {
+    const milestone = await this.db.query.milestones.findFirst({
+      where: (m, { eq, and }) => and(eq(m.id, milestoneId), eq(m.goalId, goalId)),
+    });
+    if (!milestone) throw new NotFoundException('Milestone not found');
+
+    const [startH, startM] = dto.startTime.split(':').map(Number);
+    const [endH, endM] = dto.endTime.split(':').map(Number);
+    const durationMinutes = (endH * 60 + endM) - (startH * 60 + startM);
+
+    const event = await this.plannerService.create(userId, {
+      title: `Milestone: ${milestone.title}`,
+      date: dto.date,
+      startTime: dto.startTime,
+      endTime: dto.endTime,
+      durationMinutes: Math.max(durationMinutes, 15),
+      category: 'goal',
+      sourceType: 'goal_milestone',
+      sourceId: milestoneId,
+    });
+
+    await this.db
+      .update(schema.milestones)
+      .set({ generatedEventId: event.id })
+      .where(eq(schema.milestones.id, milestoneId));
+
+    return event;
+  }
+
+  async getLinkedItems(userId: string, goalId: string) {
+    const [habits, tasks] = await Promise.all([
+      this.db.query.habits.findMany({
+        where: (h, { eq }) => eq(h.linkedGoalId, goalId),
+        columns: { id: true, name: true },
+      }),
+      this.db.query.tasks.findMany({
+        where: (t, { eq }) => eq(t.linkedGoalId, goalId),
+        columns: { id: true, title: true },
+      }),
+    ]);
+
+    return [
+      ...habits.map((h) => ({ type: 'habit' as const, id: h.id, title: h.name })),
+      ...tasks.map((t) => ({ type: 'task' as const, id: t.id, title: t.title })),
+    ];
   }
 }
