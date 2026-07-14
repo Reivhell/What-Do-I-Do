@@ -2,9 +2,10 @@ import { Injectable, Inject, forwardRef } from '@nestjs/common';
 import { DRIZZLE } from '../../common/database/drizzle.provider';
 import { schema } from '../../drizzle';
 import type { DbInstance } from '../../drizzle';
-import { eq, and } from 'drizzle-orm';
+import { eq, and, sql } from 'drizzle-orm';
 import { randomUUID } from 'crypto';
 import { ActivityTrackerService } from '../activity-tracker/activity-tracker.service';
+import { AchievementsEventGateway } from '../achievements/achievements.gateway';
 
 export type PlannerStatus = 'scheduled' | 'in_progress' | 'completed' | 'missed' | 'cancelled';
 export type SourceType = 'manual' | 'task' | 'habit' | 'goal_milestone';
@@ -52,6 +53,7 @@ export class PlannerService {
     @Inject(DRIZZLE) private db: DbInstance,
     @Inject(forwardRef(() => ActivityTrackerService))
     private activityTracker: ActivityTrackerService,
+    private achievementsGateway: AchievementsEventGateway,
   ) {}
 
   async listByDate(userId: string, date: string) {
@@ -210,11 +212,21 @@ export class PlannerService {
     if (data.status !== undefined) updateData.status = data.status;
     if (data.reminderTime !== undefined) updateData.reminderTime = data.reminderTime;
 
-    return this.db
+    const [event] = await this.db
       .update(schema.plannerEvents)
       .set(updateData)
       .where(and(eq(schema.plannerEvents.id, id), eq(schema.plannerEvents.userId, userId)))
       .returning();
+
+    if (data.status === 'completed' && event) {
+      const totalCompleted = (await this.db
+        .select({ count: sql<number>`COUNT(*)` })
+        .from(schema.plannerEvents)
+        .where(and(eq(schema.plannerEvents.userId, userId), eq(schema.plannerEvents.status, 'completed'))))[0]?.count || 0;
+      this.achievementsGateway.onPlannerEventCompleted(userId, totalCompleted).catch(() => {});
+    }
+
+    return event;
   }
 
   async delete(id: string, userId: string) {

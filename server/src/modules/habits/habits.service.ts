@@ -6,6 +6,7 @@ import { eq, and, desc, gte, lte } from 'drizzle-orm';
 import { randomUUID } from 'crypto';
 import { StatisticsService } from '../statistics/statistics.service';
 import { PlannerService } from '../planner/planner.service';
+import { AchievementsEventGateway } from '../achievements/achievements.gateway';
 import { CreateHabitDto, UpdateHabitDto, LogHabitDto, HabitResponse, HabitLogResponse, RepeatRule } from './dto/habit.dto';
 
 export interface HabitWithLogs extends HabitResponse {
@@ -18,6 +19,7 @@ export class HabitsService {
     @Inject(DRIZZLE) private db: DbInstance,
     private statisticsService: StatisticsService,
     @Inject(forwardRef(() => PlannerService)) private plannerService: PlannerService,
+    private achievementsGateway: AchievementsEventGateway,
   ) {}
 
   async create(userId: string, dto: CreateHabitDto): Promise<HabitResponse> {
@@ -168,6 +170,10 @@ export class HabitsService {
 
     await this.statisticsService.invalidate(userId, 'habit');
     await this.statisticsService.invalidate(userId, 'overall');
+
+    // Fire-and-forget achievement evaluation
+    this.achievementsGateway.onStreakUpdated(userId, currentStreak, completionCount).catch(() => {});
+
     return this.mapHabitLog(log);
   }
 

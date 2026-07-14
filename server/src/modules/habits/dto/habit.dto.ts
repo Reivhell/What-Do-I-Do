@@ -11,6 +11,18 @@ export interface RepeatRule {
   endCondition?: { type: 'count'; count: number } | { type: 'date'; date: string };
 }
 
+export class EndConditionDto {
+  @IsEnum(['count', 'date'])
+  type!: 'count' | 'date';
+
+  @IsOptional()
+  count?: number;
+
+  @IsOptional()
+  @IsDateString()
+  date?: string;
+}
+
 export class RepeatRuleDto {
   @IsEnum(['daily', 'weekly', 'monthly'])
   freq!: 'daily' | 'weekly' | 'monthly';
@@ -25,18 +37,6 @@ export class RepeatRuleDto {
   @ValidateNested()
   @Type(() => EndConditionDto)
   endCondition?: EndConditionDto;
-}
-
-export class EndConditionDto {
-  @IsEnum(['count', 'date'])
-  type!: 'count' | 'date';
-
-  @IsOptional()
-  count?: number;
-
-  @IsOptional()
-  @IsDateString()
-  date?: string;
 }
 
 export class CreateHabitDto {

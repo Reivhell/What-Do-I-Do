@@ -5,12 +5,14 @@ import type { DbInstance } from '../../drizzle';
 import { eq, and, isNull, like, gte, lte, sql } from 'drizzle-orm';
 import { randomUUID } from 'crypto';
 import { StatisticsService } from '../statistics/statistics.service';
+import { AchievementsEventGateway } from '../achievements/achievements.gateway';
 
 @Injectable()
 export class ActivityTrackerService {
   constructor(
     @Inject(DRIZZLE) private db: DbInstance,
     private statisticsService: StatisticsService,
+    private achievementsGateway: AchievementsEventGateway,
   ) {}
 
   async getActiveSession(userId: string) {
@@ -69,7 +71,29 @@ export class ActivityTrackerService {
     await this.statisticsService.invalidate(userId, 'time');
     await this.statisticsService.invalidate(userId, 'activity');
     await this.statisticsService.invalidate(userId, 'overall');
+
+    // Fire-and-forget achievement evaluation
+    const totalSessions = await this.getTotalSessions(userId);
+    const totalHours = await this.getTotalHours(userId);
+    this.achievementsGateway.onSessionCompleted(userId, totalSessions, totalHours).catch(() => {});
+
     return updated;
+  }
+
+  private async getTotalSessions(userId: string): Promise<number> {
+    const result = await this.db
+      .select({ count: sql<number>`COUNT(*)` })
+      .from(schema.activitySessions)
+      .where(and(eq(schema.activitySessions.userId, userId), sql`end_time IS NOT NULL`));
+    return result[0]?.count || 0;
+  }
+
+  private async getTotalHours(userId: string): Promise<number> {
+    const result = await this.db
+      .select({ total: sql<number>`COALESCE(SUM(duration_minutes), 0) / 60.0` })
+      .from(schema.activitySessions)
+      .where(and(eq(schema.activitySessions.userId, userId), sql`end_time IS NOT NULL AND duration_minutes IS NOT NULL`));
+    return Math.round((result[0]?.total || 0) * 10) / 10;
   }
 
   async manualLog(

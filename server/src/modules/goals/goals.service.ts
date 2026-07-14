@@ -6,6 +6,7 @@ import { eq, and, sql } from 'drizzle-orm';
 import { randomUUID } from 'crypto';
 import { StatisticsService } from '../statistics/statistics.service';
 import { PlannerService } from '../planner/planner.service';
+import { AchievementsEventGateway } from '../achievements/achievements.gateway';
 
 function computeProgress(db: DbInstance, goalId: string) {
   return db
@@ -28,6 +29,7 @@ export class GoalsService {
     @Inject(DRIZZLE) private db: DbInstance,
     private statisticsService: StatisticsService,
     @Inject(forwardRef(() => PlannerService)) private plannerService: PlannerService,
+    private achievementsGateway: AchievementsEventGateway,
   ) {}
 
   /* ── Goals ── */
@@ -171,6 +173,21 @@ export class GoalsService {
     if (goalData) {
       await this.statisticsService.invalidate(goalData.userId, 'goal');
       await this.statisticsService.invalidate(goalData.userId, 'overall');
+
+      // Check if goal just completed — all milestones done
+      if (data.isCompleted) {
+        const milestones = await this.db.query.milestones.findMany({
+          where: (m, { eq }) => eq(m.goalId, goalId),
+        });
+        const allDone = milestones.every(m => m.isCompleted);
+        if (allDone) {
+          const totalGoals = (await this.db
+            .select({ count: sql<number>`COUNT(*)` })
+            .from(schema.goals)
+            .where(and(eq(schema.goals.userId, goalData.userId), sql`progress_percent = 100`)))[0]?.count || 0;
+          this.achievementsGateway.onGoalCompleted(goalData.userId, totalGoals).catch(() => {});
+        }
+      }
     }
     return updated;
   }
