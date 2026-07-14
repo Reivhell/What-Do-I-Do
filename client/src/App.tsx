@@ -10,7 +10,9 @@ import { MoneyPage } from "./pages/Money";
 import { LifeLogPage } from "./pages/LifeLog";
 import { HabitsPage } from "./pages/Habits";
 import { StatisticsPage } from "./pages/Statistics";
+import { AnalyticsPage } from "./pages/Analytics";
 import { PlaceholderPage } from "./pages/PlaceholderPage";
+import { AchievementsPage } from "./pages/Achievements";
 
 export default function App() {
   return (
@@ -27,9 +29,9 @@ export default function App() {
         <Route path="/goals" element={<GoalsPage />} />
         <Route path="/money" element={<MoneyPage />} />
         <Route path="/life-log" element={<LifeLogPage />} />
-        <Route path="/analytics" element={<PlaceholderPage title="Analytics" />} />
+        <Route path="/analytics" element={<AnalyticsPage />} />
         <Route path="/statistics" element={<StatisticsPage />} />
-        <Route path="/achievements" element={<PlaceholderPage title="Achievements" />} />
+        <Route path="/achievements" element={<AchievementsPage />} />
         <Route path="/insights" element={<PlaceholderPage title="Insights" />} />
         <Route path="/workspace" element={<PlaceholderPage title="Workspace" />} />
         <Route path="/settings" element={<PlaceholderPage title="Settings" />} />
