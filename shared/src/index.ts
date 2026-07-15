@@ -101,3 +101,11 @@ export {
   DEFAULT_WIDGET_CONFIG,
   WIDGET_TYPE_LABELS,
 } from './types/workspace';
+export type {
+  UserSettings,
+  SettingsUpdate,
+  ThemeMode,
+  NotificationSettings,
+  PrivacySettings,
+  DisplaySettings,
+} from './types/settings';

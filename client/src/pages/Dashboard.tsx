@@ -174,7 +174,7 @@ export function Dashboard() {
 
           {/* Productive Time */}
           <div className="clay-card p-[24px] flex items-center gap-5">
-            <div className="w-16 h-16 bg-blue-50 dark:bg-clr-primary-10 rounded-full flex items-center justify-center clay-button">
+            <div className="w-16 h-16 bg-blue-50 dark:bg-clr-primary-10 rounded-full flex items-center justify-center clay-l1">
               <span
                 className="material-symbols-outlined clr-primary text-3xl"
                 style={{ fontVariationSettings: "'FILL' 1" }}
@@ -196,7 +196,7 @@ export function Dashboard() {
 
           {/* Tasks Completed */}
           <div className="clay-card p-[24px] flex items-center gap-5">
-            <div className="w-16 h-16 bg-green-50 dark:bg-clr-success-10 rounded-full flex items-center justify-center clay-button clr-success">
+            <div className="w-16 h-16 bg-green-50 dark:bg-clr-success-10 rounded-full flex items-center justify-center clay-l1 clr-success">
               <span
                 className="material-symbols-outlined text-3xl"
                 style={{ fontVariationSettings: "'FILL' 1" }}
@@ -219,7 +219,7 @@ export function Dashboard() {
 
           {/* Spend Today */}
           <div className="clay-card p-[24px] flex items-center gap-5">
-            <div className="w-16 h-16 bg-red-50 dark:bg-clr-danger-10 rounded-full flex items-center justify-center clay-button clr-danger">
+            <div className="w-16 h-16 bg-red-50 dark:bg-clr-danger-10 rounded-full flex items-center justify-center clay-l1 clr-danger">
               <span
                 className="material-symbols-outlined text-3xl"
                 style={{ fontVariationSettings: "'FILL' 1" }}
@@ -270,10 +270,10 @@ export function Dashboard() {
                 {formatTimer(seconds)}
               </div>
               <div className="flex items-center gap-4">
-                <button className="w-12 h-12 rounded-full clay-button bg-clr-surface-white dark:bg-clr-surface-container-high flex items-center justify-center clr-primary">
+                <button className="w-12 h-12 rounded-full clay-l1 bg-clay-surface flex items-center justify-center clr-primary">
                   <span className="material-symbols-outlined">info</span>
                 </button>
-                <button className="w-16 h-16 rounded-full clay-button bg-clr-surface-white dark:bg-clr-surface-container-high flex items-center justify-center clr-danger">
+                <button className="w-16 h-16 rounded-full clay-l1 bg-clay-surface flex items-center justify-center clr-danger">
                   <span
                     className="material-symbols-outlined text-3xl"
                     style={{ fontVariationSettings: "'FILL' 1" }}
@@ -281,7 +281,7 @@ export function Dashboard() {
                     stop_circle
                   </span>
                 </button>
-                <button className="clay-button bg-clr-surface-white dark:bg-clr-surface-container-high rounded-full px-6 py-3 flex items-center gap-2 font-[Plus Jakarta Sans] text-[13px] leading-[18px] font-medium clr-text-primary">
+                <button className="clay-l1 bg-clay-surface rounded-full px-6 py-3 flex items-center gap-2 font-[Plus Jakarta Sans] text-[13px] leading-[18px] font-medium clr-text-primary">
                   <span className="material-symbols-outlined">swap_horiz</span>
                   Switch
                 </button>
@@ -521,7 +521,7 @@ export function Dashboard() {
                 { icon: "mail", label: "Open Inbox", color: "clr-text-primary", path: "/inbox" },
               ].map((act, idx) => (
                 <button key={idx} onClick={() => navigate(act.path)} className="flex flex-col items-center gap-2 group">
-                  <div className={`clay-button w-full aspect-square max-w-[56px] flex items-center justify-center rounded-2xl bg-clr-surface-white dark:bg-clr-surface-container-high ${act.color} group-hover:scale-110 transition-transform mx-auto`}>
+                  <div className={`clay-l2 w-full aspect-square max-w-[56px] flex items-center justify-center rounded-2xl bg-clay-surface ${act.color} group-hover:scale-110 transition-transform mx-auto`}>
                     <span className="material-symbols-outlined text-xl" style={{ fontVariationSettings: "'FILL' 1" }}>{act.icon}</span>
                   </div>
                   <span className="font-[Plus Jakarta Sans] text-[11px] leading-[14px] font-semibold text-center clr-text-secondary">{act.label}</span>
