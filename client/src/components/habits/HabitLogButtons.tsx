@@ -24,10 +24,10 @@ export function HabitLogButtons({ habitId, todayLog, onLog, disabled }: HabitLog
             key={s.value}
             onClick={() => onLog(s.value)}
             disabled={disabled || isSelected}
-            className={`flex-1 flex flex-col items-center gap-1 rounded-[--radius-md] px-3 py-2.5 font-body text-[13px] font-medium clay-transition ${
+            className={`flex-1 flex flex-col items-center gap-1 rounded-[--radius-md] px-3 py-2.5 font-body text-[13px] font-medium transition-all duration-150 ${
               isSelected
                 ? s.activeClass
-                : 'bg-clay-surface clay-l1 hover:clay-l2 active:clay-pressed clr-text-secondary hover:clr-text-primary'
+                : 'bg-clay-surface clay-l1 hover:clay-l2 active:clay-pressed text-ink-500 hover:text-ink-900'
             } disabled:cursor-not-allowed disabled:opacity-60`}
             title={isSelected ? `Already ${s.value}` : `Mark as ${s.value}`}
           >

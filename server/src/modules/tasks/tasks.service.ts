@@ -5,6 +5,7 @@ import type { DbInstance } from '../../drizzle';
 import { eq, and, inArray, sql, desc, asc } from 'drizzle-orm';
 import { randomUUID } from 'crypto';
 import { PlannerService } from '../planner/planner.service';
+import { StatisticsService } from '../statistics/statistics.service';
 
 export type TaskStatus = 'inbox' | 'active' | 'completed' | 'archived';
 export type TaskPriority = 'low' | 'medium' | 'high';
@@ -49,6 +50,7 @@ export class TasksService {
     @Inject(DRIZZLE) private db: DbInstance,
     @Inject(forwardRef(() => PlannerService))
     private plannerService: PlannerService,
+    private statisticsService: StatisticsService,
   ) {}
 
   async list(userId: string, view?: TaskView) {
@@ -106,6 +108,7 @@ export class TasksService {
         updatedAt: new Date().toISOString(),
       })
       .returning();
+    await this.statisticsService.invalidate(userId, 'overall');
     return task;
   }
 
@@ -119,18 +122,22 @@ export class TasksService {
     if (data.tags !== undefined) updateData.tags = data.tags;
     if (data.notes !== undefined) updateData.notes = data.notes;
 
-    return this.db
+    const [task] = await this.db
       .update(schema.tasks)
       .set(updateData)
       .where(and(eq(schema.tasks.id, id), eq(schema.tasks.userId, userId)))
       .returning();
+    await this.statisticsService.invalidate(userId, 'overall');
+    return task;
   }
 
   async delete(id: string, userId: string) {
-    return this.db
+    const [deleted] = await this.db
       .delete(schema.tasks)
       .where(and(eq(schema.tasks.id, id), eq(schema.tasks.userId, userId)))
       .returning();
+    await this.statisticsService.invalidate(userId, 'overall');
+    return deleted;
   }
 
   async archive(userId: string, taskId: string) {
@@ -140,11 +147,13 @@ export class TasksService {
   async bulkUpdateStatus(userId: string, taskIds: string[], status: TaskStatus) {
     if (taskIds.length === 0) return [];
 
-    return this.db
+    const updated = await this.db
       .update(schema.tasks)
       .set({ status, updatedAt: new Date().toISOString() })
       .where(and(eq(schema.tasks.userId, userId), inArray(schema.tasks.id, taskIds)))
       .returning();
+    await this.statisticsService.invalidate(userId, 'overall');
+    return updated;
   }
 
   async scheduleTask(userId: string, taskId: string, data: ScheduleTaskInput) {
@@ -171,6 +180,7 @@ export class TasksService {
         updatedAt: new Date().toISOString(),
       })
       .returning();
+    await this.statisticsService.invalidate(userId, 'overall');
     return subtask;
   }
 
@@ -184,13 +194,16 @@ export class TasksService {
       .set(updateData)
       .where(eq(schema.subtasks.id, subtaskId))
       .returning();
+    await this.statisticsService.invalidate(userId, 'overall');
     return subtask;
   }
 
   async deleteSubtask(subtaskId: string, userId: string) {
-    return this.db
+    const [deleted] = await this.db
       .delete(schema.subtasks)
       .where(eq(schema.subtasks.id, subtaskId))
       .returning();
+    await this.statisticsService.invalidate(userId, 'overall');
+    return deleted;
   }
 }

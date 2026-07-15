@@ -48,23 +48,25 @@ function TimeDistributionSection() {
   const total = data.totalMinutes || data.categories.reduce((s: number, c: any) => s + c.minutes, 0);
 
   return (
-    <div className="flex flex-col gap-3">
-      <p className="font-body text-[13px] font-semibold text-ink-500 uppercase tracking-[0.04em]">Past 7 Days</p>
-      {data.categories.map((c: any) => {
-        const pct = total > 0 ? Math.round((c.minutes / total) * 100) : 0;
-        return (
-          <div key={c.category} className="flex items-center gap-3">
-            <span className="font-body text-[14px] text-ink-900 w-24 truncate">{c.category}</span>
-            <div className="flex-1">
-              <div className="h-2 w-full rounded-[--radius-pill] bg-blue-100">
-                <div className="h-full rounded-[--radius-pill] bg-blue-500 transition-all" style={{ width: `${pct}%` }} />
+    <Card level={1}>
+      <div className="flex flex-col gap-3">
+        <p className="font-body text-[13px] font-semibold text-ink-500 uppercase tracking-[0.04em]">Past 7 Days</p>
+        {data.categories.map((c: any) => {
+          const pct = total > 0 ? Math.round((c.minutes / total) * 100) : 0;
+          return (
+            <div key={c.category} className="flex items-center gap-3">
+              <span className="font-body text-[14px] text-ink-900 w-24 truncate">{c.category}</span>
+              <div className="flex-1">
+                <div className="h-2 w-full rounded-[--radius-pill] bg-blue-100">
+                  <div className="h-full rounded-[--radius-pill] bg-blue-500 transition-all" style={{ width: `${pct}%` }} />
+                </div>
               </div>
+              <span className="font-body text-[13px] text-ink-500 w-16 text-right">{c.minutes}m</span>
             </div>
-            <span className="font-body text-[13px] text-ink-500 w-16 text-right">{c.minutes}m</span>
-          </div>
-        );
-      })}
-    </div>
+          );
+        })}
+      </div>
+    </Card>
   );
 }
 

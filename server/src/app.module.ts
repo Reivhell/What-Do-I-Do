@@ -14,6 +14,7 @@ import { StatisticsModule } from './modules/statistics/statistics.module';
 import { InsightsModule } from './modules/insights/insights.module';
 import { AchievementsModule } from './modules/achievements/achievements.module';
 import { WorkspaceModule } from './modules/workspace/workspace.module';
+import { DashboardModule } from './modules/dashboard/dashboard.module';
 
 @Module({
   imports: [
@@ -32,6 +33,7 @@ import { WorkspaceModule } from './modules/workspace/workspace.module';
     InsightsModule,
     AchievementsModule,
     WorkspaceModule,
+    DashboardModule,
   ],
 })
 export class AppModule {}

@@ -1,4 +1,7 @@
 import { useState } from 'react';
+import {
+  Flame, Plus, Loader2, RefreshCw,
+} from 'lucide-react';
 import { useHabitsList, useCreateHabit, useUpdateHabit, useDeleteHabit, useLogHabit, useTodayLogs } from '../api/habits';
 import { HabitList } from '../components/habits/HabitList';
 import type { Habit, HabitLogStatus, CreateHabitInput, UpdateHabitInput } from '@whatdo/shared';
@@ -22,10 +25,7 @@ export function HabitsPage() {
   });
 
   const handleCreate = async (data: CreateHabitInput | 'cancel' | null) => {
-    if (data === 'cancel' || data === null) {
-      setIsCreating(false);
-      return;
-    }
+    if (data === 'cancel' || data === null) { setIsCreating(false); return; }
     try {
       await createHabitMutation.mutateAsync(data);
       setIsCreating(false);
@@ -35,10 +35,7 @@ export function HabitsPage() {
   };
 
   const handleUpdate = async (data: UpdateHabitInput | 'cancel' | null) => {
-    if (data === 'cancel' || data === null || !editingHabit) {
-      setEditingHabit(null);
-      return;
-    }
+    if (data === 'cancel' || data === null || !editingHabit) { setEditingHabit(null); return; }
     try {
       await updateHabitMutation.mutateAsync({ id: editingHabit.id, data });
       setEditingHabit(null);
@@ -48,12 +45,10 @@ export function HabitsPage() {
   };
 
   const handleDelete = async (habitId: string) => {
-    if (confirm('Delete this habit?')) {
-      try {
-        await deleteHabitMutation.mutateAsync(habitId);
-      } catch (err) {
-        console.error('Failed to delete habit:', err);
-      }
+    try {
+      await deleteHabitMutation.mutateAsync(habitId);
+    } catch (err) {
+      console.error('Failed to delete habit:', err);
     }
   };
 
@@ -69,14 +64,15 @@ export function HabitsPage() {
   if (error) {
     return (
       <div className="flex flex-col gap-6">
-        <h1 className="font-display text-2xl font-bold clr-text-primary">Habits</h1>
-        <div className="clay-card p-6">
+        <h1 className="font-display text-2xl font-bold text-ink-900">Habits</h1>
+        <div className="rounded-[--radius-lg] bg-clay-surface clay-l1 p-6">
           <div className="flex flex-col items-center gap-4 py-16 text-center">
-            <div className="flex size-20 items-center justify-center rounded-[--radius-xl] bg-danger/10">
-              <span className="text-2xl text-danger">⚠</span>
+            <div className="flex size-16 items-center justify-center rounded-[--radius-xl] bg-semantic-red/10">
+              <span className="text-2xl">⚠</span>
             </div>
-            <p className="font-body text-[15px] clr-text-secondary">Failed to load habits</p>
-            <button onClick={() => refetch()} className="clay-button rounded-[--radius-md] bg-clr-primary clr-on-primary px-6 py-2.5 font-body text-sm font-semibold">
+            <p className="font-body text-[15px] text-ink-500">Failed to load habits</p>
+            <button onClick={() => refetch()} className="inline-flex items-center justify-center gap-2 rounded-[--radius-md] bg-blue-500 px-5 py-2.5 font-body text-sm font-semibold text-white clay-l1 hover:clay-l2 active:clay-pressed">
+              <RefreshCw className="size-4" />
               Retry
             </button>
           </div>
@@ -91,35 +87,32 @@ export function HabitsPage() {
       <div>
         <div className="flex items-center justify-between gap-4">
           <div>
-            <h1 className="font-display text-2xl font-bold clr-text-primary flex items-center gap-3">
-              <span className="clr-primary">🔥</span>
-              Habits
-            </h1>
-            <p className="font-body text-[15px] clr-text-secondary mt-1">
+            <h1 className="font-display text-2xl font-bold text-ink-900">Habits</h1>
+            <p className="font-body text-[15px] text-ink-500 mt-1">
               Build consistency — daily, weekly, or monthly routines.
             </p>
           </div>
           <button
             onClick={() => setIsCreating(true)}
             disabled={createHabitMutation.isPending}
-            className="rounded-full bg-clr-primary clr-on-primary px-6 py-3 font-body text-sm font-semibold clay-button disabled:opacity-70 disabled:cursor-not-allowed"
+            className="inline-flex items-center gap-2 rounded-[--radius-pill] bg-blue-500 px-5 py-2.5 font-body text-sm font-semibold text-white clay-l1 hover:clay-l2 active:clay-pressed disabled:opacity-50"
           >
-            + New Habit
+            {createHabitMutation.isPending ? (
+              <Loader2 className="size-4 animate-spin" />
+            ) : (
+              <Plus className="size-4" />
+            )}
+            Habit Baru
           </button>
         </div>
       </div>
 
-      {/* Loading */}
-      {isLoading && (
-        <div className="clay-card p-6">
-          <div className="flex items-center justify-center py-16 text-ink-300">
-            <div className="animate-spin rounded-full border-3 border-primary border-t-transparent size-8" />
-          </div>
-        </div>
-      )}
-
       {/* Content */}
-      {!isLoading && (
+      {isLoading ? (
+        <div className="flex items-center justify-center py-20">
+          <Loader2 className="size-8 animate-spin text-blue-400" />
+        </div>
+      ) : (
         <HabitList
           habits={habits}
           todayLogs={todayLogs}
@@ -132,7 +125,13 @@ export function HabitsPage() {
         />
       )}
 
-      {/* Edit modal via HabitForm in HabitList */}
+      {/* Edit form rendered outside list */}
+      {editingHabit && (
+        <div className="rounded-[--radius-lg] bg-clay-surface clay-l1 p-5">
+          <h3 className="font-display text-lg font-semibold text-ink-900 mb-4">Edit Habit</h3>
+          {/* Reuse HabitForm inline via setEditingHabit — the HabitList handles the form display */}
+        </div>
+      )}
     </div>
   );
 }

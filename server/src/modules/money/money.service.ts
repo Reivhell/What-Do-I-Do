@@ -3,9 +3,10 @@ import { Inject } from '@nestjs/common';
 import { DRIZZLE } from '../../common/database/drizzle.provider';
 import { schema } from '../../drizzle';
 import type { DbInstance } from '../../drizzle';
-import { eq, and, desc, sql } from 'drizzle-orm';
+import { eq, and, desc, sql, gte, lte } from 'drizzle-orm';
 import { randomUUID } from 'crypto';
 import { StatisticsService } from '../statistics/statistics.service';
+import { AchievementsEventGateway } from '../achievements/achievements.gateway';
 import {
   CreateAccountDto, UpdateAccountDto,
   CreateTransactionDto, UpdateTransactionDto,
@@ -18,6 +19,7 @@ export class MoneyService {
   constructor(
     @Inject(DRIZZLE) private db: DbInstance,
     private statisticsService: StatisticsService,
+    private achievementsGateway: AchievementsEventGateway,
   ) {}
 
   // ── Accounts ──
@@ -35,6 +37,8 @@ export class MoneyService {
         updatedAt: new Date().toISOString(),
       })
       .returning();
+    await this.statisticsService.invalidate(userId, 'money');
+    await this.statisticsService.invalidate(userId, 'overall');
     return account;
   }
 
@@ -63,6 +67,8 @@ export class MoneyService {
       .set(updateData)
       .where(and(eq(schema.accounts.id, id), eq(schema.accounts.userId, userId)))
       .returning();
+    await this.statisticsService.invalidate(userId, 'money');
+    await this.statisticsService.invalidate(userId, 'overall');
     return account;
   }
 
@@ -71,6 +77,8 @@ export class MoneyService {
     await this.db.update(schema.accounts)
       .set({ deletedAt: new Date().toISOString(), updatedAt: new Date().toISOString() })
       .where(and(eq(schema.accounts.id, id), eq(schema.accounts.userId, userId)));
+    await this.statisticsService.invalidate(userId, 'money');
+    await this.statisticsService.invalidate(userId, 'overall');
   }
 
   // ── Transactions ──
@@ -140,6 +148,10 @@ export class MoneyService {
 
     await this.statisticsService.invalidate(userId, 'money');
     await this.statisticsService.invalidate(userId, 'overall');
+
+    // Fire-and-forget budget kept achievement evaluation
+    this.evaluateBudgetAchievement(userId).catch(() => {});
+
     return transaction;
   }
 
@@ -204,6 +216,8 @@ export class MoneyService {
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
     }).returning();
+    await this.statisticsService.invalidate(userId, 'money');
+    await this.statisticsService.invalidate(userId, 'overall');
     return bill;
   }
 
@@ -227,6 +241,8 @@ export class MoneyService {
       .where(and(eq(schema.recurringBills.id, id), eq(schema.recurringBills.userId, userId)))
       .returning();
     if (!bill) throw new NotFoundException('Recurring bill not found');
+    await this.statisticsService.invalidate(userId, 'money');
+    await this.statisticsService.invalidate(userId, 'overall');
     return bill;
   }
 
@@ -236,6 +252,8 @@ export class MoneyService {
       .where(and(eq(schema.recurringBills.id, id), eq(schema.recurringBills.userId, userId)))
       .returning();
     if (!result.length) throw new NotFoundException('Recurring bill not found');
+    await this.statisticsService.invalidate(userId, 'money');
+    await this.statisticsService.invalidate(userId, 'overall');
   }
 
   // ── Budgets ──
@@ -251,6 +269,8 @@ export class MoneyService {
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
     }).returning();
+    await this.statisticsService.invalidate(userId, 'money');
+    await this.statisticsService.invalidate(userId, 'overall');
     return budget;
   }
 
@@ -272,6 +292,8 @@ export class MoneyService {
       .where(and(eq(schema.budgets.id, id), eq(schema.budgets.userId, userId)))
       .returning();
     if (!budget) throw new NotFoundException('Budget not found');
+    await this.statisticsService.invalidate(userId, 'money');
+    await this.statisticsService.invalidate(userId, 'overall');
     return budget;
   }
 
@@ -280,6 +302,8 @@ export class MoneyService {
       .where(and(eq(schema.budgets.id, id), eq(schema.budgets.userId, userId)))
       .returning();
     if (!result.length) throw new NotFoundException('Budget not found');
+    await this.statisticsService.invalidate(userId, 'money');
+    await this.statisticsService.invalidate(userId, 'overall');
   }
 
   // ── Summary ──
@@ -306,5 +330,46 @@ export class MoneyService {
       accounts,
       recentTransactions: allTxns.slice(0, 10),
     };
+  }
+
+  // ── Achievement evaluation helpers ──
+
+  private async evaluateBudgetAchievement(userId: string): Promise<void> {
+    const budgets = await this.findAllBudgets(userId);
+    if (budgets.length === 0) return;
+
+    const today = new Date().toISOString().split('T')[0];
+    let allKept = true;
+
+    for (const budget of budgets) {
+      const start = budget.periodStart;
+      const spent = await this.getSpendingInRange(userId, budget.category, start, today);
+      if (spent > budget.amountLimit) {
+        allKept = false;
+        break;
+      }
+    }
+
+    if (allKept) {
+      this.achievementsGateway.onBudgetKept(userId, 1).catch(() => {});
+    }
+  }
+
+  private async getSpendingInRange(userId: string, category: string, start: string, end: string): Promise<number> {
+    const [row] = await this.db
+      .select({
+        total: sql<number>`COALESCE(SUM(${schema.transactions.amount}), 0)`,
+      })
+      .from(schema.transactions)
+      .where(
+        and(
+          eq(schema.transactions.userId, userId),
+          eq(schema.transactions.type, 'expense'),
+          eq(schema.transactions.category, category),
+          gte(schema.transactions.date, start),
+          lte(schema.transactions.date, end),
+        ),
+      );
+    return Number(row?.total ?? 0);
   }
 }

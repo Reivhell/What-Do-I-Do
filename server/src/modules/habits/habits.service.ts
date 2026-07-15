@@ -38,6 +38,9 @@ export class HabitsService {
       })
       .returning();
 
+    await this.statisticsService.invalidate(userId, 'habit');
+    await this.statisticsService.invalidate(userId, 'overall');
+
     return this.mapHabit(habit);
   }
 
@@ -72,6 +75,9 @@ export class HabitsService {
       .set(updateData)
       .where(and(eq(schema.habits.id, id), eq(schema.habits.userId, userId)))
       .returning();
+
+    await this.statisticsService.invalidate(userId, 'habit');
+    await this.statisticsService.invalidate(userId, 'overall');
 
     return this.mapHabit(updated);
   }

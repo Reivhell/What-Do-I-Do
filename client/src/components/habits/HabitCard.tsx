@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { MoreVertical, Trash2, PenSquare } from 'lucide-react';
+import { MoreVertical, Trash2, PenSquare, ListChecks, Target, Flame } from 'lucide-react';
 import { HabitLogButtons } from './HabitLogButtons';
 import { HabitStreakDisplay } from './HabitStreakDisplay';
 import type { Habit, HabitLogStatus } from '@whatdo/shared';
@@ -32,61 +32,58 @@ export function HabitCard({ habit, todayLog, onLog, onEdit, onDelete }: HabitCar
   };
 
   return (
-    <div className={`relative rounded-[--radius-lg] bg-clay-surface clay-l1 p-5 clay-transition hover:clay-l2 ${isDoneToday ? 'opacity-60' : ''}`}>
+    <div className={`rounded-[--radius-lg] bg-clay-surface clay-l1 p-5 transition-all duration-150 hover:clay-l2 ${isDoneToday ? 'opacity-60' : ''}`}>
       {/* Top row: title + menu */}
       <div className="flex items-start justify-between gap-3">
         <div className="flex-1 min-w-0">
           <div className="flex items-start gap-2">
-            <h3 className="font-display text-lg font-semibold clr-text-primary">{habit.name}</h3>
+            <h3 className="font-display text-lg font-semibold text-ink-900">{habit.name}</h3>
             {isDoneToday && <span className="text-lg shrink-0">✅</span>}
           </div>
           <div className="flex items-center gap-3 mt-1">
-            <span className="rounded-[--radius-sm] bg-clay-surface-alt clay-inset px-3 py-1 font-body text-[12px] clr-text-secondary">
-              {getFrequencyLabel(habit.targetFrequency, habit.repeatRule)}
+            <span className="rounded-[--radius-sm] bg-clay-surface-alt clay-inset px-3 py-1 font-body text-[12px] text-ink-500">
+              {getFrequencyLabel(habit.repeatRule?.freq ?? 'daily', habit.repeatRule)}
             </span>
-            {habit.linkedGoalId && (
-              <span className="rounded-[--radius-sm] bg-primary/10 clr-primary px-3 py-1 font-body text-[12px] font-medium">
-                🎯 Linked to goal
-              </span>
+            {habit.notes && (
+              <span className="font-body text-[13px] text-ink-400 truncate">{habit.notes}</span>
             )}
           </div>
         </div>
-
-        {/* Menu */}
         <div className="relative shrink-0">
           <button
             onClick={() => setShowMenu(!showMenu)}
-            className="tap-target rounded-[--radius-md] clay-l1 bg-clay-surface hover:clay-pressed clay-transition"
-            aria-label="More options"
+            className="flex size-8 items-center justify-center rounded-[--radius-sm] text-ink-400 hover:bg-clay-surface-alt hover:text-ink-700 clay-transition"
           >
-            <MoreVertical className="size-5 clr-text-secondary" />
+            <MoreVertical className="size-4" />
           </button>
           {showMenu && (
-            <>
-              <div className="fixed inset-0 z-10" onClick={() => setShowMenu(false)} />
-              <div className="absolute right-0 top-full z-20 mt-1 w-40 rounded-[--radius-md] bg-clay-surface clay-l2 p-1">
-                <button
-                  onClick={() => { onEdit(habit); setShowMenu(false); }}
-                  className="flex w-full items-center gap-2 rounded-[--radius-sm] p-2 font-body text-[13px] clr-text-primary hover:bg-clay-surface-alt clay-transition"
-                >
-                  <PenSquare className="size-4" />
-                  Edit
-                </button>
-                <button
-                  onClick={() => { onDelete(habit.id); setShowMenu(false); }}
-                  className="flex w-full items-center gap-2 rounded-[--radius-sm] p-2 font-body text-[13px] text-danger hover:bg-danger/10 clay-transition"
-                >
-                  <Trash2 className="size-4" />
-                  Delete
-                </button>
-              </div>
-            </>
+            <div className="absolute right-0 top-full z-20 mt-1 min-w-[140px] rounded-[--radius-md] bg-clay-surface clay-l2 p-1 shadow-lg">
+              <button
+                onClick={() => { onEdit(habit); setShowMenu(false); }}
+                className="flex w-full items-center gap-2 rounded-[--radius-sm] px-3 py-2 font-body text-[13px] text-ink-700 hover:bg-blue-50 hover:text-blue-600 clay-transition"
+              >
+                <PenSquare className="size-3.5" />
+                Edit
+              </button>
+              <button
+                onClick={() => { onDelete(habit.id); setShowMenu(false); }}
+                className="flex w-full items-center gap-2 rounded-[--radius-sm] px-3 py-2 font-body text-[13px] text-semantic-red hover:bg-semantic-red/10 clay-transition"
+              >
+                <Trash2 className="size-3.5" />
+                Delete
+              </button>
+            </div>
           )}
         </div>
       </div>
 
-      {/* Streak + Stats row */}
+      {/* Log buttons */}
       <div className="mt-4">
+        <HabitLogButtons habitId={habit.id} todayLog={todayLog ?? undefined} onLog={(status) => onLog(habit.id, status)} />
+      </div>
+
+      {/* Streak display */}
+      <div className="mt-3">
         <HabitStreakDisplay
           current={habit.currentStreak}
           best={habit.bestStreak}
@@ -94,22 +91,6 @@ export function HabitCard({ habit, todayLog, onLog, onEdit, onDelete }: HabitCar
           missedCount={habit.missedCount}
         />
       </div>
-
-      {/* Log buttons */}
-      <div className="mt-4">
-        <HabitLogButtons
-          habitId={habit.id}
-          todayLog={todayLog ?? undefined}
-          onLog={(status) => onLog(habit.id, status)}
-        />
-      </div>
-
-      {/* Notes */}
-      {habit.notes && (
-        <p className="mt-3 font-body text-[13px] clr-text-secondary italic border-t brd-clr-divider-soft pt-3">
-          {habit.notes}
-        </p>
-      )}
     </div>
   );
 }

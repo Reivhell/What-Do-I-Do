@@ -23,23 +23,22 @@ export function HabitList({
   isCreating,
   isEditing,
 }: HabitListProps) {
-  // Empty state
   if (habits.length === 0 && !isCreating) {
     return (
-      <div className="clay-card p-6">
+      <div className="rounded-[--radius-lg] bg-clay-surface clay-l1 p-6">
         <div className="flex flex-col items-center justify-center gap-4 py-16 text-center">
           <div className="flex size-20 items-center justify-center rounded-[--radius-xl] bg-blue-50 clay-inset">
             <span className="text-3xl">🌱</span>
           </div>
           <div className="max-w-[280px]">
-            <p className="font-display text-lg font-semibold clr-text-primary">No habits yet</p>
-            <p className="mt-1 font-body text-[15px] clr-text-secondary">
+            <p className="font-display text-lg font-semibold text-ink-900">No habits yet</p>
+            <p className="mt-1 font-body text-[15px] text-ink-500">
               Start building consistency by creating your first habit
             </p>
           </div>
           <button
             onClick={() => onCreate(null)}
-            className="clay-button rounded-[--radius-md] bg-clr-primary clr-on-primary px-6 py-2.5 font-body text-sm font-semibold mt-2"
+            className="inline-flex items-center justify-center rounded-[--radius-md] bg-blue-500 px-6 py-2.5 font-body text-sm font-semibold text-white clay-l1 hover:clay-l2 active:clay-pressed"
           >
             + Create Habit
           </button>
@@ -50,52 +49,39 @@ export function HabitList({
 
   return (
     <div className="flex flex-col gap-4">
-      {/* Create form */}
       {isCreating && (
-        <HabitForm
-          onSubmit={(data) => onCreate(data as CreateHabitInput)}
-          onCancel={() => onCreate('cancel')}
-        />
+        <div className="rounded-[--radius-lg] bg-clay-surface clay-l1 p-5">
+          <h3 className="font-display text-lg font-semibold text-ink-900 mb-4">New Habit</h3>
+          <HabitForm onSubmit={(data) => onCreate(data as CreateHabitInput)} onCancel={() => onCreate('cancel')} />
+        </div>
       )}
 
-      {/* Header count */}
-      {habits.length > 0 && (
-        <p className="font-body text-[13px] clr-text-secondary px-1">
-          {habits.length} {habits.length === 1 ? 'habit' : 'habits'}
-        </p>
-      )}
-
-      {/* Habit cards */}
-      {habits.map((habit) => (
-        <div key={habit.id}>
-          {isEditing && isEditing.id === habit.id ? (
-            <HabitForm
-              initialData={{
-                name: habit.name,
-                targetFrequency: habit.targetFrequency,
-                repeatRule: habit.repeatRule,
-                notes: habit.notes ?? undefined,
-                linkedGoalId: habit.linkedGoalId ?? undefined,
-              }}
-              onSubmit={(data) => {
-                onEdit(habit);
-                // The parent will use the data
-                onEdit(habit);
-              }}
-              onCancel={() => onEdit(habit)}
-              isEditing
-            />
-          ) : (
+      {habits.length === 0 ? null : (
+        <div className="flex flex-col gap-3">
+          {habits.map((habit) => (
             <HabitCard
+              key={habit.id}
               habit={habit}
               todayLog={todayLogs[habit.id] ?? null}
               onLog={onLog}
               onEdit={onEdit}
               onDelete={onDelete}
             />
-          )}
+          ))}
         </div>
-      ))}
+      )}
+
+      {isEditing && (
+        <div className="rounded-[--radius-lg] bg-clay-surface clay-l1 p-5">
+          <h3 className="font-display text-lg font-semibold text-ink-900 mb-4">Edit Habit</h3>
+          <HabitForm
+            initialData={isEditing}
+            onSubmit={(data) => { onEdit(data as unknown as Habit); }}
+            onCancel={() => onEdit(null as unknown as Habit)}
+            isEditing
+          />
+        </div>
+      )}
     </div>
   );
 }

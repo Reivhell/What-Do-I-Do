@@ -11,7 +11,7 @@ import { LifeLogPage } from "./pages/LifeLog";
 import { HabitsPage } from "./pages/Habits";
 import { StatisticsPage } from "./pages/Statistics";
 import { AnalyticsPage } from "./pages/Analytics";
-import { PlaceholderPage } from "./pages/PlaceholderPage";
+import { SettingsPage } from "./pages/Settings";
 import { AchievementsPage } from "./pages/Achievements";
 import { InsightsPage } from "./pages/Insights";
 import { WorkspacePage } from "./pages/Workspace";
@@ -36,7 +36,7 @@ export default function App() {
         <Route path="/achievements" element={<AchievementsPage />} />
         <Route path="/insights" element={<InsightsPage />} />
         <Route path="/workspace" element={<WorkspacePage />} />
-        <Route path="/settings" element={<PlaceholderPage title="Settings" />} />
+        <Route path="/settings" element={<SettingsPage />} />
       </Route>
     </Routes>
   );

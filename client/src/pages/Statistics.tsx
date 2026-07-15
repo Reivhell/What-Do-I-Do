@@ -31,11 +31,11 @@ type TabKey = (typeof TABS)[number]['key'];
 function StatCard({ label, value, sub, color }: { label: string; value: string; sub?: string; color?: 'green' | 'red' | 'blue' }) {
   const colorMap = { green: 'text-semantic-green', red: 'text-semantic-red', blue: 'text-blue-600' };
   return (
-    <div className="rounded-[--radius-lg] bg-clay-surface p-5 clay-l1">
+    <Card level={1}>
       <p className="font-body text-[12px] font-semibold uppercase tracking-[0.04em] text-ink-500">{label}</p>
       <p className={`font-display text-2xl font-bold mt-1 ${color ? colorMap[color] : 'text-ink-900'}`}>{value}</p>
       {sub && <p className="font-body text-[13px] text-ink-400 mt-1">{sub}</p>}
-    </div>
+    </Card>
   );
 }
 

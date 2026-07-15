@@ -9,7 +9,7 @@ import { seedAchievements } from './seed';
 @Module({
   controllers: [AchievementsController],
   providers: [AchievementsService, AchievementsEventGateway],
-  exports: [AchievementsEventGateway],
+  exports: [AchievementsEventGateway, AchievementsService],
 })
 export class AchievementsModule implements OnModuleInit {
   constructor(@Inject(DRIZZLE) private db: DbInstance) {}

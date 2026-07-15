@@ -1,47 +1,71 @@
-import { WeeklySummary } from '@whatdo/shared';
-import { SeverityBadge } from './SeverityBadge';
+import { Card } from '../ui/Card';
+import type { Insight, WeeklySummary } from '@whatdo/shared';
 
 interface WeeklySummaryCardProps {
   summary: WeeklySummary;
 }
 
-export function WeeklySummaryCard({ summary }: WeeklySummaryCardProps) {
-  const insights = Object.values(summary.byType).filter(Boolean) as (typeof summary.byType.time)[];
+const TYPE_ICONS: Record<string, string> = {
+  time: '⏰',
+  habit: '🔄',
+  productivity: '📈',
+  money: '💰',
+  task: '✓',
+  goal: '🎯',
+};
 
-  if (insights.length === 0) {
+const TYPE_LABELS: Record<string, string> = {
+  time: 'Waktu',
+  habit: 'Kebiasaan',
+  productivity: 'Produktivitas',
+  money: 'Uang',
+  task: 'Tugas',
+  goal: 'Target',
+};
+
+function hasContent(summary: WeeklySummary): boolean {
+  return Object.values(summary.byType).some((v) => v !== null);
+}
+
+export function WeeklySummaryCard({ summary }: WeeklySummaryCardProps) {
+  if (!hasContent(summary)) {
     return (
-      <section className="clay-level-2 rounded-[var(--radius-lg)] p-6">
-        <h3 className="font-[Quicksand] text-[18px] leading-[26px] font-semibold text-[var(--ink-900)] mb-4">
-          Ringkasan Mingguan
-        </h3>
-        <p className="font-[Inter] text-[14px] leading-[20px] text-[var(--ink-500)] text-center py-4">
+      <Card level={1}>
+        <h3 className="font-display text-lg font-semibold text-ink-900 mb-1">Ringkasan Mingguan</h3>
+        <p className="font-body text-[14px] leading-[1.6] text-ink-400">
           Belum ada insight minggu ini. Data akan muncul setelah snapshot Analytics berikutnya.
         </p>
-      </section>
+      </Card>
     );
   }
 
+  const entries = Object.entries(summary.byType).filter(
+    (e): e is [string, NonNullable<Insight>] => e[1] !== null
+  );
+
   return (
-    <section className="clay-level-2 rounded-[var(--radius-lg)] p-6">
-      <h3 className="font-[Quicksand] text-[18px] leading-[26px] font-semibold text-[var(--ink-900)] mb-4">
-        Ringkasan Mingguan
-      </h3>
-      <div className="space-y-3">
-        {insights.map((insight) => (
+    <Card level={1}>
+      <div className="flex items-center justify-between mb-4">
+        <h3 className="font-display text-lg font-semibold text-ink-900">Ringkasan Mingguan</h3>
+      </div>
+      <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
+        {entries.map(([type, insight]) => (
           <div
-            key={insight?.id}
-            className="clay-level-1 rounded-[var(--radius-md)] p-3 flex items-center gap-3"
+            key={insight.id}
+            className="rounded-[--radius-md] bg-clay-surface-alt p-3 clay-l1 transition-all duration-150 hover:clay-l2"
           >
-            <SeverityBadge severity={insight!.severity} />
-            <p className="font-[Inter] text-[14px] leading-[20px] text-[var(--ink-900)] flex-1">
-              {insight!.message}
+            <div className="flex items-center gap-1.5 mb-1.5">
+              <span className="text-sm">{TYPE_ICONS[type] ?? '💡'}</span>
+              <span className="font-body text-[12px] font-semibold text-ink-500 uppercase tracking-[0.03em]">
+                {TYPE_LABELS[type] ?? type}
+              </span>
+            </div>
+            <p className="font-body text-[13px] leading-[1.5] text-ink-900 line-clamp-2">
+              {insight.message}
             </p>
           </div>
         ))}
       </div>
-      <button className="w-full mt-4 clay-button bg-[var(--clay-surface)] text-[var(--blue-700)] border border-[var(--blue-100)] rounded-[var(--radius-md)] py-3 font-[Plus_Jakarta_Sans] text-[13px] leading-[18px] font-medium">
-        Lihat Semua Insight
-      </button>
-    </section>
+    </Card>
   );
 }

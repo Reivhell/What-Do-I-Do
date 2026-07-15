@@ -15,6 +15,6 @@ import { InsightsModule } from '../insights/insights.module';
     ScoreCalculator,
     AnalyticsScheduler,
   ],
-  exports: [SnapshotService],
+  exports: [SnapshotService, AnalyticsService],
 })
 export class AnalyticsModule {}

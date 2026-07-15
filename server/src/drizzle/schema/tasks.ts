@@ -1,23 +1,23 @@
 import { sqliteTable, text, integer, index } from 'drizzle-orm/sqlite-core';
 import { users } from './users';
+import { goals } from './goals';
+import { plannerEvents } from './planner';
 import { randomUUID } from 'crypto';
 
 // 05. Tasks
-// Note: scheduled_event_id references planner_events (cross-file, resolved at migration time)
-// linked_goal_id references goals (cross-file, resolved at migration time)
 
 export const tasks = sqliteTable('tasks', {
   id: text('id').primaryKey().$defaultFn(() => randomUUID()),
   userId: text('user_id').notNull().references(() => users.id, { onDelete: 'cascade' }),
   title: text('title').notNull(),
   description: text('description'),
-  status: text('status').notNull().default('inbox'), // inbox | active | completed | archived
-  priority: text('priority').notNull().default('medium'), // low | medium | high
+  status: text('status', { enum: ['inbox', 'active', 'completed', 'archived'] }).notNull().default('inbox'),
+  priority: text('priority', { enum: ['low', 'medium', 'high'] }).notNull().default('medium'),
   dueDate: text('due_date'),
   tags: text('tags', { mode: 'json' }).notNull().default('[]'),
   notes: text('notes'),
-  linkedGoalId: text('linked_goal_id'), // FK → goals.id (Phase 2), validated in app layer
-  scheduledEventId: text('scheduled_event_id'), // FK → planner_events.id, validated in app layer
+  linkedGoalId: text('linked_goal_id').references(() => goals.id, { onDelete: 'set null' }),
+  scheduledEventId: text('scheduled_event_id').references(() => plannerEvents.id, { onDelete: 'set null' }),
   createdAt: text('created_at').notNull().$defaultFn(() => new Date().toISOString()),
   updatedAt: text('updated_at').notNull().$defaultFn(() => new Date().toISOString()),
 }, (table) => ({

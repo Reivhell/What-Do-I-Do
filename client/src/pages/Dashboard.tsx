@@ -3,6 +3,7 @@ import { useTheme } from "../providers";
 import { Link, useNavigate } from "react-router-dom";
 import { Sidebar } from "../components/layout";
 import { TopInsightWidget } from "../components/dashboard/TopInsightWidget";
+import { useDashboardSummary } from "../api/dashboard";
 
 /* ── Helpers ── */
 function formatTimer(totalSeconds: number) {
@@ -16,27 +17,130 @@ function formatTimer(totalSeconds: number) {
   return `${hrs}:${mins}:${secs}`;
 }
 
+function formatMinutes(minutes: number) {
+  const h = Math.floor(minutes / 60);
+  const m = minutes % 60;
+  if (h === 0) return `${m}m`;
+  return `${h}h ${m}m`;
+}
+
+function formatCurrency(amount: number): string {
+  return `Rp ${amount.toLocaleString("id-ID")}`;
+}
+
+/* ── Skeleton ── */
+function StatSkeleton() {
+  return (
+    <div className="clay-card p-[24px] flex items-center gap-5 animate-pulse">
+      <div className="w-16 h-16 rounded-full bg-clr-track-neutral" />
+      <div className="flex-1 space-y-2">
+        <div className="h-3 w-20 bg-clr-track-neutral rounded" />
+        <div className="h-6 w-16 bg-clr-track-neutral rounded" />
+        <div className="h-2 w-full bg-clr-track-neutral rounded" />
+      </div>
+    </div>
+  );
+}
+
 export function Dashboard() {
   const { theme, toggle } = useTheme();
   const isDark = theme === "dark";
-  const [seconds, setSeconds] = useState(5077);
+  const navigate = useNavigate();
+
+  // ── API ──
+  const userId = "default";
+  const { data, isLoading, isError } = useDashboardSummary(userId);
+
+  const activeSession = data?.activeSession ?? null;
+  const todayStats = data?.todayStats ?? {
+    tasksCompleted: 0,
+    tasksTotal: 0,
+    minutesTracked: 0,
+    expenseToday: 0,
+    incomeToday: 0,
+    habitsDone: 0,
+    habitsTotal: 0,
+  };
+  const scores = data?.scores ?? { discipline: null, focus: null, consistency: null };
+  const streak = data?.streak ?? { current: 0, best: 0 };
+  const upcomingEvents = data?.upcomingEvents ?? [];
+  const topInsight = data?.topInsight ?? null;
+
+  // ── Live timer ──
+  const [elapsed, setElapsed] = useState(0);
 
   useEffect(() => {
-    const interval = setInterval(() => {
-      setSeconds((s) => s + 1);
-    }, 1000);
-    return () => clearInterval(interval);
-  }, []);
+    if (activeSession?.isActive && activeSession.elapsedSeconds != null) {
+      setElapsed(activeSession.elapsedSeconds);
+    } else {
+      setElapsed(0);
+    }
+  }, [activeSession?.elapsedSeconds, activeSession?.isActive]);
 
-  const navigate = useNavigate();
+  useEffect(() => {
+    if (!activeSession?.isActive) return;
+    const interval = setInterval(() => setElapsed((s) => s + 1), 1000);
+    return () => clearInterval(interval);
+  }, [activeSession?.isActive]);
+
+  // Derived
+  const taskPct =
+    todayStats.tasksTotal > 0
+      ? Math.round((todayStats.tasksCompleted / todayStats.tasksTotal) * 100)
+      : 0;
+  const habitPct =
+    todayStats.habitsTotal > 0
+      ? Math.round((todayStats.habitsDone / todayStats.habitsTotal) * 100)
+      : 0;
+  const focusScore = scores.focus ?? 0;
+  const focusPct = Math.min(focusScore, 100);
+
+  // ── Loading skeleton ──
+  if (isLoading) {
+    return (
+      <div className="flex min-h-screen">
+        <Sidebar />
+        <main className="ml-[230px] p-8 flex-1 bg-clr-background clr-on-surface">
+          <header className="flex items-center justify-between w-full mb-10 gap-[16px] h-20">
+            <div className="flex-1 max-w-xl">
+              <div className="relative clay-card-inset rounded-full flex items-center px-6 py-3 animate-pulse">
+                <div className="h-4 w-full bg-clr-track-neutral rounded" />
+              </div>
+            </div>
+          </header>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+            <StatSkeleton />
+            <StatSkeleton />
+            <StatSkeleton />
+            <StatSkeleton />
+          </div>
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+            {Array.from({ length: 4 }).map((_, i) => (
+              <div key={i} className="clay-card p-[24px] lg:col-span-3 h-48 animate-pulse" />
+            ))}
+          </div>
+        </main>
+      </div>
+    );
+  }
 
   return (
     <div className="flex min-h-screen">
-      {/* ── Sidebar (shared component) ── */}
+      {/* ── Sidebar ── */}
       <Sidebar />
 
       {/* ── Main Content ── */}
       <main className="ml-[230px] p-8 flex-1 bg-clr-background clr-on-surface">
+        {/* ── Error Banner ── */}
+        {isError && (
+          <div className="mb-6 px-6 py-4 rounded-2xl clay-card flex items-center gap-3 clr-danger bg-clr-danger-10">
+            <span className="material-symbols-outlined">error</span>
+            <span className="font-[Plus Jakarta Sans] text-[14px] leading-[20px] font-medium">
+              Failed to load dashboard data. Showing cached values.
+            </span>
+          </div>
+        )}
+
         {/* ── Header ── */}
         <header className="flex items-center justify-between w-full mb-10 gap-[16px] h-20">
           <div className="flex-1 max-w-xl">
@@ -139,7 +243,7 @@ export function Dashboard() {
 
         {/* ── Stat Cards Row ── */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-          {/* Discipline Score */}
+          {/* Focus Score */}
           <div className="clay-card p-[24px] flex items-center gap-5">
             <div className="relative w-16 h-16">
               <svg className="w-full h-full -rotate-90" viewBox="0 0 36 36">
@@ -153,7 +257,7 @@ export function Dashboard() {
                   d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
                   fill="none"
                   stroke="#3b82f6"
-                  strokeDasharray="82, 100"
+                  strokeDasharray={`${focusPct}, 100`}
                   strokeLinecap="round"
                   strokeWidth="3"
                 />
@@ -163,12 +267,14 @@ export function Dashboard() {
               </div>
             </div>
             <div>
-              <p className="font-[Plus Jakarta Sans] text-[13px] leading-[18px] font-medium clr-text-secondary">Discipline Score</p>
+              <p className="font-[Plus Jakarta Sans] text-[13px] leading-[18px] font-medium clr-text-secondary">Focus Score</p>
               <h3 className="font-[Plus Jakarta Sans] text-[26px] leading-[32px] font-bold clr-text-primary">
-                82{" "}
+                {focusPct}{" "}
                 <span className="text-[13px] leading-[18px] font-medium clr-text-secondary">/100</span>
               </h3>
-              <p className="font-[Plus Jakarta Sans] text-[12px] leading-[16px] font-medium clr-success mt-1">Great consistency!</p>
+              <p className="font-[Plus Jakarta Sans] text-[12px] leading-[16px] font-medium clr-success mt-1">
+                {focusPct >= 80 ? "Great focus!" : focusPct >= 50 ? "Keep going!" : "Room for improvement"}
+              </p>
             </div>
           </div>
 
@@ -184,12 +290,14 @@ export function Dashboard() {
             </div>
             <div>
               <p className="font-[Plus Jakarta Sans] text-[13px] leading-[18px] font-medium clr-text-secondary">Productive Time</p>
-              <h3 className="font-[Plus Jakarta Sans] text-[26px] leading-[32px] font-bold clr-text-primary">4h 27m</h3>
+              <h3 className="font-[Plus Jakarta Sans] text-[26px] leading-[32px] font-bold clr-text-primary">
+                {formatMinutes(todayStats.minutesTracked)}
+              </h3>
               <div className="w-full bg-clr-track-neutral h-1.5 rounded-full mt-2 overflow-hidden">
-                <div className="bg-clr-primary h-full" style={{ width: "55%" }} />
+                <div className="bg-clr-primary h-full" style={{ width: `${Math.min((todayStats.minutesTracked / 480) * 100, 100)}%` }} />
               </div>
               <p className="font-[Plus Jakarta Sans] text-[12px] leading-[16px] font-medium clr-text-secondary mt-1">
-                of 8h 30m goal
+                of 8h goal
               </p>
             </div>
           </div>
@@ -207,13 +315,13 @@ export function Dashboard() {
             <div>
               <p className="font-[Plus Jakarta Sans] text-[13px] leading-[18px] font-medium clr-text-secondary">Tasks Completed</p>
               <h3 className="font-[Plus Jakarta Sans] text-[26px] leading-[32px] font-bold clr-text-primary">
-                7{" "}
-                <span className="text-[13px] leading-[18px] font-medium clr-text-secondary">/12</span>
+                {todayStats.tasksCompleted}{" "}
+                <span className="text-[13px] leading-[18px] font-medium clr-text-secondary">/{todayStats.tasksTotal}</span>
               </h3>
               <div className="w-full bg-clr-track-neutral h-1.5 rounded-full mt-2 overflow-hidden">
-                <div className="bg-clr-success h-full" style={{ width: "58%" }} />
+                <div className="bg-clr-success h-full" style={{ width: `${taskPct}%` }} />
               </div>
-              <p className="font-[Plus Jakarta Sans] text-[12px] leading-[16px] font-medium clr-success mt-1">58% completed</p>
+              <p className="font-[Plus Jakarta Sans] text-[12px] leading-[16px] font-medium clr-success mt-1">{taskPct}% completed</p>
             </div>
           </div>
 
@@ -229,9 +337,11 @@ export function Dashboard() {
             </div>
             <div>
               <p className="font-[Plus Jakarta Sans] text-[13px] leading-[18px] font-medium clr-text-secondary">Spend Today</p>
-              <h3 className="font-[Plus Jakarta Sans] text-[26px] leading-[32px] font-bold clr-text-primary">Rp 105.000</h3>
+              <h3 className="font-[Plus Jakarta Sans] text-[26px] leading-[32px] font-bold clr-text-primary">
+                {formatCurrency(todayStats.expenseToday)}
+              </h3>
               <div className="w-full bg-clr-track-neutral h-1.5 rounded-full mt-2 overflow-hidden">
-                <div className="bg-clr-danger h-full" style={{ width: "42%" }} />
+                <div className="bg-clr-danger h-full" style={{ width: `${Math.min((todayStats.expenseToday / 250000) * 100, 100)}%` }} />
               </div>
               <p className="font-[Plus Jakarta Sans] text-[12px] leading-[16px] font-medium clr-text-secondary mt-1">
                 Budget: Rp 250.000
@@ -239,6 +349,21 @@ export function Dashboard() {
             </div>
           </div>
         </div>
+
+        {/* ── Top Insight Banner ── */}
+        {topInsight && (
+          <div className="mb-8 clay-card p-[20px] flex items-start gap-4">
+            <span className="material-symbols-outlined clr-primary text-2xl shrink-0">insight</span>
+            <div className="flex-1 min-w-0">
+              <p className="font-[Plus Jakarta Sans] text-[15px] leading-[22px] font-semibold clr-text-primary">
+                {topInsight.message}
+              </p>
+              <span className="inline-block mt-1 px-3 py-0.5 rounded-full bg-clr-primary-20 font-[Plus Jakarta Sans] text-[11px] leading-[16px] font-medium clr-primary">
+                {topInsight.type}
+              </span>
+            </div>
+          </div>
+        )}
 
         {/* ── BENTO WIDGET GRID ── */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
@@ -251,23 +376,31 @@ export function Dashboard() {
               <h4 className="font-[Plus Jakarta Sans] text-[16px] leading-[24px] font-semibold clr-text-primary">
                 Current Activity
               </h4>
-              <span className="px-3 py-1 bg-green-100 dark:bg-clr-success-10 clr-success rounded-full font-[Plus Jakarta Sans] text-[12px] leading-[16px] font-medium flex items-center gap-1">
-                <span className="w-2 h-2 bg-clr-success rounded-full animate-pulse" />
-                In Progress
-              </span>
+              {activeSession?.isActive ? (
+                <span className="px-3 py-1 bg-green-100 dark:bg-clr-success-10 clr-success rounded-full font-[Plus Jakarta Sans] text-[12px] leading-[16px] font-medium flex items-center gap-1">
+                  <span className="w-2 h-2 bg-clr-success rounded-full animate-pulse" />
+                  In Progress
+                </span>
+              ) : (
+                <span className="px-3 py-1 bg-clr-track-neutral rounded-full font-[Plus Jakarta Sans] text-[12px] leading-[16px] font-medium clr-text-secondary flex items-center gap-1">
+                  Idle
+                </span>
+              )}
             </div>
             <div className="flex flex-col items-center justify-center py-4">
               <div className="w-28 h-28 bg-clr-surface-white dark:bg-clr-surface-container-high clay-button rounded-3xl flex items-center justify-center mb-6">
-                <span className="material-symbols-outlined clr-primary text-5xl">code</span>
+                <span className="material-symbols-outlined clr-primary text-5xl">
+                  {activeSession?.isActive ? "code" : "bedtime"}
+                </span>
               </div>
               <h5 className="font-[Plus Jakarta Sans] text-[24px] leading-[32px] font-bold clr-text-primary text-center">
-                Coding Project
+                {activeSession?.activityName ?? "No active session"}
               </h5>
               <p className="font-[Plus Jakarta Sans] text-[14px] leading-[20px] font-normal clr-text-secondary mb-6">
-                Personal Project
+                {activeSession?.isActive ? "Tracking now" : "Start an activity to track time"}
               </p>
               <div className="font-[Plus Jakarta Sans] text-[24px] leading-[32px] font-semibold tracking-[0.05em] clr-primary mb-8">
-                {formatTimer(seconds)}
+                {formatTimer(elapsed)}
               </div>
               <div className="flex items-center gap-4">
                 <button className="w-12 h-12 rounded-full clay-button bg-clr-surface-white dark:bg-clr-surface-container-high flex items-center justify-center clr-primary">
@@ -292,7 +425,7 @@ export function Dashboard() {
           {/* Top Insight — span 3 */}
           <TopInsightWidget />
 
-          {/* Today's Plan — span 5 (widest — highest content density) */}
+          {/* Today's Plan — span 5 */}
           <section className="clay-card p-[24px] lg:col-span-5">
             <div className="flex items-center justify-between mb-6">
               <h4 className="font-[Plus Jakarta Sans] text-[16px] leading-[24px] font-semibold clr-text-primary">
@@ -303,69 +436,65 @@ export function Dashboard() {
               </Link>
             </div>
             <div className="space-y-5">
-              {[
-                { time: "07:00 – 08:00", label: "Morning Routine", icon: "check_circle", color: "clr-success", fill: 1 },
-                { time: "08:30 – 10:30", label: "Deep Work: Project", icon: "check_circle", color: "clr-success", fill: 1 },
-                { time: "11:00 – 12:00", label: "Study", icon: "radio_button_checked", color: "clr-primary", fill: 1, bold: true },
-                { time: "13:00 – 14:00", label: "Lunch Break", icon: "radio_button_unchecked", color: "clr-text-secondary", fill: 0 },
-                { time: "15:00 – 17:00", label: "Work on Features", icon: "radio_button_unchecked", color: "clr-text-secondary", fill: 0 },
-              ].map((item, idx) => (
-                <div key={idx} className="flex items-start gap-4">
-                  <span
-                    className={`material-symbols-outlined ${item.color}`}
-                    style={{ fontVariationSettings: `'FILL' ${item.fill}` }}
-                  >
-                    {item.icon}
-                  </span>
-                  <div className="flex-1 flex items-baseline justify-between gap-4">
-                    <p className="font-[Plus Jakarta Sans] text-[12px] leading-[16px] font-medium clr-text-secondary tabular-nums">{item.time}</p>
-                    <p
-                      className={`font-[Plus Jakarta Sans] text-[14px] leading-[20px] font-medium clr-text-primary ${item.bold ? "font-bold" : ""}`}
+              {upcomingEvents.length > 0 ? (
+                upcomingEvents.slice(0, 6).map((evt) => (
+                  <div key={evt.id} className="flex items-start gap-4">
+                    <span
+                      className="material-symbols-outlined clr-primary"
+                      style={{ fontVariationSettings: "'FILL' 1" }}
                     >
-                      {item.label}
-                    </p>
+                      radio_button_checked
+                    </span>
+                    <div className="flex-1 flex items-baseline justify-between gap-4">
+                      <p className="font-[Plus Jakarta Sans] text-[12px] leading-[16px] font-medium clr-text-secondary tabular-nums">{evt.time}</p>
+                      <p className="font-[Plus Jakarta Sans] text-[14px] leading-[20px] font-medium clr-text-primary">
+                        {evt.title}
+                      </p>
+                    </div>
                   </div>
-                </div>
-              ))}
+                ))
+              ) : (
+                <p className="font-[Plus Jakarta Sans] text-[14px] leading-[20px] font-medium clr-text-secondary text-center py-8">
+                  No events planned for today
+                </p>
+              )}
             </div>
             <div className="mt-6">
               <div className="flex justify-between mb-1.5">
                 <span className="font-[Plus Jakarta Sans] text-[12px] leading-[16px] font-medium clr-text-secondary">
-                  3 of 6 completed
+                  {todayStats.tasksCompleted} of {todayStats.tasksTotal} completed
                 </span>
-                <span className="font-[Plus Jakarta Sans] text-[12px] leading-[16px] font-medium clr-text-secondary">50%</span>
+                <span className="font-[Plus Jakarta Sans] text-[12px] leading-[16px] font-medium clr-text-secondary">{taskPct}%</span>
               </div>
               <div className="w-full bg-clr-track-neutral h-2 rounded-full overflow-hidden">
-                <div className="bg-clr-primary h-full" style={{ width: "50%" }} />
+                <div className="bg-clr-primary h-full" style={{ width: `${taskPct}%` }} />
               </div>
             </div>
           </section>
 
-          {/* Upcoming / Next Action — span 3 (compact) */}
+          {/* Next Up — span 3 */}
           <section className="clay-card p-[24px] lg:col-span-3">
             <h4 className="font-[Plus Jakarta Sans] text-[16px] leading-[24px] font-semibold clr-text-primary mb-5">
               Next Up
             </h4>
             <div className="space-y-3">
-              <div className="clay-card-inset p-4 rounded-2xl flex items-center gap-4">
-                <div className="w-10 h-10 bg-clr-primary-10 rounded-xl flex items-center justify-center clr-primary shrink-0">
-                  <span className="material-symbols-outlined">calendar_today</span>
-                </div>
-                <div className="flex-1 min-w-0 leading-tight">
-                  <p className="font-[Plus Jakarta Sans] text-[12px] leading-[16px] font-semibold clr-primary">In 35 min</p>
-                  <p className="font-[Plus Jakarta Sans] text-[15px] leading-[22px] font-semibold clr-text-primary">Study</p>
-                  <p className="font-[Plus Jakarta Sans] text-[12px] leading-[16px] font-medium clr-text-secondary">11:00 – 12:00</p>
-                </div>
-              </div>
-              <div className="clay-card-inset p-4 rounded-2xl flex items-center gap-4">
-                <div className="w-10 h-10 bg-clr-danger-10 rounded-xl flex items-center justify-center clr-danger shrink-0">
-                  <span className="material-symbols-outlined">assignment_late</span>
-                </div>
-                <div className="flex-1 min-w-0 leading-tight">
-                  <p className="font-[Plus Jakarta Sans] text-[12px] leading-[16px] font-semibold clr-danger">High Priority</p>
-                  <p className="font-[Plus Jakarta Sans] text-[15px] leading-[22px] font-semibold clr-text-primary">Fix landing page bug</p>
-                </div>
-              </div>
+              {upcomingEvents.length > 0 ? (
+                upcomingEvents.slice(0, 3).map((evt) => (
+                  <div key={evt.id} className="clay-card-inset p-4 rounded-2xl flex items-center gap-4">
+                    <div className="w-10 h-10 bg-clr-primary-10 rounded-xl flex items-center justify-center clr-primary shrink-0">
+                      <span className="material-symbols-outlined">calendar_today</span>
+                    </div>
+                    <div className="flex-1 min-w-0 leading-tight">
+                      <p className="font-[Plus Jakarta Sans] text-[12px] leading-[16px] font-semibold clr-primary">{evt.time}</p>
+                      <p className="font-[Plus Jakarta Sans] text-[15px] leading-[22px] font-semibold clr-text-primary">{evt.title}</p>
+                    </div>
+                  </div>
+                ))
+              ) : (
+                <p className="font-[Plus Jakarta Sans] text-[14px] leading-[20px] font-medium clr-text-secondary text-center py-8">
+                  No upcoming events
+                </p>
+              )}
             </div>
             <Link
               to="/"
@@ -439,7 +568,7 @@ export function Dashboard() {
             </div>
           </section>
 
-          {/* Habit Progress — span 4 */}
+          {/* Habit Progress + Streak — span 4 */}
           <section className="clay-card p-[24px] lg:col-span-4">
             <div className="flex items-center justify-between mb-5">
               <h4 className="font-[Plus Jakarta Sans] text-[16px] leading-[24px] font-semibold clr-text-primary flex items-center gap-2">
@@ -450,27 +579,45 @@ export function Dashboard() {
                 View All
               </Link>
             </div>
-            <div className="space-y-4">
-              {[
-                { name: "Morning Run", icon: "directions_run", streak: 12, color: "clr-primary", bg: "bg-clr-primary-20" },
-                { name: "Read 30m", icon: "menu_book", streak: 5, color: "clr-success", bg: "bg-clr-success-10" },
-                { name: "Meditate", icon: "self_improvement", streak: 3, color: "clr-secondary", bg: "bg-clr-secondary-10" },
-              ].map((habit, idx) => (
-                <div key={idx} className="flex items-center gap-4">
-                  <div className={`w-11 h-11 ${habit.bg} rounded-xl flex items-center justify-center shrink-0`}>
-                    <span className={`material-symbols-outlined ${habit.color} text-2xl`} style={{ fontVariationSettings: "'FILL' 1" }}>{habit.icon}</span>
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <p className="font-[Plus Jakarta Sans] text-[14px] leading-[20px] font-semibold clr-text-primary">{habit.name}</p>
-                    <p className="font-[Plus Jakarta Sans] text-[12px] leading-[16px] font-medium clr-text-secondary">{habit.streak} day streak</p>
-                  </div>
-                  <span className="material-symbols-outlined clr-text-secondary text-xl">chevron_right</span>
-                </div>
-              ))}
+            {/* Streak summary */}
+            <div className="flex items-center gap-4 mb-5 clay-card-inset p-4 rounded-2xl">
+              <div className="w-12 h-12 bg-clr-secondary-10 rounded-xl flex items-center justify-center shrink-0">
+                <span className="material-symbols-outlined clr-secondary text-2xl" style={{ fontVariationSettings: "'FILL' 1" }}>local_fire_department</span>
+              </div>
+              <div className="flex-1 min-w-0">
+                <p className="font-[Plus Jakarta Sans] text-[12px] leading-[16px] font-medium clr-text-secondary">Current Streak</p>
+                <p className="font-[Plus Jakarta Sans] text-[22px] leading-[28px] font-bold clr-text-primary">
+                  {streak.current}{" "}
+                  <span className="text-[14px] leading-[20px] font-medium clr-text-secondary">days</span>
+                </p>
+              </div>
+              <div className="text-right">
+                <p className="font-[Plus Jakarta Sans] text-[12px] leading-[16px] font-medium clr-text-secondary">Best</p>
+                <p className="font-[Plus Jakarta Sans] text-[18px] leading-[24px] font-bold clr-primary">{streak.best}</p>
+              </div>
             </div>
+            {/* Progress bar */}
+            <div className="mb-4">
+              <div className="flex justify-between mb-1.5">
+                <span className="font-[Plus Jakarta Sans] text-[12px] leading-[16px] font-medium clr-text-secondary">
+                  Today's progress
+                </span>
+                <span className="font-[Plus Jakarta Sans] text-[12px] leading-[16px] font-medium clr-text-secondary">
+                  {todayStats.habitsDone}/{todayStats.habitsTotal}
+                </span>
+              </div>
+              <div className="w-full bg-clr-track-neutral h-2 rounded-full overflow-hidden">
+                <div className="bg-clr-secondary h-full" style={{ width: `${habitPct}%` }} />
+              </div>
+            </div>
+            <p className="font-[Plus Jakarta Sans] text-[14px] leading-[20px] font-medium clr-text-secondary text-center">
+              {todayStats.habitsDone === 0 && todayStats.habitsTotal === 0
+                ? "No habits tracked today"
+                : `${habitPct}% of habits completed`}
+            </p>
           </section>
 
-          {/* ═══ ROW 3: Money Summary — 6 col, Quick Actions — 6 col (2×3 grid) ═══ */}
+          {/* ═══ ROW 3: Money Summary — 6 col, Quick Actions — 6 col ═══ */}
 
           {/* Money Summary — span 6 */}
           <section className="clay-card p-[24px] lg:col-span-6">
@@ -490,17 +637,23 @@ export function Dashboard() {
               <div className="flex items-center gap-5">
                 <div className="text-center">
                   <p className="font-[Plus Jakarta Sans] text-[11px] leading-[14px] font-medium clr-text-secondary">Income</p>
-                  <p className="font-[Plus Jakarta Sans] text-[16px] leading-[24px] font-bold clr-success">Rp 0</p>
+                  <p className="font-[Plus Jakarta Sans] text-[16px] leading-[24px] font-bold clr-success">
+                    {formatCurrency(todayStats.incomeToday)}
+                  </p>
                 </div>
                 <div className="w-px h-8 bg-clr-divider-soft" />
                 <div className="text-center">
                   <p className="font-[Plus Jakarta Sans] text-[11px] leading-[14px] font-medium clr-text-secondary">Expense</p>
-                  <p className="font-[Plus Jakarta Sans] text-[16px] leading-[24px] font-bold clr-danger">Rp 105k</p>
+                  <p className="font-[Plus Jakarta Sans] text-[16px] leading-[24px] font-bold clr-danger">
+                    {formatCurrency(todayStats.expenseToday)}
+                  </p>
                 </div>
                 <div className="w-px h-8 bg-clr-divider-soft" />
                 <div className="text-center">
                   <p className="font-[Plus Jakarta Sans] text-[11px] leading-[14px] font-medium clr-text-secondary">Net</p>
-                  <p className="font-[Plus Jakarta Sans] text-[16px] leading-[24px] font-bold clr-danger">-105k</p>
+                  <p className={`font-[Plus Jakarta Sans] text-[16px] leading-[24px] font-bold ${todayStats.incomeToday - todayStats.expenseToday >= 0 ? "clr-success" : "clr-danger"}`}>
+                    {formatCurrency(todayStats.incomeToday - todayStats.expenseToday)}
+                  </p>
                 </div>
               </div>
             </div>

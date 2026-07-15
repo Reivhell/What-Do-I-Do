@@ -1,4 +1,4 @@
-import { useState, useEffect, type FormEvent } from 'react';
+import { useState, useEffect, useRef, type FormEvent } from 'react';
 import {
   Play, Square, Clock, History, Plus, Search, Trash2,
   Timer, Pencil, X, Loader2,
@@ -41,11 +41,20 @@ function LiveTimerCard() {
   const { data: active, isLoading: loadingActive } = useActiveSession();
   const stopActivity = useStopActivity();
   const [now, setNow] = useState(Date.now());
+  const justRecovered = useRef(true);
+  const [showRecovery, setShowRecovery] = useState(false);
 
   useEffect(() => {
     if (!active) return;
     const id = setInterval(() => setNow(Date.now()), 1000);
     return () => clearInterval(id);
+  }, [active]);
+
+  useEffect(() => {
+    if (active && justRecovered.current) {
+      justRecovered.current = false;
+      setShowRecovery(true);
+    }
   }, [active]);
 
   if (loadingActive) {
@@ -59,25 +68,54 @@ function LiveTimerCard() {
   if (active) {
     const secs = elapsedSeconds(active);
     return (
-      <Card level={2} className="!p-6">
-        <div className="flex flex-col items-center gap-4 text-center">
-          <Timer className="size-6 text-blue-500" />
-          <div>
-            <p className="font-display text-lg font-semibold text-ink-900">{active.activityName}</p>
-            <Badge variant="info">{active.category}</Badge>
+      <>
+        <Card level={2} className="!p-6">
+          <div className="flex flex-col items-center gap-4 text-center">
+            <Timer className="size-6 text-blue-500" />
+            <div>
+              <p className="font-display text-lg font-semibold text-ink-900">{active.activityName}</p>
+              <Badge variant="info">{active.category}</Badge>
+            </div>
+            <p className="font-display text-5xl font-bold tabular-nums text-blue-600">{fmtTimer(secs)}</p>
+            <Button
+              variant="destructive"
+              size="lg"
+              onClick={() => stopActivity.mutate(active.id)}
+              disabled={stopActivity.isPending}
+            >
+              {stopActivity.isPending ? <Loader2 className="size-5 animate-spin" /> : <Square className="size-5" />}
+              Stop
+            </Button>
           </div>
-          <p className="font-display text-5xl font-bold tabular-nums text-blue-600">{fmtTimer(secs)}</p>
-          <Button
-            variant="destructive"
-            size="lg"
-            onClick={() => stopActivity.mutate(active.id)}
-            disabled={stopActivity.isPending}
-          >
-            {stopActivity.isPending ? <Loader2 className="size-5 animate-spin" /> : <Square className="size-5" />}
-            Stop
-          </Button>
-        </div>
-      </Card>
+        </Card>
+
+        {showRecovery && (
+          <Modal open={showRecovery} onClose={() => setShowRecovery(false)} title="Timer Ditemukan">
+            <div className="flex flex-col items-center gap-4 py-4 text-center">
+              <Timer className="size-10 text-semantic-amber" />
+              <p className="font-body text-[15px] text-ink-700">
+                Timer untuk <strong>{active.activityName}</strong> masih berjalan dari sesi sebelumnya.
+              </p>
+              <p className="font-display text-3xl font-bold tabular-nums text-blue-600">{fmtTimer(secs)}</p>
+              <div className="flex gap-3">
+                <Button variant="primary" onClick={() => setShowRecovery(false)}>
+                  Lanjutkan
+                </Button>
+                <Button
+                  variant="destructive"
+                  onClick={() => {
+                    setShowRecovery(false);
+                    stopActivity.mutate(active.id);
+                  }}
+                  disabled={stopActivity.isPending}
+                >
+                  Stop Sekarang
+                </Button>
+              </div>
+            </div>
+          </Modal>
+        )}
+      </>
     );
   }
 
@@ -212,10 +250,10 @@ function HistoryRow({
 }) {
   const secs = elapsedSeconds(session);
   return (
-    <div className="flex items-start gap-4 rounded-[--radius-md] bg-clay-surface px-4 py-3 clay-l1 group">
-      <div className="flex-1 min-w-0">
-        <div className="flex items-center gap-2 mb-0.5">
-          <span className="font-body font-semibold text-[15px] text-ink-900">{session.activityName}</span>
+    <div className="group flex items-start gap-4 rounded-[--radius-md] bg-clay-surface px-4 py-3 clay-l1">
+      <div className="min-w-0 flex-1">
+        <div className="mb-0.5 flex items-center gap-2">
+          <span className="font-body text-[15px] font-semibold text-ink-900">{session.activityName}</span>
           <Badge variant="info">{session.category}</Badge>
           <Badge variant={session.source === 'live' ? 'warning' : 'default'}>{session.source}</Badge>
         </div>
@@ -223,9 +261,9 @@ function HistoryRow({
           {fmtDate(session.startTime)} – {session.endTime ? fmtDate(session.endTime) : 'now'}
           {session.durationMinutes && ` · ${session.durationMinutes}m`}
         </p>
-        {session.note && <p className="font-body text-[13px] text-ink-500 mt-1 italic">{session.note}</p>}
+        {session.note && <p className="mt-1 font-body text-[13px] italic text-ink-500">{session.note}</p>}
       </div>
-      <div className="flex shrink-0 items-center gap-1 opacity-0 group-hover:opacity-100 clay-transition">
+      <div className="flex shrink-0 items-center gap-1 opacity-0 clay-transition group-hover:opacity-100">
         <button onClick={() => onEdit(session)} className="tap-target flex size-8 items-center justify-center rounded-[--radius-sm] text-ink-400 hover:bg-blue-50 hover:text-blue-600" title="Edit">
           <Pencil className="size-4" />
         </button>
@@ -262,25 +300,19 @@ function EditModal({
     <Modal open onClose={onClose} title="Edit Session">
       <div className="flex flex-col gap-4">
         <p className="font-body text-[15px] text-ink-900"><span className="text-ink-500">Activity:</span> {session.activityName}</p>
-        <div>
-          <label className="font-body text-[12px] font-semibold uppercase tracking-[0.04em] text-ink-500">Duration (minutes)</label>
-          <input
-            type="number"
-            min={1}
-            value={duration}
-            onChange={(e) => setDuration(e.target.value)}
-            className="mt-1 w-full rounded-[--radius-md] bg-clay-surface-alt px-4 py-3 font-body text-[15px] clay-inset"
-          />
-        </div>
-        <div>
-          <label className="font-body text-[12px] font-semibold uppercase tracking-[0.04em] text-ink-500">Note</label>
-          <input
-            value={note}
-            onChange={(e) => setNote(e.target.value)}
-            placeholder="Add a note..."
-            className="mt-1 w-full rounded-[--radius-md] bg-clay-surface-alt px-4 py-3 font-body text-[15px] clay-inset"
-          />
-        </div>
+        <Input
+          label="Duration (minutes)"
+          type="number"
+          min={1}
+          value={duration}
+          onChange={(e) => setDuration(e.target.value)}
+        />
+        <Input
+          label="Note"
+          value={note}
+          onChange={(e) => setNote(e.target.value)}
+          placeholder="Add a note..."
+        />
         <div className="flex justify-end gap-2">
           <Button variant="ghost" onClick={onClose}>Cancel</Button>
           <Button onClick={handleSave} disabled={updateActivity.isPending}>
@@ -312,7 +344,7 @@ export function ActivityTrackerPage() {
       {/* Header */}
       <div>
         <h1 className="font-display text-2xl font-bold text-ink-900">Activity Tracker</h1>
-        <p className="font-body text-[15px] text-ink-500 mt-1">
+        <p className="mt-1 font-body text-[15px] text-ink-500">
           Track what you actually do, not just what you planned.
         </p>
       </div>
@@ -328,7 +360,7 @@ export function ActivityTrackerPage() {
         </div>
       </Card>
 
-      {/* Manual Log */}
+      {/* History header + Manual Log trigger */}
       <div className="flex items-center justify-between">
         <h2 className="font-display text-lg font-semibold text-ink-900">History</h2>
         <Button variant="secondary" size="sm" onClick={() => setShowManualLog(true)}>
@@ -338,17 +370,14 @@ export function ActivityTrackerPage() {
       </div>
 
       {/* Search / Filter */}
-      <div className="relative">
-        <Search className="absolute left-4 top-1/2 -translate-y-1/2 size-4 text-ink-300" />
-        <input
-          value={filter}
-          onChange={(e) => setFilter(e.target.value)}
-          placeholder="Search by activity name..."
-          className="w-full rounded-[--radius-md] bg-clay-surface pl-12 pr-4 py-3 font-body text-[15px] clay-l1 focus:outline-none focus:ring-4 focus:ring-blue-50"
-        />
-      </div>
+      <Input
+        value={filter}
+        onChange={(e) => setFilter(e.target.value)}
+        placeholder="Search by activity name..."
+        icon={<Search className="size-4" />}
+      />
 
-      {/* History */}
+      {/* History list */}
       {loadingHistory && (
         <div className="flex justify-center py-8 text-ink-300">
           <Loader2 className="size-6 animate-spin" />

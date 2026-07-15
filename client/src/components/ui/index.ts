@@ -1,6 +1,7 @@
 export { Button, FAB } from "./Button";
 export { Card, CardHeader, CardTitle } from "./Card";
 export { Input } from "./Input";
+export { Select } from "./Select";
 export { Badge, StatusDot } from "./Badge";
 export { ProgressRing } from "./ProgressRing";
 export { ProgressBar } from "./ProgressBar";

@@ -1,5 +1,7 @@
-import { Insight } from '@whatdo/shared';
-import { SeverityBadge } from './SeverityBadge';
+import { X } from 'lucide-react';
+import { Card } from '../ui/Card';
+import { Badge } from '../ui/Badge';
+import type { Insight } from '@whatdo/shared';
 
 interface InsightCardProps {
   insight: Insight;
@@ -21,49 +23,37 @@ function formatRelativeTime(dateString: string): string {
   return date.toLocaleDateString('id-ID', { day: 'numeric', month: 'short' });
 }
 
+const SEVERITY_CONFIG: Record<string, { variant: 'info' | 'warning' | 'danger'; label: string }> = {
+  info: { variant: 'info', label: 'Info' },
+  warning: { variant: 'warning', label: 'Warning' },
+  risk: { variant: 'danger', label: 'Risk' },
+};
+
 export function InsightCard({ insight, onDismiss }: InsightCardProps) {
-  const severityBorderColors = {
-    info: 'border-l-4 border-[var(--blue-500)]',
-    warning: 'border-l-4 border-[var(--semantic-amber)]',
-    risk: 'border-l-4 border-[var(--semantic-red)]',
-  };
+  const config = SEVERITY_CONFIG[insight.severity] ?? SEVERITY_CONFIG.info;
 
   return (
-    <div
-      className={`
-        clay-level-1 rounded-[var(--radius-lg)] p-5 flex items-start gap-4
-        transition-all duration-180 ease-[cubic-bezier(0.34,1.56,0.64,1)]
-        hover:clay-level-2 hover:-translate-y-0.5
-        active:clay-pressed active:translate-y-0
-        ${severityBorderColors[insight.severity]}
-      `}
-    >
-      <div className="flex-1 min-w-0">
-        <div className="flex items-center gap-2 mb-1.5">
-          <SeverityBadge severity={insight.severity} />
-          <time className="font-[Inter] text-[12px] leading-[16px] text-[var(--ink-500)]">
-            {formatRelativeTime(insight.generatedAt)}
-          </time>
+    <Card level={1} className="group !p-4 transition-all duration-150 hover:clay-l2">
+      <div className="flex items-start gap-3">
+        <div className="flex-1 min-w-0">
+          <div className="flex items-center gap-2 mb-1.5">
+            <Badge variant={config.variant}>{config.label}</Badge>
+            <time className="font-body text-[12px] text-ink-500">
+              {formatRelativeTime(insight.generatedAt)}
+            </time>
+          </div>
+          <p className="font-body text-[14px] leading-[1.6] text-ink-900">
+            {insight.message}
+          </p>
         </div>
-        <p className="font-[Inter] text-[14px] leading-[20px] text-[var(--ink-900)]">
-          {insight.message}
-        </p>
-        {insight.sourceMetric && (
-          <a
-            href={`/analytics/snapshot/${insight.sourceMetric}`}
-            className="font-[Inter] text-[12px] leading-[16px] font-medium text-[var(--blue-500)] hover:underline mt-2 inline-block"
-          >
-            Lihat snapshot sumber →
-          </a>
-        )}
+        <button
+          onClick={() => onDismiss(insight.id)}
+          className="shrink-0 flex size-7 items-center justify-center rounded-[--radius-sm] text-ink-400 opacity-0 group-hover:opacity-100 hover:bg-red-50 hover:text-red-500 transition-all duration-150"
+          title="Tutup insight"
+        >
+          <X className="size-4" />
+        </button>
       </div>
-      <button
-        onClick={() => onDismiss(insight.id)}
-        className="clay-level-1 rounded-full p-2 text-[var(--ink-500)] hover:text-[var(--ink-900)] hover:clay-level-2 active:clay-pressed transition-all duration-180 shrink-0"
-        aria-label="Dismiss insight"
-      >
-        <span className="material-symbols-outlined text-lg">close</span>
-      </button>
-    </div>
+    </Card>
   );
 }

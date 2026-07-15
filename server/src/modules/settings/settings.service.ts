@@ -1,9 +1,39 @@
-import { Injectable, Inject } from '@nestjs/common';
+import { Injectable, Inject, BadRequestException } from '@nestjs/common';
 import { DRIZZLE } from '../../common/database/drizzle.provider';
 import { schema } from '../../drizzle';
 import type { DbInstance } from '../../drizzle';
 import { eq } from 'drizzle-orm';
 import { randomUUID } from 'crypto';
+
+const APP_VERSION = process.env.APP_VERSION || '1.0.0';
+
+const TABLE_KEY_MAP: Record<string, string> = {
+  activity_sessions: 'activitySessions',
+  capture_items: 'captureItems',
+  tasks: 'tasks',
+  subtasks: 'subtasks',
+  planner_events: 'plannerEvents',
+  goals: 'goals',
+  milestones: 'milestones',
+  habits: 'habits',
+  habit_logs: 'habitLogs',
+  accounts: 'accounts',
+  transactions: 'transactions',
+  budgets: 'budgets',
+  recurring_bills: 'recurringBills',
+  life_log_annotations: 'lifeLogAnnotations',
+  achievement_definitions: 'achievementDefinitions',
+  user_achievements: 'userAchievements',
+  insights: 'insights',
+  layout_presets: 'layoutPresets',
+  user_profiles: 'userProfiles',
+  user_preferences: 'userPreferences',
+  notification_settings: 'notificationSettings',
+  category_definitions: 'categoryDefinitions',
+};
+
+// Tables without direct userId column — exported un-filtered (single-user app)
+const CHILD_TABLE_NAMES = new Set(['subtasks', 'milestones', 'habit_logs', 'achievement_definitions']);
 
 @Injectable()
 export class SettingsService {
@@ -124,5 +154,64 @@ export class SettingsService {
       .delete(schema.categoryDefinitions)
       .where(eq(schema.categoryDefinitions.id, categoryId))
       .returning();
+  }
+
+  // ── Export/Import ──
+
+  async exportData(userId: string) {
+    const data: Record<string, unknown[]> = {};
+
+    for (const [tableName, schemaKey] of Object.entries(TABLE_KEY_MAP)) {
+      const tableDef = (schema as any)[schemaKey];
+      if (!tableDef) continue;
+      try {
+        data[tableName] = CHILD_TABLE_NAMES.has(tableName)
+          ? await this.db.select().from(tableDef)
+          : await this.db.select().from(tableDef).where(eq(tableDef.userId, userId));
+      } catch (e: any) {
+        // ponytail: log and skip failing tables
+        data[tableName] = [];
+      }
+    }
+
+    return {
+      exportedAt: new Date().toISOString(),
+      appVersion: APP_VERSION,
+      data,
+    };
+  }
+
+  async importData(
+    userId: string,
+    body: { exportedAt: string; appVersion: string; data: Record<string, unknown[]> },
+  ) {
+    if (body.appVersion !== APP_VERSION) {
+      throw new BadRequestException(`Version mismatch: expected ${APP_VERSION}, got ${body.appVersion}`);
+    }
+
+    const result: Record<string, { imported: number; skipped: number }> = {};
+
+    for (const [tableName, rows] of Object.entries(body.data)) {
+      const schemaKey = TABLE_KEY_MAP[tableName];
+      if (!schemaKey || !Array.isArray(rows)) continue;
+
+      const tableDef = (schema as any)[schemaKey];
+      let imported = 0;
+      let skipped = 0;
+
+      for (const row of rows) {
+        try {
+          const result = await this.db.insert(tableDef).values(row as any).onConflictDoNothing().execute();
+          // onConflictDoNothing succeeds even on no-op; check changes to count correctly
+          if ((result as any)?.changes > 0) imported++; else skipped++;
+        } catch {
+          skipped++;
+        }
+      }
+
+      result[tableName] = { imported, skipped };
+    }
+
+    return result;
   }
 }

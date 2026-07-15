@@ -53,6 +53,19 @@ export type {
   MoneySummary,
 } from './types/money';
 export type {
+  UserProfile,
+  UserPreferences,
+  NotificationSettings,
+  CategoryDefinition,
+  CategoryDomain,
+  UpdateProfileInput,
+  UpdatePreferencesInput,
+  UpdateNotificationsInput,
+  CreateCategoryInput,
+  ExportData,
+  ImportResult,
+} from './types/settings';
+export type {
   OverviewStats,
   TimeStats,
   ActivityStats,
@@ -101,3 +114,12 @@ export {
   DEFAULT_WIDGET_CONFIG,
   WIDGET_TYPE_LABELS,
 } from './types/workspace';
+export type {
+  DashboardSummary,
+  ActiveSession,
+  TodayStats,
+  UpcomingEvent,
+  DashboardScores,
+  TopInsight,
+  StreakInfo,
+} from './types/dashboard';

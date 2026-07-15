@@ -4,7 +4,7 @@ import {
   Pencil, Calendar, CalendarDays, ChevronDown, ChevronUp,
   AlertTriangle, Link,
 } from 'lucide-react';
-import { Card, CardHeader, CardTitle, Badge, Button, Modal, ProgressBar, EmptyState } from '../components/ui';
+import { Card, Badge, Button, Modal, ProgressBar, EmptyState } from '../components/ui';
 import {
   useGoalsList,
   useCreateGoal,
@@ -50,7 +50,7 @@ function GoalCard({
   const { data: linkedItems = [] } = useLinkedItems(goal.id);
 
   return (
-    <Card level={goal.status === 'at_risk' ? 2 : 1} className={`!p-5 ${goal.status === 'at_risk' ? 'ring-2 ring-semantic-red/20' : ''}`}>
+    <Card level={goal.status === 'at_risk' ? 2 : 1} className={goal.status === 'at_risk' ? 'ring-2 ring-semantic-red/20' : ''}>
       <div className="flex items-start justify-between gap-4">
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-2 mb-1">
@@ -69,11 +69,11 @@ function GoalCard({
           )}
         </div>
         <div className="flex shrink-0 items-center gap-1">
-          <button onClick={() => onEdit(goal)} className="tap-target flex size-8 items-center justify-center rounded-[--radius-sm] text-ink-400 hover:bg-blue-50 hover:text-blue-600" title="Edit">
+          <button onClick={() => onEdit(goal)} className="tap-target flex size-8 items-center justify-center rounded-[--radius-sm] text-ink-400 hover:bg-blue-50 hover:text-blue-600 clay-l1 hover:clay-l2" title="Edit">
             <Pencil className="size-4" />
           </button>
           {goal.status !== 'archived' && (
-            <button onClick={() => onArchive(goal.id)} className="tap-target flex size-8 items-center justify-center rounded-[--radius-sm] text-ink-400 hover:bg-amber-50 hover:text-amber-600" title="Archive">
+            <button onClick={() => onArchive(goal.id)} className="tap-target flex size-8 items-center justify-center rounded-[--radius-sm] text-ink-400 hover:bg-amber-50 hover:text-amber-600 clay-l1 hover:clay-l2" title="Archive">
               <ChevronDown className="size-4" />
             </button>
           )}
@@ -143,7 +143,7 @@ function GoalCard({
             <div className="flex items-center gap-2">
               <button
                 onClick={() => onAddMilestone(goal.id)}
-                className="flex items-center gap-1.5 rounded-[--radius-sm] px-3 py-1.5 font-body text-[13px] text-blue-600 hover:bg-blue-50 clay-transition"
+                className="flex items-center gap-1.5 rounded-[--radius-sm] px-3 py-1.5 font-body text-[13px] text-blue-600 hover:bg-blue-50 clay-l1 hover:clay-l2 clay-transition"
               >
                 <Plus className="size-3.5" />
                 Add milestone
@@ -151,7 +151,7 @@ function GoalCard({
               {linkedItems.length > 0 && (
                 <button
                   onClick={() => setShowLinked(!showLinked)}
-                  className="flex items-center gap-1.5 rounded-[--radius-sm] px-3 py-1.5 font-body text-[13px] text-ink-500 hover:text-blue-600 hover:bg-blue-50 clay-transition"
+                  className="flex items-center gap-1.5 rounded-[--radius-sm] px-3 py-1.5 font-body text-[13px] text-ink-500 hover:text-blue-600 hover:bg-blue-50 clay-l1 hover:clay-l2 clay-transition"
                 >
                   <Link className="size-3.5" />
                   {linkedItems.length} linked
@@ -162,7 +162,7 @@ function GoalCard({
             {showLinked && linkedItems.length > 0 && (
               <div className="mt-2 flex flex-col gap-1">
                 {linkedItems.map((item) => (
-                  <div key={`${item.type}-${item.id}`} className="flex items-center gap-2 rounded-[--radius-sm] bg-clay-surface-alt px-3 py-1.5">
+                  <div key={`${item.type}-${item.id}`} className="flex items-center gap-2 rounded-[--radius-sm] bg-clay-surface-alt px-3 py-1.5 clay-inset">
                     <span className="font-body text-[11px] font-semibold uppercase tracking-wider text-ink-400 w-8">{item.type}</span>
                     <span className="font-body text-[13px] text-ink-700">{item.title}</span>
                   </div>
@@ -398,8 +398,8 @@ export function GoalsPage() {
         <div className="flex items-center gap-3">
           <button
             onClick={() => setShowArchived(!showArchived)}
-            className={`font-body text-[13px] px-3 py-1.5 rounded-[--radius-sm] clay-transition ${
-              showArchived ? 'bg-blue-50 text-blue-700' : 'text-ink-400 hover:text-ink-700'
+            className={`inline-flex items-center gap-1.5 rounded-[--radius-md] px-3 py-2 font-body text-[13px] font-semibold clay-l1 hover:clay-l2 clay-transition ${
+              showArchived ? 'bg-blue-50 text-blue-700' : 'bg-clay-surface text-ink-500'
             }`}
           >
             {showArchived ? 'Showing all' : 'Show archived'}
@@ -420,7 +420,7 @@ export function GoalsPage() {
 
       {/* Error */}
       {error && (
-        <Card level={1}>
+        <Card>
           <p className="font-body text-[15px] text-semantic-red">Failed to load goals.</p>
         </Card>
       )}

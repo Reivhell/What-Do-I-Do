@@ -62,6 +62,8 @@ export class GoalsService {
         updatedAt: new Date().toISOString(),
       })
       .returning();
+    await this.statisticsService.invalidate(userId, 'goal');
+    await this.statisticsService.invalidate(userId, 'overall');
     return goal;
   }
 
@@ -102,6 +104,8 @@ export class GoalsService {
       .delete(schema.goals)
       .where(eq(schema.goals.id, goalId))
       .returning();
+    await this.statisticsService.invalidate(userId, 'goal');
+    await this.statisticsService.invalidate(userId, 'overall');
     return deleted;
   }
 
@@ -259,6 +263,9 @@ export class GoalsService {
       .update(schema.milestones)
       .set({ generatedEventId: event.id })
       .where(eq(schema.milestones.id, milestoneId));
+
+    await this.statisticsService.invalidate(userId, 'goal');
+    await this.statisticsService.invalidate(userId, 'overall');
 
     return event;
   }

@@ -28,11 +28,11 @@ export function AchievementGrid({ achievements }: AchievementGridProps) {
             key={cat}
             onClick={() => setActiveCategory(cat)}
             className={`
-              font-body text-xs font-semibold uppercase tracking-wide px-4 py-2 rounded-xl
-              transition-all duration-200 whitespace-nowrap
+              rounded-[--radius-pill] px-3 py-1.5 font-body text-[13px]
+              whitespace-nowrap transition-all duration-200
               ${activeCategory === cat
-                ? 'bg-ink-900 text-white dark:bg-white dark:text-ink-900'
-                : 'clay-l1 text-ink-500 hover:text-ink-700'
+                ? 'bg-blue-500 text-white'
+                : 'bg-clay-surface text-ink-500 hover:bg-blue-50'
               }
             `}
           >

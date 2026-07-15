@@ -1,9 +1,9 @@
-import { InsightSeverity } from '@whatdo/shared';
+import type { InsightSeverity } from '@whatdo/shared';
 
 const severityStyles: Record<InsightSeverity, string> = {
-  info: 'bg-[var(--blue-50)] text-[var(--blue-700)]',
-  warning: 'bg-[var(--semantic-amber)]/15 text-[var(--semantic-amber)]',
-  risk: 'bg-[var(--semantic-red)]/15 text-[var(--semantic-red)]',
+  info: 'bg-blue-50 text-blue-700',
+  warning: 'bg-semantic-amber/15 text-semantic-amber',
+  risk: 'bg-semantic-red/15 text-semantic-red',
 };
 
 const severityLabels: Record<InsightSeverity, string> = {
@@ -20,11 +20,7 @@ interface SeverityBadgeProps {
 export function SeverityBadge({ severity, className = '' }: SeverityBadgeProps) {
   return (
     <span
-      className={`
-        font-[Plus_Jakarta_Sans] text-[11px] leading-[14px] font-semibold
-        px-2.5 py-0.5 rounded-[var(--radius-pill)]
-        ${severityStyles[severity]} ${className}
-      `}
+      className={`inline-flex items-center rounded-[--radius-sm] px-2.5 py-0.5 font-body text-[11px] font-semibold ${severityStyles[severity]} ${className}`}
     >
       {severityLabels[severity]}
     </span>

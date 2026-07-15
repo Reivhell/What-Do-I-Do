@@ -10,6 +10,7 @@ import {
   ParseUUIDPipe,
   DefaultValuePipe,
   ParseBoolPipe,
+  HttpCode,
 } from '@nestjs/common';
 import { SettingsService } from './settings.service';
 
@@ -91,5 +92,20 @@ export class SettingsController {
   @Delete('categories/:id')
   deleteCategory(@Param('id', ParseUUIDPipe) id: string) {
     return this.settingsService.deleteCategory(id);
+  }
+
+  // ── Backup / Export / Import (17-offline-sync.md) ──
+
+  @Get('export')
+  exportData() {
+    return this.settingsService.exportData(DEFAULT_USER_ID);
+  }
+
+  @Post('import')
+  @HttpCode(200)
+  importData(
+    @Body() body: { exportedAt: string; appVersion: string; data: Record<string, unknown[]> },
+  ) {
+    return this.settingsService.importData(DEFAULT_USER_ID, body);
   }
 }

@@ -1,9 +1,10 @@
 import { useState } from 'react';
 import {
   CheckCircle2, Archive, MoreVertical, X, Calendar, Flag, Tag,
-  AlertCircle, ChevronDown, ChevronRight, Plus, Trash2,
+  AlertCircle, ChevronDown, ChevronRight, Plus, Trash2, Loader2,
+  ListChecks, Inbox, Clock, CheckCheck, LayoutList,
 } from 'lucide-react';
-import { Card, Badge, Button } from '../ui';
+import { Card, Badge, Button, EmptyState } from '../ui';
 import { TaskRow } from './TaskRow';
 import { TaskDetailModal } from './TaskDetailModal';
 import { ScheduleTaskModal } from './ScheduleTaskModal';
@@ -22,154 +23,144 @@ function getViewForTask(task: Task): TaskView {
   if (task.status === 'completed') return 'completed';
   if (task.status === 'inbox') return 'inbox';
   if (task.dueDate) {
-    const today = new Date().toISOString().split('T')[0];
-    if (task.dueDate === today) return 'today';
-    if (task.dueDate > today) return 'upcoming';
+    const dueDate = new Date(task.dueDate);
+    const now = new Date();
+    const next7Days = new Date(now.getTime() + 7 * 24 * 60 * 60 * 1000);
+    if (dueDate > next7Days) return 'upcoming';
+    return 'today';
   }
-  // Active tasks without due date default to inbox for view counting
   return 'inbox';
 }
 
-function getFilteredTaskIds(tasks: Task[], view: TaskView): string[] {
-  return tasks
-    .filter(t => t.status !== 'completed' || view === 'completed')
-    .map(t => t.id);
-}
+const VIEW_CONFIG: { value: TaskView; label: string; icon: typeof ListChecks }[] = [
+  { value: 'inbox', label: 'Inbox', icon: Inbox },
+  { value: 'today', label: 'Today', icon: Clock },
+  { value: 'upcoming', label: 'Upcoming', icon: Calendar },
+  { value: 'completed', label: 'Completed', icon: CheckCheck },
+  { value: 'all', label: 'All', icon: LayoutList },
+];
 
 export function TaskList({ view = 'inbox', onTaskClick, onViewChange }: TaskListProps) {
   const [selectedTask, setSelectedTask] = useState<Task | null>(null);
   const [scheduleTaskId, setScheduleTaskId] = useState<string | null>(null);
-  const [expandedTasks, setExpandedTasks] = useState<Set<string>>(new Set());
+  const [showSubtasks, setShowSubtasks] = useState<Set<string>>(new Set());
+  const [bulkMode, setBulkMode] = useState(false);
+  const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
 
   const { data: tasks = [], isLoading, error } = useTasksList(view);
   const updateTask = useUpdateTask();
   const deleteTask = useDeleteTask();
   const archiveTask = useArchiveTask();
-  const bulkUpdateStatus = useBulkUpdateTaskStatus();
   const scheduleTask = useScheduleTask();
+  const bulkUpdate = useBulkUpdateTaskStatus();
 
-  const handleTaskClick = (task: Task) => {
-    onTaskClick?.(task);
-  };
+  // Filter by view
+  const filteredTasks = tasks.filter(t => getViewForTask(t) === view);
+  const completedCount = tasks.filter(t => t.status === 'completed').length;
 
-  const toggleExpanded = (taskId: string) => {
-    setExpandedTasks(prev => {
+  // Subtask toggle
+  const toggleSubtasks = (taskId: string) => {
+    setShowSubtasks(prev => {
       const next = new Set(prev);
-      if (next.has(taskId)) next.delete(taskId);
-      else next.add(taskId);
+      if (next.has(taskId)) next.delete(taskId); else next.add(taskId);
       return next;
     });
   };
 
-  const handleBulkComplete = (taskIds: string[]) => {
-    bulkUpdateStatus.mutate({ taskIds, status: 'completed' });
+  // Bulk select
+  const toggleSelect = (taskId: string) => {
+    setSelectedIds(prev => {
+      const next = new Set(prev);
+      if (next.has(taskId)) next.delete(taskId); else next.add(taskId);
+      return next;
+    });
   };
 
-  const handleBulkArchive = (taskIds: string[]) => {
-    bulkUpdateStatus.mutate({ taskIds, status: 'archived' });
+  const handleBulkComplete = () => {
+    bulkUpdate.mutate({ ids: Array.from(selectedIds), status: 'completed' });
+    setSelectedIds(new Set());
   };
 
   const handleSchedule = (task: Task) => {
     setScheduleTaskId(task.id);
   };
 
-  const filteredTasks = tasks.filter(t => {
-    if (view === 'completed') return t.status === 'completed';
-    return t.status !== 'completed' || view === 'inbox';
-  });
-
-  const taskIds = getFilteredTaskIds(tasks, view);
-
   return (
-    <div className="flex flex-col gap-6">
-      {/* Quick Add */}
-      <TaskQuickAdd defaultView={view} onTaskCreated={() => {}} />
-
-      {/* View switcher tabs — claymorphism */}
-      <div className="flex items-center gap-1 rounded-[--radius-lg] bg-clay-surface-alt p-1 self-start">
-        {([
-          { value: 'inbox' as TaskView, label: 'Inbox' },
-          { value: 'today' as TaskView, label: 'Today' },
-          { value: 'upcoming' as TaskView, label: 'Upcoming' },
-          { value: 'completed' as TaskView, label: 'Completed' },
-        ]).map((tab) => (
+    <div className="flex flex-col gap-4">
+      {/* View tabs */}
+      <div className="flex gap-1 overflow-x-auto pb-1">
+        {VIEW_CONFIG.map(({ value, label, icon: Icon }) => (
           <button
-            key={tab.value}
-            onClick={() => onViewChange?.(tab.value)}
-            className={`rounded-[--radius-md] px-5 py-2.5 font-body text-sm font-semibold clay-transition ${
-              view === tab.value
-                ? 'clay-pressed bg-clay-surface text-ink-900'
-                : 'clay-l1 bg-clay-surface text-ink-500 hover:text-ink-900'
+            key={value}
+            onClick={() => onViewChange?.(value)}
+            className={`inline-flex items-center gap-1.5 rounded-[--radius-pill] px-3.5 py-1.5 font-body text-[13px] font-medium whitespace-nowrap transition-all ${
+              view === value
+                ? 'bg-blue-500 text-white shadow-sm'
+                : 'bg-clay-surface text-ink-500 hover:bg-blue-50 hover:text-ink-900'
             }`}
           >
-            {tab.label}
+            <Icon className="size-3.5" />
+            {label}
           </button>
         ))}
       </div>
 
-      {/* Loading / Error / Empty States */}
-      {isLoading && (
-        <div className="flex items-center justify-center py-16 text-ink-300">
-          <div className="animate-spin rounded-full border-3 border-primary border-t-transparent size-8" />
+      {/* Quick add */}
+      <TaskQuickAdd defaultView={view} />
+
+      {/* Bulk actions */}
+      {bulkMode && selectedIds.size > 0 && (
+        <div className="flex items-center gap-3 rounded-[--radius-md] bg-blue-50 clay-inset px-4 py-2">
+          <span className="font-body text-[13px] text-blue-700 font-medium">{selectedIds.size} selected</span>
+          <button onClick={handleBulkComplete} className="rounded-[--radius-md] bg-blue-500 px-4 py-1.5 font-body text-[13px] font-semibold text-white">
+            Complete All
+          </button>
+          <button onClick={() => { setSelectedIds(new Set()); setBulkMode(false); }} className="font-body text-[13px] text-ink-500 hover:text-ink-700">
+            Cancel
+          </button>
         </div>
       )}
 
-      {error && (
-        <Card level={1} className="p-4 bg-danger/10 text-danger">
-          Failed to load tasks. Please try again.
-        </Card>
-      )}
-
-      {!isLoading && !error && filteredTasks.length === 0 && (
-        <Card level={1} className="p-12 text-center">
-          <div className="size-16 mx-auto mb-4 bg-clay-surface-alt rounded-full flex items-center justify-center text-ink-300">
-            <svg className="size-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4" />
-            </svg>
-          </div>
-          <h3 className="font-display text-lg font-semibold text-ink-700 mb-1">
-            {view === 'inbox' ? 'Inbox is empty' : view === 'today' ? 'Nothing due today' : view === 'upcoming' ? 'No upcoming tasks' : 'No completed tasks'}
-          </h3>
-          <p className="font-body text-[14px] text-ink-500">
-            {view === 'inbox' ? 'Add a task above to get started.' : 'Great job! Enjoy the free time.'}
-          </p>
-        </Card>
-      )}
-
-      {/* Task List */}
-      {!isLoading && !error && filteredTasks.length > 0 && (
-        <div className="flex flex-col gap-3">
+      {/* Loading / Error / Empty states */}
+      {isLoading ? (
+        <div className="flex items-center justify-center py-16">
+          <Loader2 className="size-8 animate-spin text-blue-400" />
+        </div>
+      ) : error ? (
+        <div className="flex items-center justify-center py-12">
+          <p className="font-body text-[15px] text-semantic-red">Failed to load tasks. Please try again.</p>
+        </div>
+      ) : filteredTasks.length === 0 ? (
+        <EmptyState
+          icon={<ListChecks className="size-10 text-ink-300" />}
+          title="No tasks here"
+          description={view === 'completed' ? 'No completed tasks yet.' : `No ${view === 'inbox' ? 'unsorted' : view} tasks. Use Quick Input to add one.`}
+        />
+      ) : (
+        <div className="flex flex-col gap-2">
+          {bulkMode && (
+            <div className="flex items-center gap-2 px-1">
+              <button
+                onClick={() => setSelectedIds(new Set(filteredTasks.map(t => t.id)))}
+                className="font-body text-[12px] text-blue-600 hover:text-blue-700"
+              >
+                Select all
+              </button>
+            </div>
+          )}
           {filteredTasks.map((task) => (
             <TaskRow
               key={task.id}
               task={task}
-              onToggleSubtasks={toggleExpanded}
+              onToggleSubtasks={toggleSubtasks}
+              showSubtasks={showSubtasks.has(task.id)}
+              onTaskClick={(t) => { setSelectedTask(t); }}
               onSchedule={handleSchedule}
-              onEdit={handleTaskClick}
-              showSubtasks={expandedTasks.has(task.id)}
+              bulkMode={bulkMode}
+              selected={selectedIds.has(task.id)}
+              onToggleSelect={toggleSelect}
             />
           ))}
-
-          {/* Bulk Actions Footer */}
-          {view !== 'completed' && taskIds.length > 0 && (
-            <Card level={2} className="p-3 animate-in slide-in-from-bottom-2 duration-200">
-              <div className="flex items-center justify-between">
-                <span className="font-body text-[13px] text-ink-500">
-                  {taskIds.length} task{taskIds.length !== 1 ? 's' : ''} selected
-                </span>
-                <div className="flex items-center gap-2">
-                  <Button variant="secondary" size="sm" onClick={() => handleBulkComplete(taskIds)}>
-                    <CheckCircle2 className="size-3.5 mr-1.5" />
-                    Complete All
-                  </Button>
-                  <Button variant="secondary" size="sm" onClick={() => handleBulkArchive(taskIds)}>
-                    <Archive className="size-3.5 mr-1.5" />
-                    Archive All
-                  </Button>
-                </div>
-              </div>
-            </Card>
-          )}
         </div>
       )}
 
