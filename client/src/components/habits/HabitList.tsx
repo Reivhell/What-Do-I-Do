@@ -75,7 +75,7 @@ export function HabitList({
         <div className="rounded-[--radius-lg] bg-clay-surface clay-l1 p-5">
           <h3 className="font-display text-lg font-semibold text-ink-900 mb-4">Edit Habit</h3>
           <HabitForm
-            initialData={isEditing}
+            initialData={isEditing as CreateHabitInput | UpdateHabitInput}
             onSubmit={(data) => { onEdit(data as unknown as Habit); }}
             onCancel={() => onEdit(null as unknown as Habit)}
             isEditing

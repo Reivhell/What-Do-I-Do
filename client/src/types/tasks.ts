@@ -1,6 +1,6 @@
 // Client-specific types for Tasks (mirrors shared types + UI extensions)
 export type TaskStatus = 'inbox' | 'active' | 'completed' | 'archived';
-export type TaskPriority = 'low' | 'medium' | 'high';
+export type TaskPriority = 'low' | 'medium' | 'high' | 'urgent' | 'none';
 export type TaskView = 'inbox' | 'today' | 'upcoming' | 'completed';
 
 export interface Task {
@@ -13,6 +13,9 @@ export interface Task {
   dueDate?: string;        // YYYY-MM-DD
   tags: string[];
   notes?: string;
+  category?: string;
+  project?: string;
+  energyEstimate?: number;
   linkedGoalId?: string;
   scheduledEventId?: string;
   createdAt: string;

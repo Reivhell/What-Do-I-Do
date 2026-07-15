@@ -17,11 +17,9 @@ interface TaskDetailModalProps {
 }
 
 const PRIORITIES: { value: TaskPriority; label: string }[] = [
-  { value: 'urgent', label: 'Urgent' },
   { value: 'high', label: 'High' },
   { value: 'medium', label: 'Medium' },
   { value: 'low', label: 'Low' },
-  { value: 'none', label: 'None' },
 ];
 
 const STATUSES: { value: TaskStatus; label: string }[] = [
@@ -38,18 +36,15 @@ export function TaskDetailModal({ task, open, onClose, onSchedule }: TaskDetailM
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
   const [status, setStatus] = useState<TaskStatus>('inbox');
-  const [priority, setPriority] = useState<TaskPriority>('none');
+  const [priority, setPriority] = useState<TaskPriority>('medium');
   const [dueDate, setDueDate] = useState('');
-  const [category, setCategory] = useState('');
-  const [project, setProject] = useState('');
-  const [energyEstimate, setEnergyEstimate] = useState('');
   const [isDirty, setIsDirty] = useState(false);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
 
   const updateTask = useUpdateTask();
   const deleteTask = useDeleteTask();
   const archiveTask = useArchiveTask();
-  const createSubtask = useCreateSubtask();
+  const createSubtask = useCreateSubtask(task?.id ?? '');
   const updateSubtask = useUpdateSubtask();
   const deleteSubtask = useDeleteSubtask();
 
@@ -59,11 +54,8 @@ export function TaskDetailModal({ task, open, onClose, onSchedule }: TaskDetailM
       setTitle(task.title);
       setDescription(task.description || '');
       setStatus(task.status);
-      setPriority(task.priority ?? 'none');
+      setPriority(task.priority ?? 'medium');
       setDueDate(task.dueDate || '');
-      setCategory(task.category || '');
-      setProject(task.project || '');
-      setEnergyEstimate(task.energyEstimate?.toString() || '');
       setIsDirty(false);
     }
   });
@@ -72,16 +64,11 @@ export function TaskDetailModal({ task, open, onClose, onSchedule }: TaskDetailM
     if (!task || !isDirty) return;
     updateTask.mutate({
       id: task.id,
-      data: {
-        title: title.trim() || task.title,
-        description: description.trim() || null,
-        status,
-        priority: priority === 'none' ? null : priority,
-        dueDate: dueDate || null,
-        category: category.trim() || null,
-        project: project.trim() || null,
-        energyEstimate: energyEstimate ? parseInt(energyEstimate) : null,
-      },
+      title: title.trim() || task.title,
+      description: description.trim() || undefined,
+      status,
+      priority,
+      dueDate: dueDate || undefined,
     });
     setIsDirty(false);
   };
@@ -95,7 +82,7 @@ export function TaskDetailModal({ task, open, onClose, onSchedule }: TaskDetailM
   const handleAddSubtask = (e: FormEvent) => {
     e.preventDefault();
     if (!task || !newSubtaskTitle.trim()) return;
-    createSubtask.mutate({ taskId: task.id, title: newSubtaskTitle.trim() });
+    createSubtask.mutate({ title: newSubtaskTitle.trim() });
     setNewSubtaskTitle('');
     setShowAddSubtask(false);
   };
@@ -245,15 +232,15 @@ export function TaskDetailModal({ task, open, onClose, onSchedule }: TaskDetailM
                   <input
                     type="checkbox"
                     checked={subtask.completed}
-                    onChange={() => updateSubtask.mutate({ taskId: task.id, subtaskId: subtask.id, data: { completed: !subtask.completed } })}
+                    onChange={() => updateSubtask.mutate({ id: subtask.id, isCompleted: !subtask.isCompleted })}
                     className="size-4 rounded border-ink-300 text-blue-500"
                   />
-                  <span className={`font-body text-[14px] ${subtask.completed ? 'line-through text-ink-400' : 'text-ink-700'}`}>
+                  <span className={`font-body text-[14px] ${subtask.isCompleted ? 'line-through text-ink-400' : 'text-ink-700'}`}>
                     {subtask.title}
                   </span>
                 </label>
                 <button
-                  onClick={() => deleteSubtask.mutate({ taskId: task.id, subtaskId: subtask.id })}
+                  onClick={() => deleteSubtask.mutate(subtask.id)}
                   className="flex size-7 items-center justify-center rounded-[--radius-sm] text-ink-400 hover:bg-semantic-red/10 hover:text-semantic-red"
                 >
                   <X className="size-3.5" />
