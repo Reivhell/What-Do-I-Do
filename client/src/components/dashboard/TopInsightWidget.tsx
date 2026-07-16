@@ -16,16 +16,16 @@ export function TopInsightWidget() {
   return (
     <section className="clay-level-2 rounded-[var(--radius-lg)] p-6 lg:col-span-3">
       <div className="flex items-start justify-between gap-4 mb-4">
-        <h4 className="font-[Quicksand] text-[16px] leading-[24px] font-semibold text-[var(--ink-900)]">
+        <h4 className="font-display text-[16px] leading-[24px] font-semibold text-[var(--ink-900)]">
           Insight Teratas
         </h4>
         <SeverityBadge severity={topInsight.severity} />
       </div>
-      <p className="font-[Inter] text-[15px] leading-[22px] text-[var(--ink-900)] mb-4">
+      <p className="font-body text-[15px] leading-[22px] text-[var(--ink-900)] mb-4">
         {topInsight.message}
       </p>
       <div className="flex items-center gap-3">
-        <button className="clay-button bg-[var(--blue-50)] text-[var(--blue-700)] rounded-[var(--radius-md)] px-4 py-2 font-[Plus_Jakarta_Sans] text-[12px] leading-[16px] font-medium">
+        <button className="clay-button bg-[var(--blue-50)] text-[var(--blue-700)] rounded-[var(--radius-md)] px-4 py-2 font-body text-[12px] leading-[16px] font-medium">
           Lihat Detail
         </button>
         <button

@@ -1,5 +1,8 @@
 import { Module } from '@nestjs/common';
+import { ThrottlerModule, ThrottlerGuard } from '@nestjs/throttler';
+import { APP_GUARD } from '@nestjs/core';
 import { DatabaseModule } from './common/database/database.module';
+import { LoggerModule } from './common/logger/logger.module';
 import { SettingsModule } from './modules/settings/settings.module';
 import { InboxModule } from './modules/inbox/inbox.module';
 import { TasksModule } from './modules/tasks/tasks.module';
@@ -15,9 +18,20 @@ import { InsightsModule } from './modules/insights/insights.module';
 import { AchievementsModule } from './modules/achievements/achievements.module';
 import { WorkspaceModule } from './modules/workspace/workspace.module';
 import { DashboardModule } from './modules/dashboard/dashboard.module';
+import { BackupModule } from './common/backup/backup.module';
 
 @Module({
   imports: [
+    ThrottlerModule.forRoot({
+      throttlers: [
+        {
+          ttl: 60000,
+          limit: 100,
+        },
+      ],
+    }),
+    LoggerModule,
+    BackupModule,
     DatabaseModule,
     SettingsModule,
     InboxModule,
@@ -34,6 +48,12 @@ import { DashboardModule } from './modules/dashboard/dashboard.module';
     AchievementsModule,
     WorkspaceModule,
     DashboardModule,
+  ],
+  providers: [
+    {
+      provide: APP_GUARD,
+      useClass: ThrottlerGuard,
+    },
   ],
 })
 export class AppModule {}

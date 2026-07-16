@@ -8,14 +8,15 @@ export function ProgressBar({ value, className = "" }: ProgressBarProps) {
 
   return (
     <div
-      className={`h-2 w-full rounded-[--radius-pill] bg-blue-100 ${className}`}
+      className={`h-2 w-full rounded-[var(--radius-pill)] bg-[var(--blue-100)] clay-inset ${className}`}
       role="progressbar"
       aria-valuenow={clamped}
       aria-valuemin={0}
       aria-valuemax={100}
+      aria-valuetext={`${clamped}%`}
     >
       <div
-        className="h-full rounded-[--radius-pill] bg-gradient-to-r from-blue-300 to-blue-500 transition-all duration-500 ease-out"
+        className="h-full rounded-[var(--radius-pill)] bg-gradient-to-r from-[var(--blue-300)] to-[var(--blue-500)] transition-all duration-500 ease-out"
         style={{ width: `${clamped}%` }}
       />
     </div>

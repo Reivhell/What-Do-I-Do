@@ -2,6 +2,8 @@ import { useState } from 'react';
 import { useTimeline, useDailySummary, useCreateAnnotation, useUpdateAnnotation, useDeleteAnnotation } from '../api/life-log';
 import { Modal } from '../components/ui/Modal';
 import { ClayInput } from '../components/ui/ClayInput';
+import { Button, FAB } from '../components/ui/Button';
+import { Card } from '../components/ui/Card';
 import type { CreateAnnotationInput, UpdateAnnotationInput, TimelineItem } from '@whatdo/shared';
 
 const SOURCE_ICONS: Record<string, string> = {
@@ -12,20 +14,22 @@ const SOURCE_ICONS: Record<string, string> = {
   annotation: 'edit_note',
 };
 
+// status-only semantic colors (applied via inline style)
 const SOURCE_COLORS: Record<string, string> = {
-  activity: 'clr-primary',
-  planner: 'clr-secondary',
-  transaction: 'clr-danger',
-  habit: 'clr-success',
-  annotation: 'clr-text-primary',
+  activity: 'var(--blue-500)',
+  planner: 'var(--blue-500)',
+  transaction: 'var(--semantic-red)',
+  habit: 'var(--semantic-green)',
+  annotation: 'var(--ink-500)',
 };
 
+// background tints as Tailwind arbitrary classes
 const SOURCE_BG: Record<string, string> = {
-  activity: 'bg-clr-primary-20',
-  planner: 'bg-clr-secondary-10',
-  transaction: 'bg-clr-danger-10',
-  habit: 'bg-clr-success-10',
-  annotation: 'bg-clr-surface-container-high',
+  activity: 'bg-[var(--blue-500)]/10',
+  planner: 'bg-[var(--blue-500)]/10',
+  transaction: 'bg-[var(--semantic-red)]/10',
+  habit: 'bg-[var(--semantic-green)]/10',
+  annotation: 'bg-[var(--ink-500)]/10',
 };
 
 const SOURCE_LABELS: Record<string, string> = {
@@ -68,11 +72,11 @@ export function LifeLogPage() {
       {/* Header */}
       <div className="flex items-center justify-between mb-8">
         <div>
-          <h1 className="font-[Plus Jakarta Sans] text-[28px] leading-[36px] font-bold tracking-tight clr-text-primary flex items-center gap-3">
-            <span className="material-symbols-outlined clr-primary text-3xl" style={{ fontVariationSettings: "'FILL' 1" }}>bar_chart</span>
+          <h1 className="font-body text-[28px] leading-[36px] font-bold tracking-tight text-[var(--ink-900)] flex items-center gap-3">
+            <span className="material-symbols-outlined text-[var(--blue-500)] text-3xl" style={{ fontVariationSettings: "'FILL' 1" }}>bar_chart</span>
             Life Log
           </h1>
-          <p className="font-[Plus Jakarta Sans] text-[14px] leading-[20px] font-normal clr-text-secondary mt-1">
+          <p className="font-body text-[14px] leading-[20px] font-normal text-[var(--ink-500)] mt-1">
             Your daily timeline — activities, plans, transactions, habits & notes.
           </p>
         </div>
@@ -80,30 +84,30 @@ export function LifeLogPage() {
 
       {/* Date Navigator + Search */}
       <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-4 mb-6">
-        <div className="clay-card-inset rounded-full flex items-center px-4 py-2 flex-1 max-w-md">
-          <span className="material-symbols-outlined clr-text-secondary mr-2 text-lg">search</span>
+        <div className="bg-clay-surface clay-l1 rounded-full flex items-center px-4 py-2 flex-1 max-w-md">
+          <span className="material-symbols-outlined text-[var(--ink-500)] mr-2 text-lg">search</span>
           <input
-            className="bg-transparent border-none focus:ring-0 w-full font-[Plus Jakarta Sans] text-[13px] clr-text-primary placeholder:clr-text-secondary"
+            className="bg-transparent border-none focus:ring-0 w-full font-body text-[13px] text-[var(--ink-900)] placeholder:text-[var(--ink-500)]"
             placeholder="Search timeline..."
             value={search}
             onChange={e => setSearch(e.target.value)}
           />
         </div>
 
-        <div className="flex items-center gap-2 clay-card-inset rounded-full px-3 py-2">
-          <button onClick={() => navigateDay(-1)} className="w-8 h-8 flex items-center justify-center rounded-full hover:bg-clr-surface-container-high clay-transition clr-text-secondary">
+        <div className="flex items-center gap-2 bg-clay-surface clay-l1 rounded-full px-3 py-2">
+          <button onClick={() => navigateDay(-1)} className="w-8 h-8 flex items-center justify-center rounded-full hover:bg-clay-surface clay-transition text-[var(--ink-500)]">
             <span className="material-symbols-outlined text-lg">chevron_left</span>
           </button>
           <div className="flex items-center gap-2 px-3">
-            <span className="material-symbols-outlined clr-primary text-lg">calendar_today</span>
+            <span className="material-symbols-outlined text-[var(--blue-500)] text-lg">calendar_today</span>
             <input
               type="date"
               value={selectedDate}
               onChange={e => setSelectedDate(e.target.value)}
-              className="bg-transparent border-none focus:ring-0 font-[Plus Jakarta Sans] text-[13px] font-medium clr-text-primary"
+              className="bg-transparent border-none focus:ring-0 font-body text-[13px] font-medium text-[var(--ink-900)]"
             />
           </div>
-          <button onClick={() => navigateDay(1)} className="w-8 h-8 flex items-center justify-center rounded-full hover:bg-clr-surface-container-high clay-transition clr-text-secondary">
+          <button onClick={() => navigateDay(1)} className="w-8 h-8 flex items-center justify-center rounded-full hover:bg-clay-surface clay-transition text-[var(--ink-500)]">
             <span className="material-symbols-outlined text-lg">chevron_right</span>
           </button>
         </div>
@@ -115,11 +119,12 @@ export function LifeLogPage() {
           <button
             key={key}
             onClick={() => toggleSource(key)}
-            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full font-[Plus Jakarta Sans] text-[12px] font-medium transition-all ${
+            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full font-body text-[12px] font-medium transition-all ${
               activeSources.includes(key)
-                ? `${SOURCE_BG[key]} ${SOURCE_COLORS[key]}`
-                : 'clay-card-inset clr-text-secondary opacity-60'
+                ? `${SOURCE_BG[key]}`
+                : 'opacity-60'
             }`}
+            style={{ color: activeSources.includes(key) ? SOURCE_COLORS[key] : 'var(--ink-500)' }}
           >
             <span className="material-symbols-outlined text-sm" style={{ fontVariationSettings: "'FILL' 1" }}>{icon}</span>
             {SOURCE_LABELS[key]}
@@ -131,24 +136,24 @@ export function LifeLogPage() {
       {summary && !summaryLoading && (
         <div className="clay-card p-5 mb-6">
           <div className="flex items-center justify-between mb-3">
-            <h3 className="font-[Plus Jakarta Sans] text-[14px] font-semibold clr-text-primary flex items-center gap-2">
-              <span className="material-symbols-outlined clr-primary text-lg" style={{ fontVariationSettings: "'FILL' 1" }}>analytics</span>
+            <h3 className="font-body text-[14px] font-semibold text-[var(--ink-900)] flex items-center gap-2">
+              <span className="material-symbols-outlined text-[var(--blue-500)] text-lg" style={{ fontVariationSettings: "'FILL' 1" }}>analytics</span>
               Daily Summary
             </h3>
-            <span className="font-[Plus Jakarta Sans] text-[13px] font-bold clr-primary">{summary.total} total entries</span>
+            <span className="font-body text-[13px] font-bold text-[var(--blue-500)]">{summary.total} total entries</span>
           </div>
           <div className="grid grid-cols-5 gap-4">
             {[
-              { label: 'Activities', count: summary.totalActivities, color: 'clr-primary', icon: 'play_circle' },
-              { label: 'Planned', count: summary.totalPlannerEvents, color: 'clr-secondary', icon: 'calendar_month' },
-              { label: 'Transactions', count: summary.totalTransactions, color: 'clr-danger', icon: 'payments' },
-              { label: 'Habits', count: summary.totalHabitLogs, color: 'clr-success', icon: 'check_circle' },
-              { label: 'Notes', count: summary.totalAnnotations, color: 'clr-text-primary', icon: 'edit_note' },
+              { label: 'Activities', count: summary.totalActivities, color: 'var(--blue-500)', icon: 'play_circle' },
+              { label: 'Planned', count: summary.totalPlannerEvents, color: 'var(--blue-500)', icon: 'calendar_month' },
+              { label: 'Transactions', count: summary.totalTransactions, color: 'var(--semantic-red)', icon: 'payments' },
+              { label: 'Habits', count: summary.totalHabitLogs, color: 'var(--semantic-green)', icon: 'check_circle' },
+              { label: 'Notes', count: summary.totalAnnotations, color: 'var(--ink-500)', icon: 'edit_note' },
             ].map(item => (
               <div key={item.label} className="text-center">
-                <span className={`material-symbols-outlined ${item.color} text-xl`} style={{ fontVariationSettings: "'FILL' 1" }}>{item.icon}</span>
-                <p className="font-[Plus Jakarta Sans] text-[18px] font-bold clr-text-primary mt-1">{item.count}</p>
-                <p className="font-[Plus Jakarta Sans] text-[10px] font-medium clr-text-secondary">{item.label}</p>
+                <span className="material-symbols-outlined text-xl" style={{ fontVariationSettings: "'FILL' 1", color: item.color }}>{item.icon}</span>
+                <p className="font-body text-[18px] font-bold text-[var(--ink-900)] mt-1">{item.count}</p>
+                <p className="font-body text-[10px] font-medium text-[var(--ink-500)]">{item.label}</p>
               </div>
             ))}
           </div>
@@ -159,13 +164,13 @@ export function LifeLogPage() {
       <div className="relative">
         {timelineLoading ? (
           <div className="clay-card p-8 text-center">
-            <p className="font-[Plus Jakarta Sans] clr-text-secondary">Loading timeline...</p>
+            <p className="font-body text-[var(--ink-500)]">Loading timeline...</p>
           </div>
         ) : timeline.length === 0 ? (
           <div className="clay-card p-8 text-center">
-            <span className="material-symbols-outlined text-4xl clr-text-secondary mb-3">timeline</span>
-            <p className="font-[Plus Jakarta Sans] text-[14px] clr-text-secondary">No entries for this day.</p>
-            <p className="font-[Plus Jakarta Sans] text-[12px] clr-text-secondary mt-1">Add an annotation or check other sources.</p>
+            <span className="material-symbols-outlined text-4xl text-[var(--ink-500)] mb-3">timeline</span>
+            <p className="font-body text-[14px] text-[var(--ink-500)]">No entries for this day.</p>
+            <p className="font-body text-[12px] text-[var(--ink-500)] mt-1">Add an annotation or check other sources.</p>
           </div>
         ) : (
           <div className="space-y-3">
@@ -181,12 +186,9 @@ export function LifeLogPage() {
         )}
 
         {/* Add annotation FAB */}
-        <button
-          onClick={() => setShowAnnotationForm(true)}
-          className="fixed bottom-8 right-8 w-14 h-14 rounded-full bg-clr-primary clr-on-primary clay-button flex items-center justify-center shadow-lg hover:scale-110 transition-transform z-40"
-        >
+        <FAB onClick={() => setShowAnnotationForm(true)}>
           <span className="material-symbols-outlined text-3xl" style={{ fontVariationSettings: "'FILL' 1" }}>edit_note</span>
-        </button>
+        </FAB>
       </div>
 
       {/* Create Annotation Modal */}
@@ -229,8 +231,8 @@ function TimelineCard({
   onDelete?: () => void;
 }) {
   const icon = SOURCE_ICONS[item.source] || 'circle';
-  const color = SOURCE_COLORS[item.source] || 'clr-text-primary';
-  const bg = SOURCE_BG[item.source] || 'bg-clr-surface-container-high';
+  const color = SOURCE_COLORS[item.source] || 'var(--ink-500)';
+  const bg = SOURCE_BG[item.source] || 'bg-[var(--blue-500)]/10';
   const label = SOURCE_LABELS[item.source] || item.source;
 
   const time = item.timestamp?.includes('T')
@@ -238,10 +240,10 @@ function TimelineCard({
     : item.timestamp?.slice(11, 16) || '';
 
   return (
-    <div className="clay-card p-5 flex items-start gap-4 relative group">
+    <Card level={1} className="flex items-start gap-4 relative group">
       {/* Timeline dot line */}
       <div className="flex flex-col items-center shrink-0">
-        <div className={`w-10 h-10 ${bg} rounded-xl flex items-center justify-center ${color}`}>
+        <div className={`w-10 h-10 ${bg} rounded-xl flex items-center justify-center`} style={{ color }}>
           <span className="material-symbols-outlined text-xl" style={{ fontVariationSettings: "'FILL' 1" }}>{icon}</span>
         </div>
       </div>
@@ -249,48 +251,49 @@ function TimelineCard({
       {/* Content */}
       <div className="flex-1 min-w-0">
         <div className="flex items-center gap-2 mb-0.5">
-          <span className="font-[Plus Jakarta Sans] text-[11px] font-medium clr-text-secondary">{label}</span>
+          <span className="font-body text-[11px] font-medium text-[var(--ink-500)]">{label}</span>
           {time && (
             <>
-              <span className="text-clr-text-secondary">·</span>
-              <span className="font-[Plus Jakarta Sans] text-[11px] font-medium clr-text-secondary tabular-nums">{time}</span>
+              <span className="text-[var(--ink-500)]">·</span>
+              <span className="font-body text-[11px] font-medium text-[var(--ink-500)] tabular-nums">{time}</span>
             </>
           )}
         </div>
-        <p className="font-[Plus Jakarta Sans] text-[15px] font-semibold clr-text-primary">{item.title}</p>
+
+        <p className="font-body text-[15px] font-semibold text-[var(--ink-900)]">{item.title}</p>
 
         {/* Source-specific details */}
         <div className="flex flex-wrap gap-x-4 gap-y-1 mt-1">
           {item.durationMinutes != null && (
-            <span className="font-[Plus Jakarta Sans] text-[12px] clr-text-secondary">{item.durationMinutes}m</span>
+            <span className="font-body text-[12px] text-[var(--ink-500)]">{item.durationMinutes}m</span>
           )}
           {item.amount != null && (
-            <span className={`font-[Plus Jakarta Sans] text-[12px] font-medium ${
-              item.type === 'income' ? 'clr-success' : item.type === 'expense' ? 'clr-danger' : 'clr-text-primary'
+            <span className={`font-body text-[12px] font-medium ${
+              item.type === 'income' ? 'text-[var(--semantic-green)]' : item.type === 'expense' ? 'text-[var(--semantic-red)]' : 'text-[var(--ink-900)]'
             }`}>
               {item.type === 'income' ? '+' : item.type === 'expense' ? '-' : ''}Rp {item.amount.toLocaleString()}
             </span>
           )}
           {item.category && item.source === 'planner' && (
-            <span className="font-[Plus Jakarta Sans] text-[12px] clr-text-secondary">{item.category}</span>
+            <span className="font-body text-[12px] text-[var(--ink-500)]">{item.category}</span>
           )}
           {item.status && (
-            <span className={`font-[Plus Jakarta Sans] text-[12px] capitalize ${
-              item.status === 'completed' || item.status === 'done' ? 'clr-success' :
-              item.status === 'skipped' ? 'clr-text-secondary' :
-              item.status === 'missed' ? 'clr-danger' : 'clr-text-secondary'
+            <span className={`font-body text-[12px] capitalize ${
+              item.status === 'completed' || item.status === 'done' ? 'text-[var(--semantic-green)]' :
+              item.status === 'skipped' ? 'text-[var(--ink-500)]' :
+              item.status === 'missed' ? 'text-[var(--semantic-red)]' : 'text-[var(--ink-500)]'
             }`}>{item.status}</span>
           )}
         </div>
 
         {item.description && (
-          <p className="font-[Plus Jakarta Sans] text-[12px] clr-text-secondary mt-1 line-clamp-2">{item.description}</p>
+          <p className="font-body text-[12px] text-[var(--ink-500)] mt-1 line-clamp-2">{item.description}</p>
         )}
 
         {/* Annotation note */}
         {item.note && (
-          <div className="clay-card-inset rounded-xl p-3 mt-2">
-            <p className="font-[Plus Jakarta Sans] text-[12px] clr-text-primary italic">{item.note}</p>
+          <div className="bg-clay-surface clay-l1 rounded-xl p-3 mt-2">
+            <p className="font-body text-[12px] text-[var(--ink-900)] italic">{item.note}</p>
           </div>
         )}
       </div>
@@ -299,18 +302,18 @@ function TimelineCard({
       {item.source === 'annotation' && (
         <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
           {onEdit && (
-            <button onClick={onEdit} className="w-8 h-8 flex items-center justify-center rounded-full hover:bg-clr-surface-container-high clr-text-secondary clay-transition">
+            <button onClick={onEdit} className="w-8 h-8 flex items-center justify-center rounded-full hover:bg-clay-surface clay-transition text-[var(--ink-500)]">
               <span className="material-symbols-outlined text-lg">edit</span>
             </button>
           )}
           {onDelete && (
-            <button onClick={onDelete} className="w-8 h-8 flex items-center justify-center rounded-full hover:bg-clr-danger-10 clr-danger clay-transition">
+            <button onClick={onDelete} className="w-8 h-8 flex items-center justify-center rounded-full hover:bg-[var(--semantic-red)]/10 text-[var(--semantic-red)] clay-transition">
               <span className="material-symbols-outlined text-lg">delete</span>
             </button>
           )}
         </div>
       )}
-    </div>
+    </Card>
   );
 }
 
@@ -343,30 +346,28 @@ function AnnotationForm({
     <form onSubmit={handleSubmit} className="space-y-4">
       <ClayInput label="Title" value={title} onChange={e => setTitle(e.target.value)} required placeholder="What happened?" />
       <div className="flex flex-col gap-1.5">
-        <label className="font-[Plus Jakarta Sans] text-[12px] font-semibold uppercase tracking-[0.04em] clr-text-secondary">Description</label>
+        <label className="font-body text-[12px] font-semibold uppercase tracking-[0.04em] text-[var(--ink-500)]">Description</label>
         <textarea
           value={description}
           onChange={e => setDescription(e.target.value)}
           placeholder="Brief description..."
           rows={2}
-          className="clay-card-inset p-3 rounded-2xl w-full bg-clr-surface-white dark:bg-clr-surface-container-high font-[Plus Jakarta Sans] text-sm clr-text-primary placeholder-clr-text-muted resize-none"
+          className="p-3 rounded-2xl w-full bg-clay-surface text-sm font-body text-[var(--ink-900)] placeholder:text-[var(--ink-400)] resize-none"
         />
       </div>
       <div className="flex flex-col gap-1.5">
-        <label className="font-[Plus Jakarta Sans] text-[12px] font-semibold uppercase tracking-[0.04em] clr-text-secondary">Note</label>
+        <label className="font-body text-[12px] font-semibold uppercase tracking-[0.04em] text-[var(--ink-500)]">Note</label>
         <textarea
           value={note}
           onChange={e => setNote(e.target.value)}
           placeholder="Detailed note..."
           rows={3}
-          className="clay-card-inset p-3 rounded-2xl w-full bg-clr-surface-white dark:bg-clr-surface-container-high font-[Plus Jakarta Sans] text-sm clr-text-primary placeholder-clr-text-muted resize-none"
+          className="p-3 rounded-2xl w-full bg-clay-surface text-sm font-body text-[var(--ink-900)] placeholder:text-[var(--ink-400)] resize-none"
         />
       </div>
       <div className="flex gap-3 pt-2">
-        <button type="button" onClick={onCancel} className="flex-1 py-3 rounded-2xl clay-card-inset font-[Plus Jakarta Sans] text-[13px] font-medium clr-text-secondary">Cancel</button>
-        <button type="submit" className="flex-1 py-3 rounded-2xl bg-clr-primary clr-on-primary font-[Plus Jakarta Sans] text-[13px] font-medium clay-button">
-          {initial ? 'Update' : 'Save'}
-        </button>
+        <Button variant="secondary" size="md" className="flex-1" onClick={onCancel}>Cancel</Button>
+        <Button variant="primary" size="md" className="flex-1" type="submit">{initial ? 'Update' : 'Save'}</Button>
       </div>
     </form>
   );

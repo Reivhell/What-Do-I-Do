@@ -4,6 +4,8 @@ type Level = 1 | 2;
 
 interface CardProps extends HTMLAttributes<HTMLDivElement> {
   level?: Level;
+  interactive?: boolean;
+  nested?: boolean;
   children: ReactNode;
 }
 
@@ -14,13 +16,21 @@ const levelStyles: Record<Level, string> = {
 
 export function Card({
   level = 1,
+  interactive = false,
+  nested = false,
   className = "",
   children,
   ...props
 }: CardProps) {
   return (
     <div
-      className={`rounded-[--radius-lg] bg-clay-surface p-5 clay-transition ${levelStyles[level]} ${className}`}
+      className={`rounded-[var(--radius-lg)] p-5 clay-transition ${
+        nested ? "bg-[var(--clay-surface-alt)]" : "bg-clay-surface"
+      } ${levelStyles[level]} ${
+        interactive
+          ? "cursor-pointer hover:clay-l2 active:clay-pressed focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--blue-500)]"
+          : ""
+      } ${className}`}
       {...props}
     >
       {children}
@@ -52,7 +62,7 @@ export function CardTitle({
 }: HTMLAttributes<HTMLHeadingElement>) {
   return (
     <h3
-      className={`font-display text-lg font-semibold text-ink-900 ${className}`}
+      className={`font-display text-lg font-semibold text-[var(--ink-900)] ${className}`}
       {...props}
     >
       {children}

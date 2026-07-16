@@ -254,6 +254,44 @@ VITE_API_URL=http://localhost:3000
 
 ---
 
+## Security Hardening
+
+### Server Security (NestJS)
+
+The server includes the following security hardening:
+
+1. **Helmet.js** — Security headers middleware
+   - Content Security Policy (CSP) configured for local-first development (allows inline styles/scripts for dev)
+   - HSTS enabled only in production
+   - X-Frame-Options: DENY
+   - X-Content-Type-Options: nosniff
+   - Referrer-Policy: strict-origin-when-cross-origin
+   - X-XSS-Protection enabled
+   - X-Powered-By header hidden
+
+2. **Rate Limiting** — `@nestjs/throttler`
+   - 100 requests per minute per IP (configurable via env)
+   - Applied globally via `ThrottlerGuard`
+
+3. **CORS** — Restricted to localhost in development
+   - `CORS_ORIGIN` env var (default: `http://localhost:5173`)
+   - Credentials allowed for auth cookies
+
+4. **Server Binding** — Binds to `localhost` by default
+   - `SERVER_HOST` env var (default: `localhost`)
+   - **⚠️ WARNING**: Do not bind to `0.0.0.0` without additional authentication (e.g., Tailscale, VPN, or application-level auth)
+
+### Environment Variables (Server)
+
+| Variable | Default | Description |
+|---|---|---|
+| `SERVER_PORT` | `3000` | Server port |
+| `SERVER_HOST` | `localhost` | Bind address — **do not use `0.0.0.0` without auth** |
+| `CORS_ORIGIN` | `http://localhost:5173` | Allowed CORS origin |
+| `NODE_ENV` | `development` | `production` enables strict CSP & HSTS |
+
+---
+
 ## Quick Start (TL;DR)
 
 ```bash

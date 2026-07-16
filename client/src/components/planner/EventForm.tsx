@@ -1,5 +1,8 @@
 import { useState } from 'react';
 import { ClayInput } from '../ui/ClayInput';
+import { Select } from '../ui/Select';
+import { Button } from '../ui/Button';
+import { Card } from '../ui/Card';
 import type { PlannerEvent, CreatePlannerEvent, UpdatePlannerEvent, RepeatRule } from '../../types/planner';
 
 const REMINDER_OPTIONS = [
@@ -78,14 +81,14 @@ export function EventForm({ event, onSave, onClose }: EventFormProps) {
       {/* Backdrop */}
       <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/20 backdrop-blur-sm" onClick={onClose}>
         {/* Modal card */}
-        <div className="clay-card p-6 rounded-2xl bg-clr-surface-white dark:bg-clr-surface-container-high w-full max-w-lg mx-4 shadow-xl" onClick={(e) => e.stopPropagation()}>
+        <Card level={2} className="p-6 rounded-2xl w-full max-w-lg mx-4 shadow-xl" onClick={(e) => e.stopPropagation()}>
           {/* Header */}
           <div className="flex items-center justify-between mb-6">
-            <h2 className="font-[Plus Jakarta Sans] text-xl font-semibold clr-text-primary">
+            <h2 className="font-display text-xl font-semibold text-ink-900">
               {event ? 'Edit Event' : 'New Event'}
             </h2>
             <button onClick={onClose}
-              className="clay-button w-10 h-10 flex items-center justify-center rounded-2xl bg-clr-surface-white dark:bg-clr-surface-container-high clr-text-secondary hover:scale-110 transition-transform">
+              className="clay-button w-10 h-10 flex items-center justify-center rounded-2xl bg-clay-surface text-ink-500 hover:scale-110 transition-transform">
               <span className="material-symbols-outlined text-lg" style={{ fontVariationSettings: "'FILL' 0" }}>close</span>
             </button>
           </div>
@@ -101,13 +104,11 @@ export function EventForm({ event, onSave, onClose }: EventFormProps) {
 
             <div className="flex gap-3">
               <div className="flex-1">
-                <label className="font-[Plus Jakarta Sans] text-[12px] font-semibold uppercase tracking-[0.04em] clr-text-secondary block mb-2">Priority</label>
-                <select value={priority} onChange={(e) => setPriority(e.target.value)}
-                  className="clay-card-inset p-3 rounded-2xl w-full bg-clr-surface-white dark:bg-clr-surface-container-high font-[Plus Jakarta Sans] text-sm clr-text-primary">
-                  <option value="low">Low</option>
-                  <option value="medium">Medium</option>
-                  <option value="high">High</option>
-                </select>
+                <Select label="Priority" value={priority} onChange={(e) => setPriority(e.target.value)} options={[
+                  { value: 'low', label: 'Low' },
+                  { value: 'medium', label: 'Medium' },
+                  { value: 'high', label: 'High' },
+                ]} />
               </div>
               <div className="flex-1">
                 <ClayInput label="Category" value={category} onChange={(e) => setCategory(e.target.value)} placeholder="e.g. work" />
@@ -115,53 +116,44 @@ export function EventForm({ event, onSave, onClose }: EventFormProps) {
             </div>
 
             <div>
-              <label className="flex items-center gap-3 font-[Plus Jakarta Sans] text-sm font-semibold clr-text-primary cursor-pointer">
+              <label className="flex items-center gap-3 font-body text-sm font-semibold text-ink-900 cursor-pointer">
                 <input type="checkbox" checked={hasRepeat} onChange={(e) => setHasRepeat(e.target.checked)}
-                  className="w-4 h-4 rounded clr-primary accent-clr-primary" />
+                  className="w-4 h-4 rounded accent-[var(--color-blue-500)]" />
                 Repeat
               </label>
               {hasRepeat && (
-                <select value={repeatFreq} onChange={(e) => setRepeatFreq(e.target.value as typeof repeatFreq)}
-                  className="mt-2 clay-card-inset p-3 rounded-2xl w-full bg-clr-surface-white dark:bg-clr-surface-container-high font-[Plus Jakarta Sans] text-sm clr-text-primary">
-                  <option value="daily">Daily</option>
-                  <option value="weekly">Weekly</option>
-                  <option value="monthly">Monthly</option>
-                </select>
+                <Select value={repeatFreq} onChange={(e) => setRepeatFreq(e.target.value as typeof repeatFreq)} className="mt-2" options={[
+                  { value: 'daily', label: 'Daily' },
+                  { value: 'weekly', label: 'Weekly' },
+                  { value: 'monthly', label: 'Monthly' },
+                ]} />
               )}
             </div>
 
             <div>
-              <label className="font-[Plus Jakarta Sans] text-[12px] font-semibold uppercase tracking-[0.04em] clr-text-secondary block mb-2">Reminder</label>
-              <select value={reminderOffset} onChange={(e) => setReminderOffset(e.target.value)}
-                className="clay-card-inset p-3 rounded-2xl w-full bg-clr-surface-white dark:bg-clr-surface-container-high font-[Plus Jakarta Sans] text-sm clr-text-primary">
-                {REMINDER_OPTIONS.map(opt => (
-                  <option key={opt.value} value={opt.value}>{opt.label}</option>
-                ))}
-              </select>
+              <Select label="Reminder" value={reminderOffset} onChange={(e) => setReminderOffset(e.target.value)} options={REMINDER_OPTIONS} />
             </div>
 
             <div>
-              <label className="font-[Plus Jakarta Sans] text-[12px] font-semibold uppercase tracking-[0.04em] clr-text-secondary block mb-2">Notes</label>
+              <label className="font-body text-[12px] font-semibold uppercase tracking-[0.04em] text-ink-500 block mb-2">Notes</label>
               <textarea value={notes} onChange={(e) => setNotes(e.target.value)}
-                className="clay-card-inset p-3 rounded-2xl w-full font-[Plus Jakarta Sans] text-sm clr-text-primary min-h-[70px] resize-none bg-clr-surface-white dark:bg-clr-surface-container-high"
+                className="clay-card-inset p-3 rounded-2xl w-full font-body text-sm text-ink-900 min-h-[70px] resize-none bg-clay-surface"
                 placeholder="Optional notes..." />
             </div>
 
             <div className="flex justify-end gap-3 pt-2">
-              <button type="button" onClick={onClose}
-                className="clay-chip px-6 py-3 rounded-2xl bg-clr-surface-white dark:bg-clr-surface-container-high clr-text-secondary font-[Plus Jakarta Sans] text-sm font-semibold hover:scale-105 transition-transform">
+              <Button type="button" variant="ghost" onClick={onClose}>
                 Cancel
-              </button>
-              <button type="submit"
-                className="clay-button px-6 py-3 rounded-2xl bg-clr-primary clr-on-primary font-[Plus Jakarta Sans] text-sm font-semibold flex items-center gap-2 hover:scale-105 transition-transform shadow-lg">
+              </Button>
+              <Button type="submit" variant="primary">
                 <span className="material-symbols-outlined text-base" style={{ fontVariationSettings: "'FILL' 1" }}>
                   {event ? 'save' : 'add'}
                 </span>
                 {event ? 'Save Changes' : 'Create Event'}
-              </button>
+              </Button>
             </div>
           </form>
-        </div>
+        </Card>
       </div>
     </>
   );

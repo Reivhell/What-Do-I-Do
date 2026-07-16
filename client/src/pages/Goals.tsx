@@ -50,30 +50,30 @@ function GoalCard({
   const { data: linkedItems = [] } = useLinkedItems(goal.id);
 
   return (
-    <Card level={goal.status === 'at_risk' ? 2 : 1} className={goal.status === 'at_risk' ? 'ring-2 ring-semantic-red/20' : ''}>
+    <Card level={1} className={goal.status === 'at_risk' ? 'ring-2 ring-semantic-red/20' : ''}>
       <div className="flex items-start justify-between gap-4">
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-2 mb-1">
             {goal.status === 'at_risk' && <AlertTriangle className="size-4 text-semantic-red shrink-0" />}
             <Badge variant={STATUS_COLORS[goal.status] || 'default'}>{goal.status}</Badge>
             {goal.targetDate && (
-              <span className="flex items-center gap-1 font-body text-[12px] text-ink-400">
+              <span className="flex items-center gap-1 font-body text-[12px] text-[var(--ink-400)]">
                 <Calendar className="size-3" />
                 {goal.targetDate}
               </span>
             )}
           </div>
-          <h3 className="font-display text-lg font-semibold text-ink-900">{goal.title}</h3>
+          <h3 className="font-display text-lg font-semibold text-[var(--ink-900)]">{goal.title}</h3>
           {goal.description && (
-            <p className="font-body text-[14px] text-ink-500 mt-1">{goal.description}</p>
+            <p className="font-body text-[14px] text-[var(--ink-500)] mt-1">{goal.description}</p>
           )}
         </div>
         <div className="flex shrink-0 items-center gap-1">
-          <button onClick={() => onEdit(goal)} className="tap-target flex size-8 items-center justify-center rounded-[--radius-sm] text-ink-400 hover:bg-blue-50 hover:text-blue-600 clay-l1 hover:clay-l2" title="Edit">
+          <button onClick={() => onEdit(goal)} className="tap-target flex size-8 items-center justify-center rounded-[--radius-sm] text-[var(--ink-400)] hover:bg-blue-50 hover:text-blue-600 clay-l1 hover:clay-l2" title="Edit">
             <Pencil className="size-4" />
           </button>
           {goal.status !== 'archived' && (
-            <button onClick={() => onArchive(goal.id)} className="tap-target flex size-8 items-center justify-center rounded-[--radius-sm] text-ink-400 hover:bg-amber-50 hover:text-amber-600 clay-l1 hover:clay-l2" title="Archive">
+            <button onClick={() => onArchive(goal.id)} className="tap-target flex size-8 items-center justify-center rounded-[--radius-sm] text-[var(--ink-400)] hover:bg-amber-50 hover:text-amber-600 clay-l1 hover:clay-l2" title="Archive">
               <ChevronDown className="size-4" />
             </button>
           )}
@@ -83,8 +83,8 @@ function GoalCard({
       {/* Progress */}
       <div className="mt-4">
         <div className="flex items-center justify-between mb-1">
-          <span className="font-body text-[13px] font-semibold text-ink-500">Progress</span>
-          <span className="font-body text-[13px] font-semibold text-ink-700">{goal.progressPercent}%</span>
+          <span className="font-body text-[13px] font-semibold text-[var(--ink-500)]">Progress</span>
+          <span className="font-body text-[13px] font-semibold text-[var(--ink-700)]">{goal.progressPercent}%</span>
         </div>
         <ProgressBar value={goal.progressPercent} />
       </div>
@@ -93,7 +93,7 @@ function GoalCard({
       <div className="mt-4">
         <button
           onClick={() => setExpanded(!expanded)}
-          className="flex items-center gap-1 font-body text-[13px] font-semibold text-ink-500 hover:text-ink-900"
+          className="flex items-center gap-1 font-body text-[13px] font-semibold text-[var(--ink-500)] hover:text-[var(--ink-900)]"
         >
           {expanded ? <ChevronUp className="size-4" /> : <ChevronDown className="size-4" />}
           Milestones ({goal.milestones.filter((m) => m.isCompleted).length}/{goal.milestones.length})
@@ -102,22 +102,26 @@ function GoalCard({
         {expanded && (
           <div className="mt-2 space-y-1.5">
             {goal.milestones.length === 0 && (
-              <p className="font-body text-[13px] text-ink-400 italic py-2">No milestones yet. Add one below.</p>
+              <p className="font-body text-[13px] text-[var(--ink-400)] italic py-2">No milestones yet. Add one below.</p>
             )}
             {goal.milestones.map((m) => (
-              <div key={m.id} className="group flex items-center gap-3 rounded-[--radius-md] bg-clay-surface-alt px-3 py-2 clay-inset">
+              <Card
+                level={2}
+                key={m.id}
+                className="group flex items-center gap-3 rounded-[--radius-md] bg-clay-surface-alt px-3 py-2 clay-inset"
+              >
                 <button onClick={() => onToggleMilestone(goal.id, m.id, !m.isCompleted)} className="shrink-0">
                   {m.isCompleted ? (
                     <CheckCircle2 className="size-5 text-semantic-green" />
                   ) : (
-                    <Circle className="size-5 text-ink-300 hover:text-blue-500" />
+                    <Circle className="size-5 text-[var(--ink-300)] hover:text-blue-500" />
                   )}
                 </button>
-                <span className={`flex-1 font-body text-[14px] ${m.isCompleted ? 'text-ink-400 line-through' : 'text-ink-900'}`}>
+                <span className={`flex-1 font-body text-[14px] ${m.isCompleted ? 'text-[var(--ink-400)] line-through' : 'text-[var(--ink-900)]'}`}>
                   {m.title}
                 </span>
                 {m.targetDate && (
-                  <span className="font-body text-[11px] text-ink-400">{m.targetDate}</span>
+                  <span className="font-body text-[11px] text-[var(--ink-400)]">{m.targetDate}</span>
                 )}
                 {m.generatedEventId ? (
                   <span className="shrink-0 text-blue-400" title="Scheduled to planner">
@@ -126,7 +130,7 @@ function GoalCard({
                 ) : (
                   <button
                     onClick={() => onScheduleMilestone(goal.id, m.id)}
-                    className="shrink-0 opacity-0 group-hover:opacity-100 clay-transition text-ink-400 hover:text-blue-500"
+                    className="shrink-0 opacity-0 group-hover:opacity-100 clay-transition text-[var(--ink-400)] hover:text-blue-500"
                     title="Schedule to planner"
                   >
                     <Calendar className="size-3.5" />
@@ -134,11 +138,11 @@ function GoalCard({
                 )}
                 <button
                   onClick={() => onDeleteMilestone(goal.id, m.id)}
-                  className="shrink-0 opacity-0 group-hover:opacity-100 clay-transition text-ink-400 hover:text-red-500"
+                  className="shrink-0 opacity-0 group-hover:opacity-100 clay-transition text-[var(--ink-400)] hover:text-red-500"
                 >
                   <Trash2 className="size-3.5" />
                 </button>
-              </div>
+              </Card>
             ))}
             <div className="flex items-center gap-2">
               <button
@@ -151,7 +155,7 @@ function GoalCard({
               {linkedItems.length > 0 && (
                 <button
                   onClick={() => setShowLinked(!showLinked)}
-                  className="flex items-center gap-1.5 rounded-[--radius-sm] px-3 py-1.5 font-body text-[13px] text-ink-500 hover:text-blue-600 hover:bg-blue-50 clay-l1 hover:clay-l2 clay-transition"
+                  className="flex items-center gap-1.5 rounded-[--radius-sm] px-3 py-1.5 font-body text-[13px] text-[var(--ink-500)] hover:text-blue-600 hover:bg-blue-50 clay-l1 hover:clay-l2 clay-transition"
                 >
                   <Link className="size-3.5" />
                   {linkedItems.length} linked
@@ -163,8 +167,8 @@ function GoalCard({
               <div className="mt-2 flex flex-col gap-1">
                 {linkedItems.map((item) => (
                   <div key={`${item.type}-${item.id}`} className="flex items-center gap-2 rounded-[--radius-sm] bg-clay-surface-alt px-3 py-1.5 clay-inset">
-                    <span className="font-body text-[11px] font-semibold uppercase tracking-wider text-ink-400 w-8">{item.type}</span>
-                    <span className="font-body text-[13px] text-ink-700">{item.title}</span>
+                    <span className="font-body text-[11px] font-semibold uppercase tracking-wider text-[var(--ink-400)] w-8">{item.type}</span>
+                    <span className="font-body text-[13px] text-[var(--ink-700)]">{item.title}</span>
                   </div>
                 ))}
               </div>
@@ -227,7 +231,7 @@ function GoalFormModal({
           className="w-full rounded-[--radius-md] bg-clay-surface-alt px-4 py-3 font-body text-[15px] clay-inset focus:outline-none focus:ring-4 focus:ring-blue-50 resize-none"
         />
         <div>
-          <label className="font-body text-[12px] font-semibold uppercase tracking-[0.04em] text-ink-500 mb-1 block">Target date</label>
+          <label className="font-body text-[12px] font-semibold uppercase tracking-[0.04em] text-[var(--ink-500)] mb-1 block">Target date</label>
           <input
             type="date"
             value={targetDate}
@@ -279,7 +283,7 @@ function MilestoneFormModal({
           autoFocus
         />
         <div>
-          <label className="font-body text-[12px] font-semibold uppercase tracking-[0.04em] text-ink-500 mb-1 block">Target date</label>
+          <label className="font-body text-[12px] font-semibold uppercase tracking-[0.04em] text-[var(--ink-500)] mb-1 block">Target date</label>
           <input
             type="date"
             value={targetDate}
@@ -327,7 +331,7 @@ function ScheduleMilestoneModal({
     <Modal open onClose={onClose} title="Schedule in Planner">
       <form onSubmit={handleSubmit} className="flex flex-col gap-4">
         <div>
-          <label className="font-body text-[12px] font-semibold uppercase tracking-[0.04em] text-ink-500 mb-1 block">Date</label>
+          <label className="font-body text-[12px] font-semibold uppercase tracking-[0.04em] text-[var(--ink-500)] mb-1 block">Date</label>
           <input
             type="date"
             value={date}
@@ -337,7 +341,7 @@ function ScheduleMilestoneModal({
         </div>
         <div className="grid grid-cols-2 gap-3">
           <div>
-            <label className="font-body text-[12px] font-semibold uppercase tracking-[0.04em] text-ink-500 mb-1 block">Start</label>
+            <label className="font-body text-[12px] font-semibold uppercase tracking-[0.04em] text-[var(--ink-500)] mb-1 block">Start</label>
             <input
               type="time"
               value={startTime}
@@ -346,7 +350,7 @@ function ScheduleMilestoneModal({
             />
           </div>
           <div>
-            <label className="font-body text-[12px] font-semibold uppercase tracking-[0.04em] text-ink-500 mb-1 block">End</label>
+            <label className="font-body text-[12px] font-semibold uppercase tracking-[0.04em] text-[var(--ink-500)] mb-1 block">End</label>
             <input
               type="time"
               value={endTime}
@@ -390,8 +394,8 @@ export function GoalsPage() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="font-display text-2xl font-bold text-ink-900">Goals</h1>
-          <p className="font-body text-[15px] text-ink-500 mt-1">
+          <h1 className="font-display text-2xl font-bold text-[var(--ink-900)]">Goals</h1>
+          <p className="font-body text-[15px] text-[var(--ink-500)] mt-1">
             Long-term targets and the milestones that get you there.
           </p>
         </div>
@@ -399,7 +403,7 @@ export function GoalsPage() {
           <button
             onClick={() => setShowArchived(!showArchived)}
             className={`inline-flex items-center gap-1.5 rounded-[--radius-md] px-3 py-2 font-body text-[13px] font-semibold clay-l1 hover:clay-l2 clay-transition ${
-              showArchived ? 'bg-blue-50 text-blue-700' : 'bg-clay-surface text-ink-500'
+              showArchived ? 'bg-blue-50 text-blue-700' : 'bg-clay-surface text-[var(--ink-500)]'
             }`}
           >
             {showArchived ? 'Showing all' : 'Show archived'}
@@ -413,7 +417,7 @@ export function GoalsPage() {
 
       {/* Loading */}
       {isLoading && (
-        <div className="flex justify-center py-16 text-ink-300">
+        <div className="flex justify-center py-16 text-[var(--ink-300)]">
           <Loader2 className="size-8 animate-spin" />
         </div>
       )}

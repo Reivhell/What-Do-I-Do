@@ -7,12 +7,12 @@ interface AchievementCardProps {
 }
 
 const categoryColors: Record<string, string> = {
-  activity: 'info',
-  habits: 'success',
-  goals: 'warning',
+  activity: 'default',
+  habits: 'default',
+  goals: 'default',
   planner: 'default',
-  money: 'danger',
-  loyalty: 'outline',
+  money: 'default',
+  loyalty: 'default',
 };
 
 export function AchievementCard({ achievement }: AchievementCardProps) {
@@ -25,7 +25,7 @@ export function AchievementCard({ achievement }: AchievementCardProps) {
       level={1}
       className={`
         relative flex flex-col items-center gap-3 p-5 text-center transition-all duration-300
-        ${isUnlocked ? 'shadow-[0_0_20px_rgba(34,197,94,0.15)]' : ''}
+        ${isUnlocked ? 'clay-l2' : 'clay-l1'}
         ${!isUnlocked && !hasProgress ? 'opacity-60' : ''}
       `}
     >
@@ -35,12 +35,12 @@ export function AchievementCard({ achievement }: AchievementCardProps) {
       </div>
 
       {/* Title */}
-      <h4 className={`font-display text-sm font-semibold ${isUnlocked ? 'text-ink-900' : 'text-ink-500'}`}>
+      <h4 className={`font-display text-sm font-semibold ${isUnlocked ? 'text-[var(--ink-900)]' : 'text-[var(--ink-500)]'}`}>
         {isUnlocked ? achievement.title : hasProgress ? achievement.title : '???'}
       </h4>
 
       {/* Description */}
-      <p className="font-body text-xs text-ink-400 leading-relaxed">
+      <p className="font-body text-xs text-[var(--ink-400)] leading-relaxed">
         {isUnlocked || hasProgress ? achievement.description : 'Keep going to discover this achievement'}
       </p>
 
@@ -50,16 +50,16 @@ export function AchievementCard({ achievement }: AchievementCardProps) {
       ) : hasProgress ? (
         <div className="flex flex-col items-center gap-1">
           <ProgressRing value={pct} size={48} strokeWidth={4} />
-          <span className="font-mono text-[11px] text-ink-400">
+          <span className="font-mono text-[11px] text-[var(--ink-400)]">
             {achievement.progress}/{achievement.requirementValue}
           </span>
         </div>
       ) : (
         <div className="flex flex-col items-center gap-1">
-          <div className="size-12 rounded-full bg-ink-100 dark:bg-zinc-800 flex items-center justify-center">
-            <span className="text-lg text-ink-300">?</span>
+          <div className="size-12 rounded-full bg-[var(--clay-surface-alt)] dark:bg-[var(--clay-surface-alt)] flex items-center justify-center">
+            <span className="text-lg text-[var(--ink-300)]">?</span>
           </div>
-          <span className="font-mono text-[11px] text-ink-400">???/{achievement.requirementValue}</span>
+          <span className="font-mono text-[11px] text-[var(--ink-400)]">???/{achievement.requirementValue}</span>
         </div>
       )}
 

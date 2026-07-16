@@ -19,6 +19,10 @@ export interface UserPreferences {
   dateFormat: string;
   timeFormat: string;
   categoryTimeMapping: Record<string, string>;
+  // Money-specific preferences
+  budgetAlertEnabled: boolean;
+  defaultBudgetPeriod: 'daily' | 'weekly' | 'monthly' | 'yearly';
+  transactionCategories: Record<string, string>; // category name -> color
   createdAt: string;
   updatedAt: string;
 }
@@ -59,6 +63,10 @@ export interface UpdatePreferencesInput {
   dateFormat?: string;
   timeFormat?: string;
   categoryTimeMapping?: Record<string, string>;
+  // Money-specific preferences
+  budgetAlertEnabled?: boolean;
+  defaultBudgetPeriod?: 'daily' | 'weekly' | 'monthly' | 'yearly';
+  transactionCategories?: Record<string, string>;
 }
 
 export interface UpdateNotificationsInput {
@@ -88,4 +96,24 @@ export interface ImportResult {
     imported: number;
     skipped: number;
   };
+}
+
+// ── PIN / App Lock ──
+export interface PinSettings {
+  enabled: boolean;
+  autoLockMinutes: number;
+}
+
+export interface SetPinInput {
+  pin: string;
+  confirmPin: string;
+}
+
+export interface VerifyPinInput {
+  pin: string;
+}
+
+export interface UpdatePinSettingsInput {
+  enabled?: boolean;
+  autoLockMinutes?: number;
 }

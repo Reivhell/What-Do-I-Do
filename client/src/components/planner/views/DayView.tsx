@@ -22,9 +22,9 @@ function HourSlot({ hour, children, isNow, isPast }: { hour: number; children: R
     <div
       ref={setNodeRef}
       className={`flex items-start gap-3 p-3 rounded-2xl transition-colors ${
-        isNow ? 'bg-clr-primary-20 ring-1 ring-clr-primary/20' :
-        isOver ? 'bg-clr-primary-10 ring-2 ring-clr-primary/30' :
-        isPast ? '' : 'hover:bg-clr-surface-container-high'
+        isNow ? 'bg-[var(--color-blue-500)]/10 ring-1 ring-[var(--color-blue-500)]/20' :
+        isOver ? 'bg-[var(--color-blue-500)]/10 ring-2 ring-[var(--color-blue-500)]/30' :
+        isPast ? '' : 'hover:bg-clay-surface'
       }`}
     >
       {children}
@@ -94,9 +94,9 @@ export function DayView({ events, date, onEdit, onDelete, onStart, onEventsChang
             <HourSlot key={hour} hour={hour} isNow={isNow} isPast={isPast}>
               <div className="flex items-start gap-2 w-16 shrink-0 pt-1 relative">
                 {isNow && (
-                  <div className="absolute -left-2 top-1.5 w-2 h-2 rounded-full bg-clr-danger" style={{ zIndex: 1 }} />
+                  <div className="absolute -left-2 top-1.5 w-2 h-2 rounded-full bg-semantic-red" style={{ zIndex: 1 }} />
                 )}
-                <span className={`font-body text-xs font-medium ${isNow ? 'clr-danger font-bold' : 'clr-text-secondary'} w-12 text-right`}>
+                <span className={`font-body text-xs font-medium ${isNow ? 'text-semantic-red font-bold' : 'text-ink-500'} w-12 text-right`}>
                   {hour.toString().padStart(2, '0')}:00
                 </span>
               </div>
@@ -104,8 +104,8 @@ export function DayView({ events, date, onEdit, onDelete, onStart, onEventsChang
               <div className="flex-1 min-w-0">
                 {isNow && (
                   <div className="flex items-center gap-1 mb-1">
-                    <span className="text-[10px] font-bold clr-danger uppercase tracking-wider">Now</span>
-                    <div className="h-px flex-1 bg-clr-danger/40" />
+                    <span className="text-[10px] font-bold text-semantic-red uppercase tracking-wider">Now</span>
+                    <div className="h-px flex-1 bg-semantic-red/40" />
                   </div>
                 )}
                 {hourEvents.length > 0 ? (
@@ -121,7 +121,7 @@ export function DayView({ events, date, onEdit, onDelete, onStart, onEventsChang
                     ))}
                   </div>
                 ) : !isNow ? (
-                  <span className="font-body text-[11px] clr-text-muted">No events</span>
+                  <span className="font-body text-[11px] text-ink-300">No events</span>
                 ) : null}
               </div>
             </HourSlot>

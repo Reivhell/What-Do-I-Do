@@ -3,234 +3,7 @@
 /* ── Tailwind v4: dark mode via .dark class (matches ThemeProvider) ── */
 @custom-variant dark (&:where(.dark, .dark *));
 
-/* ── Dashboard Theme (Dasboard.html 1:1) ─────────────────────────── */
-
-:root {
-  --surface-container-high: #dce9ff;
-  --surface-dim: #cbdbf5;
-  --surface-bright: #f8f9ff;
-  --surface-container-lowest: #ffffff;
-  --surface-container-low: #eff4ff;
-  --surface-container: #e5eeff;
-  --surface-container-highest: #d3e4fe;
-  --on-surface: #0b1c30;
-  --on-surface-variant: #424754;
-  --inverse-surface: #213145;
-  --inverse-on-surface: #eaf1ff;
-  --outline: #727785;
-  --outline-variant: #c2c6d6;
-  --surface-tint: #F7FAFF;
-  --primary: #0058be;
-  --on-primary: #ffffff;
-  --primary-container: #2170e4;
-  --on-primary-container: #fefcff;
-  --inverse-primary: #adc6ff;
-  --secondary: #6b38d4;
-  --on-secondary: #ffffff;
-  --secondary-container: #8455ef;
-  --on-secondary-container: #fffbff;
-  --tertiary: #825100;
-  --on-tertiary: #ffffff;
-  --tertiary-container: #a36700;
-  --on-tertiary-container: #fffbff;
-  --error: #ba1a1a;
-  --on-error: #ffffff;
-  --error-container: #ffdad6;
-  --on-error-container: #93000a;
-  --primary-fixed: #d8e2ff;
-  --primary-fixed-dim: #adc6ff;
-  --on-primary-fixed: #001a42;
-  --on-primary-fixed-variant: #004395;
-  --secondary-fixed: #e9ddff;
-  --secondary-fixed-dim: #d0bcff;
-  --on-secondary-fixed: #23005c;
-  --on-secondary-fixed-variant: #5516be;
-  --tertiary-fixed: #ffddb8;
-  --tertiary-fixed-dim: #ffb95f;
-  --on-tertiary-fixed: #2a1700;
-  --on-tertiary-fixed-variant: #653e00;
-  --background: #f8f9ff;
-  --on-background: #0b1c30;
-  --surface-variant: #d3e4fe;
-  --background-main: #EEF3FA;
-  --surface-white: #FFFFFF;
-  --surface: #f8f9ff;
-  --success: #22C55E;
-  --danger: #EF4444;
-  --danger-light: #F87171;
-  --text-primary: #1E293B;
-  --text-secondary: #64748B;
-  --divider-soft: rgba(0, 0, 0, 0.04);
-  --track-neutral: #E2E8F0;
-}
-
-.dark {
-  --surface-container-high: #3f3f46;
-  --surface-dim: #18181b;
-  --surface-bright: #27272a;
-  --surface-container-lowest: #1a1a1e;
-  --surface-container-low: #1f1f23;
-  --surface-container: #27272a;
-  --surface-container-highest: #52525b;
-  --on-surface: #ffffff;
-  --on-surface-variant: #a1a1aa;
-  --inverse-surface: #e4e4e7;
-  --inverse-on-surface: #18181b;
-  --outline: #727785;
-  --outline-variant: #3f3f46;
-  --surface-tint: #27272a;
-  --primary: #3b82f6;
-  --on-primary: #ffffff;
-  --primary-container: #2563eb;
-  --on-primary-container: #ffffff;
-  --inverse-primary: #3b82f6;
-  --secondary: #a855f7;
-  --on-secondary: #ffffff;
-  --secondary-container: #8455ef;
-  --on-secondary-container: #ffffff;
-  --tertiary: #fbbf24;
-  --on-tertiary: #ffffff;
-  --tertiary-container: #a36700;
-  --on-tertiary-container: #ffffff;
-  --error: #f87171;
-  --on-error: #ffffff;
-  --error-container: #991b1b;
-  --on-error-container: #ffdad6;
-  --primary-fixed: #d8e2ff;
-  --primary-fixed-dim: #adc6ff;
-  --on-primary-fixed: #001a42;
-  --on-primary-fixed-variant: #004395;
-  --secondary-fixed: #e9ddff;
-  --secondary-fixed-dim: #d0bcff;
-  --on-secondary-fixed: #23005c;
-  --on-secondary-fixed-variant: #5516be;
-  --tertiary-fixed: #ffddb8;
-  --tertiary-fixed-dim: #ffb95f;
-  --on-tertiary-fixed: #2a1700;
-  --on-tertiary-fixed-variant: #653e00;
-  --background: #18181b;
-  --on-background: #ffffff;
-  --surface-variant: #3f3f46;
-  --background-main: #18181b;
-  --surface-white: #27272a;
-  --surface: #18181b;
-  --success: #22C55E;
-  --danger: #ef4444;
-  --danger-light: #F87171;
-  --text-primary: #ffffff;
-  --text-secondary: #a1a1aa;
-  --divider-soft: rgba(255, 255, 255, 0.06);
-  --track-neutral: #3f3f46;
-}
-
-body {
-  font-family: 'Plus Jakarta Sans', sans-serif;
-  background-color: var(--background-main);
-  color: var(--text-primary);
-  transition: background-color 0.3s ease, color 0.3s ease;
-}
-
-.clay-card {
-  background: linear-gradient(145deg, var(--surface-white), var(--surface-tint));
-  box-shadow: 8px 8px 20px rgba(0, 0, 0, 0.05), -6px -6px 16px rgba(255, 255, 255, 0.8);
-  border-radius: 24px;
-}
-
-.dark .clay-card {
-  background: linear-gradient(145deg, #2d2d30, #27272a);
-  box-shadow: 10px 10px 24px rgba(0, 0, 0, 0.4), inset 1px 1px 1px rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(255, 255, 255, 0.05);
-}
-
-.clay-card-inset {
-  background: var(--surface-container-low);
-  box-shadow: inset 4px 4px 8px rgba(0, 0, 0, 0.05), inset -4px -4px 8px rgba(255, 255, 255, 0.5);
-}
-
-.dark .clay-card-inset {
-  background: #1f1f23;
-  box-shadow: inset 4px 4px 8px rgba(0, 0, 0, 0.3), inset -1px -1px 2px rgba(255, 255, 255, 0.05);
-}
-
-.clay-button {
-  box-shadow: 4px 4px 10px rgba(0, 0, 0, 0.1), -3px -3px 8px rgba(255, 255, 255, 0.9);
-  transition: all 0.2s ease-in-out;
-}
-
-.dark .clay-button {
-  box-shadow: 4px 4px 10px rgba(0, 0, 0, 0.3), -1px -1px 2px rgba(255, 255, 255, 0.05);
-}
-
-.clay-button:active {
-  box-shadow: inset 2px 2px 5px rgba(0, 0, 0, 0.1);
-  transform: scale(0.96);
-}
-
-.material-symbols-outlined {
-  font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
-  vertical-align: middle;
-}
-
-/* ── Critical layout classes (bypass Tailwind dark: variant) ── */
-.dashboard-sidebar {
-  background-color: #ffffff;
-  border-right-color: rgba(0,0,0,0.05);
-}
-.dark .dashboard-sidebar {
-  background-color: var(--surface-dim);
-  border-right-color: rgba(255,255,255,0.05);
-}
-
-.dashboard-main {
-  background-color: var(--background);
-  color: var(--on-surface);
-}
-
-.dashboard-header-btn {
-  background-color: #ffffff;
-}
-.dark .dashboard-header-btn {
-  background-color: var(--surface-container-high);
-}
-
-/* ── Dynamic color utilities (bypass TW build-time var resolution) ── */
-.clr-text-primary { color: var(--text-primary); }
-.clr-text-secondary { color: var(--text-secondary); }
-.clr-primary { color: var(--primary); }
-.clr-success { color: var(--success); }
-.clr-danger { color: var(--danger); }
-.clr-secondary { color: var(--secondary); }
-.clr-on-primary { color: var(--on-primary); }
-.clr-on-surface-variant { color: var(--on-surface-variant); }
-
-.bg-clr-primary { background-color: var(--primary); }
-.bg-clr-surface-white { background-color: var(--surface-white); }
-.bg-clr-surface { background-color: var(--surface); }
-.bg-clr-surface-container { background-color: var(--surface-container); }
-.bg-clr-surface-container-high { background-color: var(--surface-container-high); }
-.bg-clr-surface-container-highest { background-color: var(--surface-container-highest); }
-.bg-clr-surface-container-low { background-color: var(--surface-container-low); }
-.bg-clr-surface-dim { background-color: var(--surface-dim); }
-.bg-clr-surface-variant { background-color: var(--surface-variant); }
-.bg-clr-background { background-color: var(--background); }
-.bg-clr-track-neutral { background-color: var(--track-neutral); }
-.bg-clr-danger { background-color: var(--danger); }
-.bg-clr-success { background-color: var(--success); }
-.bg-clr-surface-tint { background-color: var(--surface-tint); }
-.bg-clr-surface-white { background-color: var(--surface-white); }
-
-.brd-clr-divider-soft { border-color: var(--divider-soft); }
-.brd-clr-white-5 { border-color: rgba(255,255,255,0.05); }
-.bg-clr-primary-10 { background-color: color-mix(in srgb, var(--primary) 10%, transparent); }
-.bg-clr-primary-20 { background-color: color-mix(in srgb, var(--primary-container) 20%, transparent); }
-.bg-clr-success-10 { background-color: color-mix(in srgb, var(--success) 10%, transparent); }
-.bg-clr-danger-10 { background-color: color-mix(in srgb, var(--danger) 10%, transparent); }
-.bg-clr-secondary-10 { background-color: color-mix(in srgb, var(--secondary) 10%, transparent); }
-
-.dark .brd-clr-divider-soft { border-color: var(--divider-soft); }
-.dark .brd-clr-white-5 { border-color: rgba(255,255,255,0.05); }
-
-/* ── Existing Claymorphism Design System ──────────────────────────── */
+/* ── Claymorphism Design System (design.md) ─────────────────────── */
 
 @theme {
   /* ── Backgrounds & Surfaces ── */
@@ -266,103 +39,49 @@ body {
   --radius-lg: 28px;
   --radius-xl: 36px;
   --radius-pill: 999px;
-
-  /* ── Dasboard.html Tailwind Config Tokens ── */
-  --color-secondary-fixed-dim: #d0bcff;
-  --color-on-secondary-fixed-variant: #5516be;
-  --color-tertiary-fixed: #ffddb8;
-  --color-on-tertiary-fixed: #2a1700;
-  --color-on-primary-fixed: #001a42;
-  --color-primary-fixed-dim: #adc6ff;
-  --color-secondary-container: #8455ef;
-  --color-tertiary-fixed-dim: #ffb95f;
-  --color-tertiary-container: #a36700;
-  --color-on-secondary-fixed: #23005c;
-  --color-secondary-fixed: #e9ddff;
-  --color-primary-fixed: #d8e2ff;
-  --color-surface-container-high: var(--surface-container-high);
-  --color-surface-dim: var(--surface-dim);
-  --color-on-primary: var(--on-primary);
-  --color-danger: var(--danger);
-  --color-danger-light: #F87171;
-  --color-success: #22C55E;
-  --color-surface-container-highest: var(--surface-container-highest);
-  --color-outline-variant: var(--outline-variant);
-  --color-on-background: var(--on-background);
-  --color-surface-tint: var(--surface-tint);
-  --color-surface-container: var(--surface-container);
-  --color-surface-variant: var(--surface-variant);
-  --color-inverse-surface: var(--inverse-surface);
-  --color-on-surface: var(--on-surface);
-  --color-tertiary: var(--tertiary);
-  --color-inverse-on-surface: var(--inverse-on-surface);
-  --color-divider-soft: var(--divider-soft);
-  --color-on-tertiary-fixed-variant: #653e00;
-  --color-on-primary-fixed-variant: #004395;
-  --color-error: var(--error);
-  --color-on-primary-container: var(--on-primary-container);
-  --color-primary: #3b82f6;
-  --color-secondary: var(--secondary);
-  --color-text-primary: var(--text-primary);
-  --color-on-surface-variant: var(--on-surface-variant);
-  --color-track-neutral: var(--track-neutral);
-  --color-surface-bright: var(--surface-bright);
-  --color-on-secondary-container: var(--on-secondary-container);
-  --color-on-error-container: #93000a;
-  --color-text-secondary: var(--text-secondary);
-  --color-on-secondary: #ffffff;
-  --color-on-tertiary: #ffffff;
-  --color-surface-container-low: var(--surface-container-low);
-  --color-on-error: #ffffff;
-  --color-background: var(--background);
-  --color-surface-white: var(--surface-white);
-  --color-background-main: var(--background-main);
-  --color-surface: var(--surface);
-  --color-error-container: var(--error-container);
-  --color-on-tertiary-container: #fffbff;
-  --color-primary-container: var(--primary-container);
-  --color-inverse-primary: #3b82f6;
-
-  --font-plusJakartaSans: "Plus Jakarta Sans", sans-serif;
-  --font-headline-display: "Plus Jakarta Sans", sans-serif;
-  --font-headline-lg: "Plus Jakarta Sans", sans-serif;
-  --font-headline-md: "Plus Jakarta Sans", sans-serif;
-  --font-label-md: "Plus Jakarta Sans", sans-serif;
-  --font-label-sm: "Plus Jakarta Sans", sans-serif;
-  --font-body-md: "Plus Jakarta Sans", sans-serif;
-  --font-body-lg: "Plus Jakarta Sans", sans-serif;
-  --font-stat-md: "Plus Jakarta Sans", sans-serif;
-  --font-stat-lg: "Plus Jakarta Sans", sans-serif;
-  --font-mono-timer: "Plus Jakarta Sans", sans-serif;
-
-  --font-size-headline-md: 16px;
-  --font-size-label-md: 13px;
-  --font-size-headline-lg: 24px;
-  --font-size-headline-display: 28px;
-  --font-size-stat-md: 26px;
-  --font-size-body-md: 14px;
-  --font-size-label-sm: 12px;
-  --font-size-stat-lg: 32px;
-  --font-size-mono-timer: 24px;
-  --font-size-body-lg: 16px;
-
-  --spacing-element-gap-md: 16px;
-  --spacing-sidebar-width: 230px;
-  --spacing-grid-gutter: 20px;
-  --spacing-section-gap: 24px;
-  --spacing-card-padding: 24px;
-  --spacing-element-gap-sm: 8px;
-
   --radius-default: 0.25rem;
 }
 
-/* ── Shadow color tokens (swap in dark mode) ── */
+/* ── Canonical clay tokens (plain vars for var(--x) references) ── */
 :root {
+  --clay-bg: #F4F7FB;
+  --clay-surface: #FFFFFF;
+  --clay-surface-alt: #FAFCFE;
+
+  --blue-50: #EAF3FE;
+  --blue-100: #D3E7FD;
+  --blue-200: #BBD9F9;
+  --blue-300: #8FC1F7;
+  --blue-400: #6FA8EC;
+  --blue-500: #4A90E2;
+  --blue-600: #3A7BC8;
+  --blue-700: #2C6CB8;
+  --blue-900: #1E3A5F;
+
+  --ink-300: #9AA8B8;
+  --ink-400: #7C8B9B;
+  --ink-500: #5B6B7D;
+  --ink-600: #415064;
+  --ink-700: #2F3D51;
+  --ink-900: #1E2A3A;
+
+  --semantic-green: #5FB88A;
+  --semantic-red: #E28080;
+  --semantic-amber: #E3B15C;
+
+  --clay-border: var(--ink-300);
+
+  /* ── Shadow color tokens (swap in dark mode) ── */
   --clay-shadow-dark: rgba(163, 177, 199, 0.45);
   --clay-shadow-light: rgba(255, 255, 255, 0.9);
 }
 
 .dark {
+  --clay-bg: #1B222C;
+  --clay-surface: #232B37;
+  --clay-surface-alt: #1E2631;
+  --blue-500: #5B9EE8;
+
   --clay-shadow-dark: rgba(0, 0, 0, 0.55);
   --clay-shadow-light: rgba(255, 255, 255, 0.05);
 }
@@ -411,12 +130,57 @@ body {
     inset -3px -3px 6px rgba(255, 255, 255, 0.03);
 }
 
+/* ── Clay surface/button helpers (re-added: referenced by pages/components) ── */
+.clay-card {
+  background-color: var(--clay-surface);
+  border-radius: var(--radius-lg, 28px);
+  box-shadow:
+    6px 6px 12px var(--clay-shadow-dark),
+    -6px -6px 12px var(--clay-shadow-light);
+}
+
+.clay-card-inset {
+  background-color: var(--clay-surface-alt);
+  box-shadow:
+    inset 3px 3px 6px rgba(163, 177, 199, 0.35),
+    inset -3px -3px 6px rgba(255, 255, 255, 0.8);
+}
+
+.clay-button {
+  background-color: var(--clay-surface);
+  border-radius: var(--radius-lg, 28px);
+  box-shadow:
+    6px 6px 12px var(--clay-shadow-dark),
+    -6px -6px 12px var(--clay-shadow-light);
+  transition: box-shadow 180ms cubic-bezier(0.34, 1.56, 0.64, 1), transform 180ms cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.dark .clay-card-inset {
+  box-shadow:
+    inset 3px 3px 6px rgba(0, 0, 0, 0.40),
+    inset -3px -3px 6px rgba(255, 255, 255, 0.03);
+}
+
 /* ── Dark mode surface overrides ── */
 .dark {
   --color-clay-bg: #1B222C;
   --color-clay-surface: #232B37;
   --color-clay-surface-alt: #1E2631;
   --color-blue-500: #5B9EE8;
+}
+
+/* ── ProgressRing (clay tokens via CSS, SVG attrs can't resolve var()) ── */
+.progress-ring-track {
+  stroke: var(--blue-100);
+}
+.progress-ring-fill {
+  stroke: url(#progress-grad);
+}
+#progress-grad stop:first-child {
+  stop-color: var(--blue-300);
+}
+#progress-grad stop:last-child {
+  stop-color: var(--blue-500);
 }
 
 /* ── Focus ring (accessible — not shadow-dependent) ── */
