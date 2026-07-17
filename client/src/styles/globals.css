@@ -44,7 +44,6 @@
 
 /* ── Canonical clay tokens (plain vars for var(--x) references) ── */
 :root {
-<<<<<<< HEAD
   --clay-bg: #F4F7FB;
   --clay-surface: #FFFFFF;
   --clay-surface-alt: #FAFCFE;
@@ -74,9 +73,6 @@
 
   /* ── Shadow color tokens (swap in dark mode) ── */
   --clay-shadow-dark: rgba(163, 177, 199, 0.45);
-=======
-  --clay-shadow-dark: rgba(209, 217, 230, 0.5);
->>>>>>> worktree-wf_76154838-1ed-5
   --clay-shadow-light: rgba(255, 255, 255, 0.9);
 }
 

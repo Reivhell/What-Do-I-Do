@@ -14,6 +14,6 @@
     "experimentalDecorators": true,
     "types": ["jest", "node"]
   },
-  "include": ["src", "test"],
-  "exclude": ["node_modules", "dist", "src/modules/habits/**"]
+  "include": ["src"],
+  "exclude": ["node_modules", "dist"]
 }

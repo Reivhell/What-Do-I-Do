@@ -77,7 +77,7 @@ export function TaskList({ view = 'inbox', onTaskClick, onViewChange }: TaskList
   };
 
   const handleBulkComplete = () => {
-    bulkUpdate.mutate({ ids: Array.from(selectedIds), status: 'completed' });
+    bulkUpdate.mutate({ taskIds: Array.from(selectedIds), status: 'completed' });
     setSelectedIds(new Set());
   };
 

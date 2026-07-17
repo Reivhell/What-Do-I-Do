@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 export type CategoryDomain = 'activity' | 'task' | 'money';
 
 export interface UserProfile {
@@ -118,7 +117,8 @@ export interface UpdatePinSettingsInput {
   enabled?: boolean;
   autoLockMinutes?: number;
 }
-=======
+
+// ── Client-side settings (from settings/notification page refactor) ──
 export type ThemeMode = 'light' | 'dark' | 'system';
 
 export interface UserSettings {
@@ -126,12 +126,12 @@ export interface UserSettings {
   language: string;
   timezone: string;
   weekStartsOn: 0 | 1 | 6;
-  notifications: NotificationSettings;
+  notifications: UserNotificationSettings;
   privacy: PrivacySettings;
   display: DisplaySettings;
 }
 
-export interface NotificationSettings {
+export interface UserNotificationSettings {
   push: boolean;
   email: boolean;
   dailyDigest: boolean;
@@ -150,4 +150,3 @@ export interface DisplaySettings {
 }
 
 export type SettingsUpdate = Partial<UserSettings>;
->>>>>>> worktree-wf_76154838-1ed-5

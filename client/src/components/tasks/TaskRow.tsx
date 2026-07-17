@@ -53,16 +53,16 @@ export function TaskRow({ task, onToggleSubtasks, showSubtasks, onTaskClick, onS
   const handleStatusClick = (e: React.MouseEvent) => {
     e.stopPropagation();
     if (task.status === 'inbox') {
-      updateTask.mutate({ id: task.id, data: { status: 'active' } });
+      updateTask.mutate({ id: task.id, status: 'active' });
     } else if (task.status === 'active') {
-      updateTask.mutate({ id: task.id, data: { status: 'completed', completedAt: new Date().toISOString() } });
+      updateTask.mutate({ id: task.id, status: 'completed' });
     } else {
-      updateTask.mutate({ id: task.id, data: { status: 'active' } });
+      updateTask.mutate({ id: task.id, status: 'active' });
     }
   };
 
   const handleSubtaskToggle = (subtask: Subtask) => {
-    updateSubtask.mutate({ taskId: task.id, subtaskId: subtask.id, data: { completed: !subtask.completed } });
+    updateSubtask.mutate({ id: subtask.id, isCompleted: !subtask.isCompleted });
   };
 
   return (
@@ -129,7 +129,7 @@ export function TaskRow({ task, onToggleSubtasks, showSubtasks, onTaskClick, onS
             )}
             {hasSubtasks && (
               <span className="font-body text-[12px] text-ink-400">
-                {task.subtasks.filter(s => s.completed).length}/{task.subtasks.length}
+                {task.subtasks?.filter(s => s.isCompleted).length}/{task.subtasks?.length ?? 0}
               </span>
             )}
           </div>
@@ -165,16 +165,16 @@ export function TaskRow({ task, onToggleSubtasks, showSubtasks, onTaskClick, onS
       {/* Subtasks */}
       {hasSubtasks && showSubtasks && (
         <div className="mt-3 pl-8 space-y-1">
-          {task.subtasks.map((subtask: Subtask) => (
+          {task.subtasks?.map((subtask: Subtask) => (
             <div key={subtask.id} className="flex items-center gap-2">
               <label className="flex items-center gap-2 cursor-pointer">
                 <input
                   type="checkbox"
-                  checked={subtask.completed}
+                  checked={subtask.isCompleted}
                   onChange={() => handleSubtaskToggle(subtask)}
                   className="size-3.5 rounded border-ink-300 text-blue-500"
                 />
-                <span className={`font-body text-[14px] ${subtask.completed ? 'line-through text-ink-400' : 'text-ink-700'}`}>
+                <span className={`font-body text-[14px] ${subtask.isCompleted ? 'line-through text-ink-400' : 'text-ink-700'}`}>
                   {subtask.title}
                 </span>
               </label>
