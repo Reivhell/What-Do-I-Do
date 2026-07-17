@@ -8,8 +8,6 @@ import {
   Param,
   Query,
   ParseUUIDPipe,
-  UsePipes,
-  ValidationPipe,
 } from '@nestjs/common';
 import {
   TasksService,
@@ -29,7 +27,6 @@ import {
 
 const DEFAULT_USER_ID = 'default';
 
-@UsePipes(new ValidationPipe({ transform: true, whitelist: true }))
 @Controller('tasks')
 export class TasksController {
   constructor(private readonly tasksService: TasksService) {}

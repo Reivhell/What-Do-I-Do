@@ -7,8 +7,6 @@ import {
   Body,
   Param,
   ParseUUIDPipe,
-  UsePipes,
-  ValidationPipe,
 } from '@nestjs/common';
 import { WorkspaceService, LayoutPreset, WidgetConfigItem } from './workspace.service';
 import {
@@ -19,7 +17,6 @@ import {
 
 const DEFAULT_USER_ID = 'default';
 
-@UsePipes(new ValidationPipe({ transform: true, whitelist: true }))
 @Controller('workspace')
 export class WorkspaceController {
   constructor(private readonly workspaceService: WorkspaceService) {}

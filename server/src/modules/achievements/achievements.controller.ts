@@ -1,13 +1,11 @@
 import {
   Controller, Get, Post, Body, Param, ParseUUIDPipe,
-  UsePipes, ValidationPipe,
 } from '@nestjs/common';
 import { AchievementsService } from './achievements.service';
 import { EvaluateEventDto, AchievementWithProgress } from './dto/achievements.dto';
 
 const DEFAULT_USER_ID = 'default';
 
-@UsePipes(new ValidationPipe({ transform: true, whitelist: true }))
 @Controller('achievements')
 export class AchievementsController {
   constructor(private readonly achievementsService: AchievementsService) {}

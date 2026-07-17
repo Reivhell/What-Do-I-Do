@@ -7,15 +7,12 @@ import {
   Body,
   Param,
   ParseUUIDPipe,
-  UsePipes,
-  ValidationPipe,
 } from '@nestjs/common';
 import { GoalsService } from './goals.service';
 import { CreateGoalDto, UpdateGoalDto, CreateMilestoneDto, UpdateMilestoneDto, ScheduleMilestoneDto } from './dto';
 
 const DEFAULT_USER_ID = 'default';
 
-@UsePipes(new ValidationPipe({ transform: true, whitelist: true }))
 @Controller('goals')
 export class GoalsController {
   constructor(private readonly goalsService: GoalsService) {}

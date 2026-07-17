@@ -1,0 +1,15 @@
+{
+  "moduleFileExtensions": ["ts", "js", "json"],
+  "rootDir": "..",
+  "testEnvironment": "node",
+  "testRegex": ".int-spec.ts$",
+  "transform": {
+    "^.+\\.ts$": ["ts-jest", {
+      "tsconfig": "tsconfig.json"
+    }]
+  },
+  "moduleNameMapper": {
+    "^@whatdo/shared$": "<rootDir>/../shared/src",
+    "^@whatdo/shared/(.*)$": "<rootDir>/../shared/src/$1"
+  }
+}

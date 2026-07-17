@@ -8,15 +8,12 @@ import {
   Param,
   Query,
   ParseUUIDPipe,
-  UsePipes,
-  ValidationPipe,
 } from '@nestjs/common';
 import { HabitsService } from './habits.service';
 import { CreateHabitDto, UpdateHabitDto, LogHabitDto, HabitResponse, HabitLogResponse } from './dto/habit.dto';
 
 const DEFAULT_USER_ID = 'default';
 
-@UsePipes(new ValidationPipe({ transform: true, whitelist: true }))
 @Controller('habits')
 export class HabitsController {
   constructor(private readonly habitsService: HabitsService) {}

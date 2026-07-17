@@ -8,15 +8,12 @@ import {
   Param,
   Query,
   ParseUUIDPipe,
-  UsePipes,
-  ValidationPipe,
 } from '@nestjs/common';
 import { InboxService, CaptureStatus } from './inbox.service';
 import { CreateCaptureDto, UpdateCaptureDto, ConvertCaptureDto } from './dto';
 
 const DEFAULT_USER_ID = 'default';
 
-@UsePipes(new ValidationPipe({ transform: true, whitelist: true }))
 @Controller('inbox')
 export class InboxController {
   constructor(private readonly inboxService: InboxService) {}
