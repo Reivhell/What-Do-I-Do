@@ -1,8 +1,8 @@
 // @whatdo/shared — Tasks types
 
 export type TaskStatus = 'inbox' | 'active' | 'completed' | 'archived';
-export type TaskPriority = 'low' | 'medium' | 'high';
-export type TaskView = 'inbox' | 'today' | 'upcoming' | 'completed';
+export type TaskPriority = 'low' | 'medium' | 'high' | 'urgent' | 'none';
+export type TaskView = 'inbox' | 'today' | 'upcoming' | 'completed' | 'all';
 
 export interface Task {
   id: string;

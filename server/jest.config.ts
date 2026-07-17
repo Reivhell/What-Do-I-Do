@@ -6,6 +6,13 @@ const config: Config = {
   roots: ['<rootDir>/src', '<rootDir>/test'],
   testMatch: ['**/*.spec.ts'],
   moduleFileExtensions: ['ts', 'js', 'json', 'node'],
+  // ts-jest 29: use test-specific tsconfig with rootDir='.' so test
+  // files outside src/ compile without rootDir conflict
+  transform: {
+    '^.+\\.ts$': ['ts-jest', {
+      tsconfig: 'tsconfig.test.json',
+    }],
+  },
   collectCoverageFrom: [
     'src/modules/**/*.ts',
     'src/common/**/*.ts',
