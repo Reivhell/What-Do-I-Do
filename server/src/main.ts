@@ -1,12 +1,7 @@
-import { ValidationPipe } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
-<<<<<<< HEAD
-import { GlobalExceptionFilter } from './common/filters/global-exception.filter';
-=======
 import { LoggerInterceptor, LoggerService } from './common/logger';
 import helmet from 'helmet';
->>>>>>> dev
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -45,8 +40,6 @@ async function bootstrap() {
   });
 
   app.setGlobalPrefix('api');
-  app.useGlobalPipes(new ValidationPipe({ transform: true, whitelist: true }));
-  app.useGlobalFilters(new GlobalExceptionFilter());
 
   const logger = app.get(LoggerService);
   app.useGlobalInterceptors(app.get(LoggerInterceptor));

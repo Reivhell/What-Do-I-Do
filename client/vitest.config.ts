@@ -4,18 +4,6 @@ import path from 'path';
 
 export default defineConfig({
   plugins: [react()],
-<<<<<<< HEAD
-  test: {
-    environment: 'jsdom',
-    globals: true,
-    setupFiles: './src/test/setup.ts',
-    css: true,
-  },
-  resolve: {
-    alias: {
-      '@whatdo/shared': path.resolve(__dirname, '../shared/src'),
-    },
-=======
   resolve: {
     alias: { '@whatdo/shared': path.resolve(__dirname, '../shared/src') },
   },
@@ -23,6 +11,5 @@ export default defineConfig({
     environment: 'jsdom',
     globals: true,
     setupFiles: ['./vitest.setup.ts'],
->>>>>>> dev
   },
 });

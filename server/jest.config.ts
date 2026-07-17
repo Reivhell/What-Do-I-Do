@@ -3,34 +3,16 @@ import type { Config } from 'jest';
 const config: Config = {
   preset: 'ts-jest',
   testEnvironment: 'node',
-<<<<<<< HEAD
-  rootDir: '.',
-  testMatch: [
-    '<rootDir>/test/**/*.spec.ts',
-    '<rootDir>/test/**/*.int-spec.ts',
-  ],
-  moduleNameMapper: {
-    '^@whatdo/shared$': '<rootDir>/../shared/src',
-    '^@whatdo/shared/(.*)$': '<rootDir>/../shared/src/$1',
-  },
-  transform: {
-    '^.+\.ts$': ['ts-jest', {
-      tsconfig: 'tsconfig.spec.json',
-    }],
-  },
-  moduleFileExtensions: ['ts', 'js', 'json'],
-  collectCoverageFrom: [
-    'src/**/*.ts',
-    '!src/main.ts',
-    '!src/seed.ts',
-  ],
-};
-
-export default config;
-=======
   roots: ['<rootDir>/src', '<rootDir>/test'],
   testMatch: ['**/*.spec.ts'],
   moduleFileExtensions: ['ts', 'js', 'json', 'node'],
+  // ts-jest 29: use test-specific tsconfig with rootDir='.' so test
+  // files outside src/ compile without rootDir conflict
+  transform: {
+    '^.+\\.ts$': ['ts-jest', {
+      tsconfig: 'tsconfig.test.json',
+    }],
+  },
   collectCoverageFrom: [
     'src/modules/**/*.ts',
     'src/common/**/*.ts',
@@ -76,4 +58,3 @@ export default config;
 };
 
 export default config;
->>>>>>> dev
