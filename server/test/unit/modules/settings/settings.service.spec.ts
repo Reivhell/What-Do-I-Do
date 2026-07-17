@@ -1,10 +1,19 @@
 import { Test } from '@nestjs/testing';
 import { SettingsService } from '../../../../src/modules/settings/settings.service';
 import { DRIZZLE } from '../../../../src/common/database/drizzle.provider';
+import { BackupService } from '../../../../src/common/backup/backup.service';
 import { schema } from '../../../../src/drizzle';
 
 jest.mock('crypto', () => ({
   randomUUID: jest.fn(() => '00000000-0000-0000-0000-000000000001'),
+}));
+
+jest.mock('../../../../src/common/backup/backup.service', () => ({
+  BackupService: jest.fn().mockImplementation(() => ({
+    getConfig: jest.fn(() => ({ backupDir: '/tmp', retentionDays: 14, dbPath: ':memory:' })),
+    updateConfig: jest.fn((config) => ({ backupDir: '/tmp', retentionDays: config.retentionDays || 14, dbPath: ':memory:' })),
+    backup: jest.fn(() => 'what-do-i-do-test.db'),
+  })),
 }));
 
 function createMockDb() {
@@ -67,6 +76,7 @@ describe('SettingsService', () => {
       providers: [
         SettingsService,
         { provide: DRIZZLE, useValue: createMockDb() },
+        { provide: BackupService, useValue: { getConfig: jest.fn(), updateConfig: jest.fn(), backup: jest.fn() } },
       ],
     }).compile();
 
