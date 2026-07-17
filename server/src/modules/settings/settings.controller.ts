@@ -11,8 +11,10 @@ import {
   DefaultValuePipe,
   ParseBoolPipe,
   HttpCode,
+  HttpStatus,
 } from '@nestjs/common';
 import { SettingsService } from './settings.service';
+import * as bcrypt from 'bcrypt';
 
 // Temp user ID for single-user mode — will be replaced with app-lock auth
 const DEFAULT_USER_ID = 'default';
@@ -51,6 +53,10 @@ export class SettingsController {
       dateFormat?: string;
       timeFormat?: string;
       categoryTimeMapping?: Record<string, string>;
+      // Money-specific preferences
+      budgetAlertEnabled?: boolean;
+      defaultBudgetPeriod?: 'daily' | 'weekly' | 'monthly' | 'yearly';
+      transactionCategories?: Record<string, string>;
     },
   ) {
     return this.settingsService.updatePreferences(DEFAULT_USER_ID, body);
@@ -96,6 +102,24 @@ export class SettingsController {
 
   // ── Backup / Export / Import (17-offline-sync.md) ──
 
+  @Get('backup/config')
+  getBackupConfig() {
+    return this.settingsService.getBackupConfig();
+  }
+
+  @Patch('backup/config')
+  updateBackupConfig(
+    @Body() body: { backupDir?: string; retentionDays?: number },
+  ) {
+    return this.settingsService.updateBackupConfig(body);
+  }
+
+  @Post('backup/trigger')
+  @HttpCode(200)
+  triggerBackup(@Body() body?: { label?: string }) {
+    return this.settingsService.triggerBackup(body?.label);
+  }
+
   @Get('export')
   exportData() {
     return this.settingsService.exportData(DEFAULT_USER_ID);
@@ -105,7 +129,49 @@ export class SettingsController {
   @HttpCode(200)
   importData(
     @Body() body: { exportedAt: string; appVersion: string; data: Record<string, unknown[]> },
+    @Query('dryRun', new DefaultValuePipe(false), ParseBoolPipe) dryRun: boolean,
   ) {
-    return this.settingsService.importData(DEFAULT_USER_ID, body);
+    return this.settingsService.importData(DEFAULT_USER_ID, body, dryRun);
+  }
+
+  @Post('import/validate')
+  @HttpCode(200)
+  validateImport(
+    @Body() body: { exportedAt: string; appVersion: string; data: Record<string, unknown[]> },
+  ) {
+    return this.settingsService.validateImport(body);
+  }
+
+  // ── PIN Lock ──
+  @Get('pin')
+  getPinSettings() {
+    return this.settingsService.getPinSettings(DEFAULT_USER_ID);
+  }
+
+  @Post('pin')
+  @HttpCode(HttpStatus.CREATED)
+  async setPin(@Body() body: { pin: string; confirmPin: string }) {
+    if (body.pin !== body.confirmPin) {
+      return { success: false, error: 'PINs do not match' };
+    }
+    if (!/^\d{4,8}$/.test(body.pin)) {
+      return { success: false, error: 'PIN must be 4-8 digits' };
+    }
+    await this.settingsService.setPin(DEFAULT_USER_ID, body.pin);
+    return { success: true };
+  }
+
+  @Post('pin/verify')
+  @HttpCode(HttpStatus.OK)
+  async verifyPin(@Body() body: { pin: string }) {
+    const valid = await this.settingsService.verifyPin(DEFAULT_USER_ID, body.pin);
+    return { success: valid };
+  }
+
+  @Patch('pin')
+  updatePinSettings(
+    @Body() body: { enabled?: boolean; autoLockMinutes?: number },
+  ) {
+    return this.settingsService.updatePinSettings(DEFAULT_USER_ID, body);
   }
 }

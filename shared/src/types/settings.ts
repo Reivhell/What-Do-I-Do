@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 export type CategoryDomain = 'activity' | 'task' | 'money';
 
 export interface UserProfile {
@@ -19,6 +20,10 @@ export interface UserPreferences {
   dateFormat: string;
   timeFormat: string;
   categoryTimeMapping: Record<string, string>;
+  // Money-specific preferences
+  budgetAlertEnabled: boolean;
+  defaultBudgetPeriod: 'daily' | 'weekly' | 'monthly' | 'yearly';
+  transactionCategories: Record<string, string>; // category name -> color
   createdAt: string;
   updatedAt: string;
 }
@@ -59,6 +64,10 @@ export interface UpdatePreferencesInput {
   dateFormat?: string;
   timeFormat?: string;
   categoryTimeMapping?: Record<string, string>;
+  // Money-specific preferences
+  budgetAlertEnabled?: boolean;
+  defaultBudgetPeriod?: 'daily' | 'weekly' | 'monthly' | 'yearly';
+  transactionCategories?: Record<string, string>;
 }
 
 export interface UpdateNotificationsInput {
@@ -89,3 +98,56 @@ export interface ImportResult {
     skipped: number;
   };
 }
+
+// ── PIN / App Lock ──
+export interface PinSettings {
+  enabled: boolean;
+  autoLockMinutes: number;
+}
+
+export interface SetPinInput {
+  pin: string;
+  confirmPin: string;
+}
+
+export interface VerifyPinInput {
+  pin: string;
+}
+
+export interface UpdatePinSettingsInput {
+  enabled?: boolean;
+  autoLockMinutes?: number;
+}
+=======
+export type ThemeMode = 'light' | 'dark' | 'system';
+
+export interface UserSettings {
+  theme: ThemeMode;
+  language: string;
+  timezone: string;
+  weekStartsOn: 0 | 1 | 6;
+  notifications: NotificationSettings;
+  privacy: PrivacySettings;
+  display: DisplaySettings;
+}
+
+export interface NotificationSettings {
+  push: boolean;
+  email: boolean;
+  dailyDigest: boolean;
+  reminderLeadMinutes: number;
+}
+
+export interface PrivacySettings {
+  showStatsOnDashboard: boolean;
+  shareActivity: boolean;
+}
+
+export interface DisplaySettings {
+  sidebarCollapsed: boolean;
+  density: 'comfortable' | 'compact';
+  fontSize: 'sm' | 'md' | 'lg';
+}
+
+export type SettingsUpdate = Partial<UserSettings>;
+>>>>>>> worktree-wf_76154838-1ed-5

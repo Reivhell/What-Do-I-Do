@@ -33,11 +33,11 @@ export function Sidebar() {
     <aside className="w-[230px] h-screen fixed left-0 top-0 rounded-r-[32px] flex flex-col py-6 px-4 gap-2 z-50 overflow-y-auto bg-clay-surface clay-l2 max-lg:hidden">
       {/* Logo */}
       <div className="mb-6 px-4">
-        <h1 className="font-[Plus Jakarta Sans] text-[24px] leading-[32px] font-bold clr-primary flex items-center gap-2">
+        <h1 className="font-display text-[24px] leading-[32px] font-bold clr-primary flex items-center gap-2">
           <span className="material-symbols-outlined text-3xl">check_circle</span>
           What Do I Do
         </h1>
-        <p className="font-[Plus Jakarta Sans] text-[12px] leading-[16px] font-medium clr-text-secondary">Productivity Tracker</p>
+        <p className="font-body text-[12px] leading-[16px] font-medium clr-text-secondary">Productivity Tracker</p>
       </div>
 
       {/* Nav */}
@@ -48,7 +48,7 @@ export function Sidebar() {
             <Link
               key={item.path}
               to={item.path}
-              className={`flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-200 font-[Plus Jakarta Sans] text-[13px] leading-[18px] font-medium ${
+              className={`flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-200 font-body text-[13px] leading-[18px] font-medium ${
                 active
                   ? "bg-clr-primary clr-on-primary shadow-lg scale-[1.02]"
                   : "clr-on-surface-variant hover:clr-primary dark:hover:text-white hover:bg-clr-surface-container-high dark:hover:bg-clr-surface-variant"
@@ -67,7 +67,7 @@ export function Sidebar() {
       <div className="mt-auto space-y-4">
         <Link
           to="/settings"
-          className={`flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-200 font-[Plus Jakarta Sans] text-[13px] leading-[18px] font-medium ${
+          className={`flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-200 font-body text-[13px] leading-[18px] font-medium ${
             location.pathname === "/settings"
               ? "bg-clr-primary clr-on-primary shadow-lg scale-[1.02]"
               : "clr-on-surface-variant hover:clr-primary dark:hover:text-white hover:bg-clr-surface-container-high dark:hover:bg-clr-surface-variant"
@@ -77,13 +77,13 @@ export function Sidebar() {
           Settings
         </Link>
 
-        <div className="clay-card p-5 relative overflow-hidden bg-gradient-to-br from-white to-[var(--surface-tint)] dark:from-[var(--surface-container)] dark:to-[var(--surface-dim)]">
+        <div className="clay-card p-5 relative overflow-hidden bg-gradient-to-br from-white to-[var(--clay-surface-alt)] dark:from-[var(--clay-surface)] dark:to-[var(--clay-surface-alt)]">
           <div className="relative z-10">
             <span className="material-symbols-outlined clr-primary text-2xl mb-2" style={{ fontVariationSettings: "'FILL' 1" }}>
               stars
             </span>
-            <h4 className="font-[Plus Jakarta Sans] text-[16px] leading-[24px] font-semibold clr-text-primary">Keep it up!</h4>
-            <p className="font-[Plus Jakarta Sans] text-[12px] leading-[16px] font-medium clr-text-secondary mt-1">
+            <h4 className="font-display text-[16px] leading-[24px] font-semibold clr-text-primary">Keep it up!</h4>
+            <p className="font-body text-[12px] leading-[16px] font-medium clr-text-secondary mt-1">
               You're doing great today.
             </p>
           </div>

@@ -27,12 +27,16 @@ export function Toggle({
       <span className="relative">
         {/* Track (inset — looks like a hole) */}
         <span
-          className={`block rounded-[--radius-pill] bg-clay-surface-alt clay-inset ${trackSizes[size]}`}
+          className={`block rounded-[var(--radius-pill)] bg-[var(--clay-surface-alt)] clay-inset ${trackSizes[size]}`}
         />
         {/* Thumb (timbul — clay level 1) */}
         <span
-          className={`absolute left-0.5 top-0.5 rounded-full bg-blue-500 clay-l1 transition-transform duration-180 ease-out ${thumbSizes[size]} ${
-            props.checked ? translateX[size] : "translate-x-0"
+          className={`absolute left-0.5 top-0.5 rounded-full clay-l1 transition-transform duration-180 ease-out ${
+            thumbSizes[size]
+          } ${
+            props.checked
+              ? `${translateX[size]} bg-[var(--blue-500)] active:clay-pressed`
+              : "translate-x-0 bg-[var(--ink-200)]"
           }`}
         />
       </span>
@@ -40,13 +44,13 @@ export function Toggle({
       <input
         type="checkbox"
         id={toggleId}
-        className="sr-only"
+        className="sr-only focus-visible:ring-2 focus-visible:ring-[var(--blue-500)] focus-visible:ring-offset-2 rounded-[var(--radius-pill)]"
         role="switch"
         aria-checked={props.checked}
         {...props}
       />
 
-      <span className="font-body text-[15px] text-ink-900">{label}</span>
+      <span className="font-body text-[15px] text-[var(--ink-900)]">{label}</span>
     </label>
   );
 }

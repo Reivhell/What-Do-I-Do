@@ -38,6 +38,17 @@ export const notificationSettings = sqliteTable('notification_settings', {
   updatedAt: text('updated_at').notNull().$defaultFn(() => new Date().toISOString()),
 });
 
+export const pinSettings = sqliteTable('pin_settings', {
+  userId: text('user_id').primaryKey().references(() => users.id, { onDelete: 'cascade' }),
+  pinHash: text('pin_hash'),
+  enabled: integer('enabled', { mode: 'boolean' }).notNull().default(false),
+  autoLockMinutes: integer('auto_lock_minutes').notNull().default(5),
+  failedAttempts: integer('failed_attempts').notNull().default(0),
+  lockedUntil: text('locked_until'),
+  createdAt: text('created_at').notNull().$defaultFn(() => new Date().toISOString()),
+  updatedAt: text('updated_at').notNull().$defaultFn(() => new Date().toISOString()),
+});
+
 export const categoryDefinitions = sqliteTable('category_definitions', {
   id: text('id').primaryKey().$defaultFn(() => randomUUID()),
   userId: text('user_id').notNull().references(() => users.id, { onDelete: 'cascade' }),

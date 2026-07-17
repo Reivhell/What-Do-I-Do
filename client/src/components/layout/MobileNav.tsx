@@ -20,7 +20,7 @@ export function MobileNav() {
             to={item.path}
             end={item.path === "/"}
             className={({ isActive }) =>
-              `tap-target flex flex-col items-center gap-0.5 rounded-[--radius-md] px-3 py-1.5 font-[Plus Jakarta Sans] text-[11px] font-medium clay-transition ${
+              `tap-target flex flex-col items-center gap-0.5 rounded-[--radius-md] px-3 py-1.5 font-body text-[11px] font-medium clay-transition ${
                 isActive
                   ? "clr-primary"
                   : "clr-text-secondary"

@@ -3,7 +3,7 @@ import {
   Play, Square, Clock, History, Plus, Search, Trash2,
   Timer, Pencil, X, Loader2,
 } from 'lucide-react';
-import { Card, CardHeader, CardTitle, Badge, Button, Input, Modal, EmptyState } from '../components/ui';
+import { Card, CardHeader, CardTitle, Badge, StatusDot, Button, Input, Modal, EmptyState } from '../components/ui';
 import {
   useActiveSession,
   useActivityHistory,
@@ -69,11 +69,14 @@ function LiveTimerCard() {
     const secs = elapsedSeconds(active);
     return (
       <>
-        <Card level={2} className="!p-6">
+        <Card level={2} className="!p-6 border border-semantic-green/30">
           <div className="flex flex-col items-center gap-4 text-center">
             <Timer className="size-6 text-blue-500" />
             <div>
-              <p className="font-display text-lg font-semibold text-ink-900">{active.activityName}</p>
+              <p className="flex items-center justify-center gap-2 font-display text-lg font-semibold text-ink-900">
+                {active.activityName}
+                <StatusDot variant="success" />
+              </p>
               <Badge variant="info">{active.category}</Badge>
             </div>
             <p className="font-display text-5xl font-bold tabular-nums text-blue-600">{fmtTimer(secs)}</p>
@@ -250,7 +253,7 @@ function HistoryRow({
 }) {
   const secs = elapsedSeconds(session);
   return (
-    <div className="group flex items-start gap-4 rounded-[--radius-md] bg-clay-surface px-4 py-3 clay-l1">
+    <Card level={2} className="group flex items-start gap-4 px-4 py-3">
       <div className="min-w-0 flex-1">
         <div className="mb-0.5 flex items-center gap-2">
           <span className="font-body text-[15px] font-semibold text-ink-900">{session.activityName}</span>
@@ -271,7 +274,7 @@ function HistoryRow({
           <Trash2 className="size-4" />
         </button>
       </div>
-    </div>
+    </Card>
   );
 }
 

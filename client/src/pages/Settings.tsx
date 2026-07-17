@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef, type FormEvent } from 'react';
 import {
   Settings, User, Bell, Tag, Download, Upload, Plus, Trash2,
-  Loader2, Info,
+  Loader2, Info, Shield, Lock,
 } from 'lucide-react';
 import {
   Card, CardHeader, CardTitle, Input, Select, Toggle,
@@ -17,6 +17,7 @@ import {
 import { useTheme } from '../providers/ThemeProvider';
 import { useQueryClient } from '@tanstack/react-query';
 import type { CategoryDomain, CategoryDefinition } from '@whatdo/shared';
+import { useAuth } from '../providers/AuthProvider';
 
 /* ── Option arrays ── */
 
@@ -58,7 +59,7 @@ const DOMAIN_OPTS = [
 function SectionLoader() {
   return (
     <div className="flex items-center justify-center py-8">
-      <Loader2 className="size-6 animate-spin text-ink-400" />
+      <Loader2 className="size-6 animate-spin text-[var(--ink-300)]" />
     </div>
   );
 }
@@ -105,7 +106,7 @@ function ProfileSection() {
     <Card level={1} className="scroll-mt-20" id="profile">
       <CardHeader>
         <div className="flex items-center gap-2">
-          <User className="size-5 text-ink-500" />
+          <User className="size-5 text-[var(--ink-500)]" />
           <CardTitle>Profile</CardTitle>
         </div>
       </CardHeader>
@@ -188,7 +189,7 @@ function PreferencesSection() {
     <Card level={1} className="scroll-mt-20" id="preferences">
       <CardHeader>
         <div className="flex items-center gap-2">
-          <Settings className="size-5 text-ink-500" />
+          <Settings className="size-5 text-[var(--ink-500)]" />
           <CardTitle>Preferences</CardTitle>
         </div>
       </CardHeader>
@@ -291,7 +292,7 @@ function NotificationsSection() {
     <Card level={1} className="scroll-mt-20" id="notifications">
       <CardHeader>
         <div className="flex items-center gap-2">
-          <Bell className="size-5 text-ink-500" />
+          <Bell className="size-5 text-[var(--ink-500)]" />
           <CardTitle>Notifications</CardTitle>
         </div>
       </CardHeader>
@@ -361,7 +362,7 @@ function CategoriesSection() {
     <Card level={1} className="scroll-mt-20" id="categories">
       <CardHeader>
         <div className="flex items-center gap-2">
-          <Tag className="size-5 text-ink-500" />
+          <Tag className="size-5 text-[var(--ink-500)]" />
           <CardTitle>Categories</CardTitle>
         </div>
         <Button size="sm" onClick={() => setModalOpen(true)}>
@@ -379,8 +380,8 @@ function CategoriesSection() {
             onClick={() => setDomainFilter(key)}
             className={`tap-target clay-transition rounded-[--radius-md] px-3 py-1.5 font-body text-[13px] font-semibold ${
               domainFilter === key
-                ? 'bg-blue-500 text-white'
-                : 'bg-clay-surface-alt text-ink-500 hover:text-ink-900'
+                ? 'bg-[var(--blue-500)] text-white'
+                : 'bg-clay-surface-alt text-[var(--ink-500)] hover:text-[var(--ink-900)]'
             }`}
           >
             {label}
@@ -415,14 +416,14 @@ function CategoriesSection() {
                 className="size-4 shrink-0 rounded-full"
                 style={{ backgroundColor: cat.color }}
               />
-              <span className="flex-1 font-body text-[15px] text-ink-900">{cat.name}</span>
-              <span className="font-body text-[12px] font-semibold uppercase tracking-[0.04em] text-ink-400">
+              <span className="flex-1 font-body text-[15px] text-[var(--ink-900)]">{cat.name}</span>
+              <span className="font-body text-[12px] font-semibold text-[var(--ink-300)]">
                 {cat.domain}
               </span>
               <button
                 type="button"
                 onClick={() => handleDelete(cat.id, cat.name)}
-                className="tap-target rounded-[--radius-sm] p-1.5 text-ink-400 hover:bg-semantic-red/10 hover:text-semantic-red clay-transition"
+                className="tap-target rounded-[--radius-sm] p-1.5 text-[var(--ink-300)] hover:bg-semantic-red/10 hover:text-semantic-red clay-transition"
                 aria-label={`Hapus ${cat.name}`}
               >
                 <Trash2 className="size-4" />
@@ -448,7 +449,7 @@ function CategoriesSection() {
             placeholder="e.g. Work, Groceries, Reading"
           />
           <div className="flex flex-col gap-1.5">
-            <label className="font-body text-[12px] font-semibold uppercase tracking-[0.04em] text-ink-500">
+            <label className="font-body text-[13px] font-medium text-[var(--ink-500)]">
               Color
             </label>
             <input
@@ -546,11 +547,11 @@ function BackupSection() {
     <Card level={1} className="scroll-mt-20" id="backup">
       <CardHeader>
         <div className="flex items-center gap-2">
-          <Download className="size-5 text-ink-500" />
+          <Download className="size-5 text-[var(--ink-500)]" />
           <CardTitle>Backup</CardTitle>
         </div>
       </CardHeader>
-      <p className="font-body text-[15px] text-ink-600 mb-4">
+      <p className="font-body text-[15px] text-[var(--ink-500)] mb-4">
         Export seluruh data untuk dipindahkan ke device lain, atau import data dari device lain.
       </p>
 
@@ -590,6 +591,183 @@ function BackupSection() {
   );
 }
 
+/* ── PIN Lock Section ── */
+
+function PinLockSection() {
+  const { pinSettings, setPinSettings } = useAuth();
+  const [pin, setPin] = useState('');
+  const [confirmPin, setConfirmPin] = useState('');
+  const [error, setError] = useState('');
+  const [success, setSuccess] = useState('');
+  const [loading, setLoading] = useState(false);
+  const [showPin, setShowPin] = useState(false);
+
+  const handleSetPin = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setError('');
+    setSuccess('');
+
+    if (pin !== confirmPin) {
+      setError('PINs do not match');
+      return;
+    }
+    if (!/^\d{4,8}$/.test(pin)) {
+      setError('PIN must be 4-8 digits');
+      return;
+    }
+
+    setLoading(true);
+    try {
+      const res = await fetch('/api/settings/pin', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ pin, confirmPin }),
+      });
+      const data = await res.json();
+      if (data.success) {
+        setSuccess('PIN set successfully');
+        setPin('');
+        setConfirmPin('');
+        setPinSettings({ enabled: true });
+      } else {
+        setError(data.error || 'Failed to set PIN');
+      }
+    } catch {
+      setError('Failed to set PIN. Please try again.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleDisablePin = async () => {
+    if (!confirm('Disable PIN lock?')) return;
+    setLoading(true);
+    try {
+      await setPinSettings({ enabled: false });
+      setSuccess('PIN disabled');
+    } catch {
+      setError('Failed to disable PIN');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleAutoLockChange = async (minutes: number) => {
+    try {
+      await setPinSettings({ autoLockMinutes: minutes });
+    } catch {
+      setError('Failed to update auto-lock');
+    }
+  };
+
+  return (
+    <Card level={1} className="scroll-mt-20" id="pin-lock">
+      <CardHeader>
+        <div className="flex items-center gap-2">
+          {pinSettings.enabled ? (
+            <Lock className="size-5 text-[var(--ink-500)]" />
+          ) : (
+            <Shield className="size-5 text-[var(--ink-500)]" />
+          )}
+          <CardTitle>App Lock (PIN)</CardTitle>
+        </div>
+      </CardHeader>
+      <p className="font-body text-[15px] text-[var(--ink-500)] mb-4">
+        Secure the app with a PIN. Auto-locks after the selected time.
+      </p>
+
+      {error && (
+        <div className="mb-4 rounded-[--radius-md] bg-semantic-red/15 px-4 py-3 font-body text-[14px] text-semantic-red">
+          {error}
+        </div>
+      )}
+      {success && (
+        <div className="mb-4 rounded-[--radius-md] bg-semantic-green/15 px-4 py-3 font-body text-[14px] text-semantic-green">
+          {success}
+        </div>
+      )}
+
+      {!pinSettings.enabled ? (
+        <form onSubmit={handleSetPin} className="space-y-4">
+          <div className="grid gap-4 sm:grid-cols-2">
+            <div className="flex flex-col gap-1.5">
+              <label className="font-body text-[13px] font-medium text-[var(--ink-500)]">
+                PIN
+              </label>
+              <input
+                type={showPin ? 'text' : 'password'}
+                inputMode="numeric"
+                pattern="[0-9]*"
+                value={pin}
+                onChange={(e) => setPin(e.target.value.replace(/\D/g, '').slice(0, 8))}
+                placeholder="4-8 digits"
+                className="h-10 rounded-[--radius-md] border border-[var(--clay-border)] bg-[var(--clay-surface-alt)] px-3 font-body text-[15px] placeholder:text-[var(--ink-300)] focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--blue-500)] clay-inset"
+              />
+            </div>
+            <div className="flex flex-col gap-1.5">
+              <label className="font-body text-[13px] font-medium text-[var(--ink-500)]">
+                Confirm PIN
+              </label>
+              <input
+                type={showPin ? 'text' : 'password'}
+                inputMode="numeric"
+                pattern="[0-9]*"
+                value={confirmPin}
+                onChange={(e) => setConfirmPin(e.target.value.replace(/\D/g, '').slice(0, 8))}
+                placeholder="Confirm PIN"
+                className="h-10 rounded-[--radius-md] border border-[var(--clay-border)] bg-[var(--clay-surface-alt)] px-3 font-body text-[15px] placeholder:text-[var(--ink-300)] focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--blue-500)] clay-inset"
+              />
+            </div>
+          </div>
+          <label className="flex items-center gap-2 cursor-pointer">
+            <input
+              type="checkbox"
+              checked={showPin}
+              onChange={(e) => setShowPin(e.target.checked)}
+              className="size-4 rounded border-[var(--clay-border)] text-[var(--blue-500)] focus-visible:ring-2 focus-visible:ring-[var(--blue-500)]"
+            />
+            <span className="font-body text-[14px] text-[var(--ink-500)]">Show PIN</span>
+          </label>
+          <div className="flex justify-end pt-2">
+            <Button type="submit" disabled={loading || pin.length < 4 || confirmPin.length < 4}>
+              {loading ? 'Setting...' : 'Set PIN'}
+            </Button>
+          </div>
+        </form>
+      ) : (
+        <div className="space-y-4">
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="font-body text-[15px] font-semibold text-[var(--ink-900)]">PIN Lock Enabled</p>
+              <p className="font-body text-[13px] text-[var(--ink-500)]">Your app is protected</p>
+            </div>
+            <Button variant="secondary" size="sm" onClick={handleDisablePin} disabled={loading}>
+              Disable PIN
+            </Button>
+          </div>
+
+          <div className="flex flex-col gap-1.5">
+            <label className="font-body text-[13px] font-medium text-[var(--ink-500)]">
+              Auto-lock after
+            </label>
+            <select
+              value={pinSettings.autoLockMinutes}
+              onChange={(e) => handleAutoLockChange(Number(e.target.value))}
+              className="h-10 rounded-[--radius-md] border border-[var(--clay-border)] bg-[var(--clay-surface-alt)] px-3 font-body text-[15px] focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--blue-500)] clay-inset"
+            >
+              <option value={1}>1 minute</option>
+              <option value={5}>5 minutes</option>
+              <option value={15}>15 minutes</option>
+              <option value={30}>30 minutes</option>
+              <option value={60}>1 hour</option>
+            </select>
+          </div>
+        </div>
+      )}
+    </Card>
+  );
+}
+
 /* ── About Section ── */
 
 function AboutSection() {
@@ -597,19 +775,19 @@ function AboutSection() {
     <Card level={1} className="scroll-mt-20" id="about">
       <CardHeader>
         <div className="flex items-center gap-2">
-          <Info className="size-5 text-ink-500" />
+          <Info className="size-5 text-[var(--ink-500)]" />
           <CardTitle>About</CardTitle>
         </div>
       </CardHeader>
-      <div className="flex flex-col gap-2 font-body text-[15px] text-ink-700">
+      <div className="flex flex-col gap-2 font-body text-[15px] text-[var(--ink-500)]">
         <p>
-          <span className="font-semibold text-ink-900">App:</span> What Do I Do
+          <span className="font-semibold text-[var(--ink-900)]">App:</span> What Do I Do
         </p>
         <p>
-          <span className="font-semibold text-ink-900">Version:</span> 1.0.0 (Fase 1)
+          <span className="font-semibold text-[var(--ink-900)]">Version:</span> 1.0.0 (Fase 1)
         </p>
         <p>
-          <span className="font-semibold text-ink-900">Built with:</span> React, TypeScript, NestJS, Drizzle, SQLite
+          <span className="font-semibold text-[var(--ink-900)]">Built with:</span> React, TypeScript, NestJS, Drizzle, SQLite
         </p>
       </div>
     </Card>
@@ -623,8 +801,8 @@ export function SettingsPage() {
     <div className="flex flex-col gap-6">
       {/* Page Header */}
       <div className="flex items-center gap-3">
-        <Settings className="size-6 text-ink-900" />
-        <h1 className="font-display text-2xl font-bold text-ink-900">Settings</h1>
+        <Settings className="size-6 text-[var(--ink-900)]" />
+        <h1 className="font-display text-2xl font-bold text-[var(--ink-900)]">Settings</h1>
       </div>
 
       {/* Sticky anchor nav */}
@@ -634,13 +812,14 @@ export function SettingsPage() {
           { href: '#preferences', label: 'Preferences', icon: Settings },
           { href: '#notifications', label: 'Notifications', icon: Bell },
           { href: '#categories', label: 'Categories', icon: Tag },
+          { href: '#pin-lock', label: 'App Lock', icon: Lock },
           { href: '#backup', label: 'Backup', icon: Download },
           { href: '#about', label: 'About', icon: Info },
         ].map(({ href, label, icon: Icon }) => (
           <a
             key={href}
             href={href}
-            className="tap-target clay-transition inline-flex items-center gap-1.5 rounded-[--radius-md] px-3 py-2 font-body text-[13px] font-semibold text-ink-500 hover:bg-blue-50 hover:text-ink-900"
+            className="tap-target clay-transition inline-flex items-center gap-1.5 rounded-[--radius-md] px-3 py-2 font-body text-[13px] font-semibold text-[var(--ink-500)] hover:bg-[var(--blue-50)] hover:text-[var(--ink-900)] focus-visible:ring-2 focus-visible:ring-[var(--blue-500)]"
           >
             <Icon className="size-4" />
             {label}
@@ -653,6 +832,7 @@ export function SettingsPage() {
       <PreferencesSection />
       <NotificationsSection />
       <CategoriesSection />
+      <PinLockSection />
       <BackupSection />
       <AboutSection />
     </div>

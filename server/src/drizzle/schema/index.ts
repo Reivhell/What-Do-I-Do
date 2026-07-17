@@ -1,5 +1,5 @@
 export { users } from './users';
-export { userProfiles, userPreferences, notificationSettings, categoryDefinitions } from './settings';
+export { userProfiles, userPreferences, notificationSettings, categoryDefinitions, pinSettings } from './settings';
 export { captureItems } from './inbox';
 export { tasks, subtasks } from './tasks';
 export { plannerEvents } from './planner';

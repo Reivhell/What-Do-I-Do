@@ -31,8 +31,8 @@ export function AchievementGrid({ achievements }: AchievementGridProps) {
               rounded-[--radius-pill] px-3 py-1.5 font-body text-[13px]
               whitespace-nowrap transition-all duration-200
               ${activeCategory === cat
-                ? 'bg-blue-500 text-white'
-                : 'bg-clay-surface text-ink-500 hover:bg-blue-50'
+                ? 'bg-[var(--blue-500)] text-white'
+                : 'bg-clay-surface text-[var(--ink-500)] hover:bg-[var(--blue-50)]'
               }
             `}
           >
@@ -49,7 +49,7 @@ export function AchievementGrid({ achievements }: AchievementGridProps) {
       </div>
 
       {filtered.length === 0 && (
-        <p className="text-center font-body text-sm text-ink-400 py-12">
+        <p className="text-center font-body text-sm text-[var(--ink-400)] py-12">
           No achievements in this category yet.
         </p>
       )}

@@ -1,6 +1,7 @@
 import { useSearchParams } from 'react-router-dom';
 import { ListChecks, Plus } from 'lucide-react';
 import { TaskList } from '../components/tasks/TaskList';
+import { Button, Card } from '../components/ui';
 import type { TaskView } from '../types/tasks';
 
 export function TasksPage() {
@@ -17,22 +18,22 @@ export function TasksPage() {
       <div>
         <div className="flex items-center justify-between gap-4">
           <div>
-            <h1 className="font-display text-2xl font-bold text-ink-900">Tasks</h1>
-            <p className="font-body text-[15px] text-ink-500 mt-1">
+            <h1 className="font-display text-2xl font-bold text-[var(--ink-900)]">Tasks</h1>
+            <p className="font-body text-[15px] text-[var(--ink-500)] mt-1">
               Manage your tasks without scheduling — schedule to Planner when ready.
             </p>
           </div>
-          <button className="inline-flex items-center gap-2 rounded-[--radius-pill] bg-blue-500 px-5 py-2.5 font-body text-sm font-semibold text-white clay-l1 hover:clay-l2 active:clay-pressed">
+          <Button variant="primary" size="md">
             <Plus className="size-4" />
             Capture
-          </button>
+          </Button>
         </div>
       </div>
 
       {/* Task List */}
-      <div className="rounded-[--radius-lg] bg-clay-surface clay-l1 p-5">
+      <Card level={1} className="p-5">
         <TaskList view={view} onViewChange={handleViewChange} />
-      </div>
+      </Card>
     </div>
   );
 }

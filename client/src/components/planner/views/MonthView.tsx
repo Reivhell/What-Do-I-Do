@@ -21,11 +21,11 @@ export function MonthView({ events, date, onEdit, onDelete }: MonthViewProps) {
   const getEventsForDay = (dayStr: string) => events.filter(e => e.date === dayStr);
 
   return (
-    <div className="rounded-2xl clay-card-inset p-4 bg-clr-surface-white dark:bg-clr-surface-container-high overflow-hidden">
+    <div className="rounded-2xl clay-card-inset p-4 bg-clay-surface overflow-hidden">
       {/* Day headers */}
       <div className="grid grid-cols-7">
         {DAY_NAMES.map(name => (
-          <div key={name} className="border-b border-clr-surface-container-high px-3 py-3 text-center font-body text-[11px] font-semibold uppercase clr-text-secondary">
+          <div key={name} className="border-b border-clay-surface px-3 py-3 text-center font-body text-[11px] font-semibold uppercase text-ink-500">
             {name}
           </div>
         ))}
@@ -42,13 +42,13 @@ export function MonthView({ events, date, onEdit, onDelete }: MonthViewProps) {
           return (
             <div
               key={i}
-              className={`min-h-[90px] border-b border-clr-surface-container-high p-1.5 ${
+              className={`min-h-[90px] border-b border-clay-surface p-1.5 ${
                 i % 7 !== 0 ? 'border-l' : ''
-              } ${!isCurrentMonth ? 'bg-clr-surface-container-high/50' : 'hover:bg-clr-surface-container-high/30 transition-colors'}`}
+              } ${!isCurrentMonth ? 'bg-clay-surface/50' : 'hover:bg-clay-surface/30 transition-colors'}`}
             >
               <span className={`font-body text-xs font-semibold ${
-                isToday ? 'bg-clr-primary clr-on-primary w-6 h-6 rounded-full flex items-center justify-center' :
-                isCurrentMonth ? 'clr-text-primary' : 'clr-text-muted'
+                isToday ? 'bg-[var(--color-blue-500)] text-white w-6 h-6 rounded-full flex items-center justify-center' :
+                isCurrentMonth ? 'text-ink-900' : 'text-ink-300'
               }`}>
                 {format(d, 'd')}
               </span>
@@ -57,20 +57,20 @@ export function MonthView({ events, date, onEdit, onDelete }: MonthViewProps) {
                   <button
                     key={ev.id}
                     onClick={() => onEdit(ev)}
-                    className="block w-full text-left truncate text-[11px] font-body font-medium clr-text-primary hover:bg-clr-primary-10 rounded-md px-1 py-0.5 transition-colors focus-visible:outline-2 focus-visible:outline-clr-primary"
+                    className="block w-full text-left truncate text-[11px] font-body font-medium text-ink-900 hover:bg-[var(--color-blue-500)]/10 rounded-md px-1 py-0.5 transition-colors focus-visible:outline-2 focus-visible:outline-[var(--color-blue-500)]"
                     aria-label={ev.title}
                   >
                     <span className={`inline-block w-1.5 h-1.5 rounded-full mr-1 ${
-                      ev.status === 'completed' ? 'bg-clr-success' :
-                      ev.status === 'in_progress' ? 'bg-clr-success animate-pulse' :
-                      ev.status === 'missed' ? 'bg-clr-danger' :
-                      'bg-clr-primary'
+                      ev.status === 'completed' ? 'bg-semantic-green' :
+                      ev.status === 'in_progress' ? 'bg-semantic-green animate-pulse' :
+                      ev.status === 'missed' ? 'bg-semantic-red' :
+                      'bg-[var(--color-blue-500)]'
                     }`} />
                     {ev.title}
                   </button>
                 ))}
                 {dayEvents.length > 3 && (
-                  <span className="font-body text-[10px] clr-text-muted font-medium">+{dayEvents.length - 3} more</span>
+                  <span className="font-body text-[10px] text-ink-300 font-medium">+{dayEvents.length - 3} more</span>
                 )}
               </div>
             </div>

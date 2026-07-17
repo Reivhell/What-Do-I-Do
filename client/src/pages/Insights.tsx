@@ -38,8 +38,8 @@ export function InsightsPage() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="font-display text-2xl font-bold text-ink-900">Insights</h1>
-          <p className="font-body text-[14px] text-ink-500 mt-1">
+          <h1 className="font-display text-2xl font-bold text-[var(--ink-900)]">Insights</h1>
+          <p className="font-body text-[14px] text-[var(--ink-500)] mt-1">
             Interpretasi dan rekomendasi dari data yang terkumpul
           </p>
         </div>
@@ -55,10 +55,10 @@ export function InsightsPage() {
             <button
               key={value}
               onClick={() => setActiveType(value)}
-              className={`inline-flex items-center gap-1.5 rounded-[--radius-pill] px-3 py-1.5 font-body text-[13px] font-medium transition-all duration-150 clay-l1 ${
+              className={`inline-flex items-center gap-1.5 rounded-[--radius-pill] px-3 py-1.5 font-body text-[13px] font-medium transition-all duration-150 clay-l1 focus-visible:ring-2 focus-visible:ring-[var(--blue-500)] ${
                 activeType === value
-                  ? 'bg-blue-500 text-white'
-                  : 'bg-clay-surface text-ink-500 hover:bg-blue-50 hover:text-ink-900'
+                  ? 'bg-[var(--blue-500)] text-white'
+                  : 'bg-clay-surface text-[var(--ink-500)] hover:bg-[var(--blue-50)] hover:text-[var(--ink-900)]'
               }`}
             >
               <Icon className="size-3.5" />
@@ -74,14 +74,14 @@ export function InsightsPage() {
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             placeholder="Cari insight..."
-            className="w-full rounded-[--radius-md] bg-clay-surface px-3 py-2 pl-9 font-body text-[14px] text-ink-900 placeholder:text-ink-400 outline-none focus:ring-2 focus:ring-blue-200 transition-shadow"
+            className="w-full rounded-[--radius-md] bg-clay-surface px-3 py-2 pl-9 font-body text-[14px] text-[var(--ink-900)] placeholder:text-[var(--ink-400)] outline-none focus:ring-2 focus:ring-[var(--blue-200)] transition-shadow"
           />
           {search ? (
-            <button onClick={() => setSearch('')} className="absolute left-2.5 top-1/2 -translate-y-1/2 text-ink-400 hover:text-ink-600">
+            <button onClick={() => setSearch('')} className="absolute left-2.5 top-1/2 -translate-y-1/2 text-[var(--ink-400)] hover:text-[var(--ink-600)]">
               <X className="size-4" />
             </button>
           ) : (
-            <Filter className="absolute left-2.5 top-1/2 -translate-y-1/2 size-4 text-ink-400" />
+            <Filter className="absolute left-2.5 top-1/2 -translate-y-1/2 size-4 text-[var(--ink-400)]" />
           )}
         </div>
       </div>
@@ -90,7 +90,7 @@ export function InsightsPage() {
       <div className="space-y-3">
         {isLoading ? (
           <div className="flex items-center justify-center py-16">
-            <Loader2 className="size-8 animate-spin text-blue-400" />
+            <Loader2 className="size-8 animate-spin text-[var(--blue-400)]" />
           </div>
         ) : filtered.length > 0 ? (
           filtered.map((insight) => (
@@ -98,7 +98,7 @@ export function InsightsPage() {
           ))
         ) : (
           <EmptyState
-            icon={<LightbulbOff className="size-10 text-ink-300" />}
+            icon={<LightbulbOff className="size-10 text-[var(--ink-300)]" />}
             title="Belum ada insight"
             description={search ? 'Tidak ada insight yang cocok dengan pencarian.' : 'Kumpulkan lebih banyak data untuk mulai mendapat insight tentang produktivitas dan kebiasaanmu.'}
           />

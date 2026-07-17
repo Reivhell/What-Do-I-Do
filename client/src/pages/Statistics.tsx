@@ -32,9 +32,9 @@ function StatCard({ label, value, sub, color }: { label: string; value: string; 
   const colorMap = { green: 'text-semantic-green', red: 'text-semantic-red', blue: 'text-blue-600' };
   return (
     <Card level={1}>
-      <p className="font-body text-[12px] font-semibold uppercase tracking-[0.04em] text-ink-500">{label}</p>
-      <p className={`font-display text-2xl font-bold mt-1 ${color ? colorMap[color] : 'text-ink-900'}`}>{value}</p>
-      {sub && <p className="font-body text-[13px] text-ink-400 mt-1">{sub}</p>}
+      <p className="font-body text-[13px] font-medium text-[var(--ink-500)]">{label}</p>
+      <p className={`font-display text-2xl font-bold mt-1 ${color ? colorMap[color] : 'text-[var(--ink-900)]'}`}>{value}</p>
+      {sub && <p className="font-body text-[13px] text-[var(--ink-400)] mt-1">{sub}</p>}
     </Card>
   );
 }
@@ -55,13 +55,13 @@ export function StatisticsPage() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="font-display text-2xl font-bold text-ink-900">Statistics</h1>
-          <p className="font-body text-[15px] text-ink-500 mt-1">
+          <h1 className="font-display text-2xl font-bold text-[var(--ink-900)]">Statistics</h1>
+          <p className="font-body text-[15px] text-[var(--ink-500)] mt-1">
             Raw numbers, totals, and records across all modules.
           </p>
         </div>
         <button onClick={handleRefresh} disabled={isLoading}
-          className="flex items-center gap-2 rounded-[--radius-md] bg-clay-surface px-4 py-2 clay-l1 text-ink-500 hover:text-ink-900 disabled:opacity-50"
+          className="flex items-center gap-2 rounded-[--radius-md] bg-clay-surface px-4 py-2 clay-l1 text-[var(--ink-500)] hover:text-[var(--ink-900)] disabled:opacity-50"
         ><RefreshCw className={`size-4 ${isLoading ? 'animate-spin' : ''}`} />Refresh</button>
       </div>
 
@@ -70,7 +70,7 @@ export function StatisticsPage() {
         {TABS.map((t) => (
           <button key={t.key} onClick={() => setTab(t.key)}
             className={`flex items-center gap-1.5 rounded-[--radius-pill] px-4 py-2 font-body text-[13px] font-semibold clay-transition ${
-              tab === t.key ? 'bg-blue-500 text-white clay-l1' : 'bg-clay-surface text-ink-500 hover:text-ink-900 clay-l1'
+              tab === t.key ? 'bg-blue-500 text-white clay-l1' : 'bg-clay-surface text-[var(--ink-500)] hover:text-[var(--ink-900)] clay-l1'
             }`}
           ><t.icon className="size-4" />{t.label}</button>
         ))}
@@ -78,7 +78,7 @@ export function StatisticsPage() {
 
       {/* Loading */}
       {isLoading && (
-        <div className="flex justify-center py-16"><Loader2 className="size-8 animate-spin text-ink-300" /></div>
+        <div className="flex justify-center py-16"><Loader2 className="size-8 animate-spin text-[var(--ink-300)]" /></div>
       )}
 
       {/* Error */}
@@ -119,8 +119,8 @@ export function StatisticsPage() {
               </div>
               {data.time.mostActiveDayOfWeek && (
                 <Card level={1} className="!p-4 text-center">
-                  <p className="font-body text-[13px] text-ink-500">Most Active Day</p>
-                  <p className="font-display text-xl font-bold text-ink-900 mt-1">{data.time.mostActiveDayOfWeek}</p>
+                  <p className="font-body text-[13px] text-[var(--ink-500)]">Most Active Day</p>
+                  <p className="font-display text-xl font-bold text-[var(--ink-900)] mt-1">{data.time.mostActiveDayOfWeek}</p>
                 </Card>
               )}
             </div>
@@ -140,17 +140,17 @@ export function StatisticsPage() {
               )}
               {data.activity.sessionsByActivity.length > 0 && (
                 <div className="flex flex-col gap-2">
-                  <p className="font-body text-[13px] font-semibold text-ink-500 uppercase tracking-[0.04em]">Per Activity</p>
+                  <p className="font-body text-[13px] font-medium text-[var(--ink-500)]">Per Activity</p>
                   {data.activity.sessionsByActivity.map((a: ActivityStatEntry, i: number) => (
                     <div key={i} className="flex items-center gap-4 rounded-[--radius-md] bg-clay-surface px-4 py-3 clay-l1">
                       <div className="flex-1 min-w-0">
                         <div className="flex items-center gap-2">
-                          <span className="font-body font-semibold text-[15px] text-ink-900">{a.activityName}</span>
+                          <span className="font-body font-semibold text-[15px] text-[var(--ink-900)]">{a.activityName}</span>
                           <Badge variant="info">{a.category}</Badge>
                         </div>
                       </div>
-                      <span className="font-body text-[13px] text-ink-500">{a.totalSessions} sessions</span>
-                      <span className="font-display text-lg font-bold text-ink-900">{fmtTime(a.totalMinutes / 60)}</span>
+                      <span className="font-body text-[13px] text-[var(--ink-500)]">{a.totalSessions} sessions</span>
+                      <span className="font-display text-lg font-bold text-[var(--ink-900)]">{fmtTime(a.totalMinutes / 60)}</span>
                     </div>
                   ))}
                 </div>
@@ -163,56 +163,56 @@ export function StatisticsPage() {
             <div className="flex flex-col gap-4">
               <div className="grid gap-3 sm:grid-cols-3">
                 <Card level={1} className="!p-5 text-center">
-                  <p className="font-body text-[12px] font-semibold uppercase tracking-[0.04em] text-semantic-green">Income</p>
+                  <p className="font-body text-[13px] font-medium text-semantic-green">Income</p>
                   <p className="font-display text-2xl font-bold text-semantic-green mt-1">{fmt(data.money.totalIncome)}</p>
                 </Card>
                 <Card level={1} className="!p-5 text-center">
-                  <p className="font-body text-[12px] font-semibold uppercase tracking-[0.04em] text-semantic-red">Expense</p>
+                  <p className="font-body text-[13px] font-medium text-semantic-red">Expense</p>
                   <p className="font-display text-2xl font-bold text-semantic-red mt-1">{fmt(data.money.totalExpense)}</p>
                 </Card>
                 <Card level={1} className="!p-5 text-center">
-                  <p className="font-body text-[12px] font-semibold uppercase tracking-[0.04em] text-ink-500">Net</p>
+                  <p className="font-body text-[13px] font-medium text-[var(--ink-500)]">Net</p>
                   <p className={`font-display text-2xl font-bold mt-1 ${data.money.netSavings >= 0 ? 'text-semantic-green' : 'text-semantic-red'}`}>{fmt(data.money.netSavings)}</p>
                 </Card>
               </div>
 
               <Card level={1} className="p-5">
-                <p className="font-body text-[13px] font-semibold text-ink-500 uppercase tracking-[0.04em] mb-2">Records</p>
+                <p className="font-body text-[13px] font-medium text-[var(--ink-500)] mb-2">Records</p>
                 <div className="grid gap-2 sm:grid-cols-2">
                   {data.money.biggestExpense && (
                     <div className="rounded-[--radius-md] bg-clay-surface-alt p-3 clay-inset">
                       <p className="font-body text-[12px] text-semantic-red font-semibold">Biggest Expense</p>
-                      <p className="font-display text-lg font-bold text-ink-900">{fmt(data.money.biggestExpense.amount)}</p>
-                      <p className="font-body text-[12px] text-ink-400">{data.money.biggestExpense.category} · {data.money.biggestExpense.date}</p>
+                      <p className="font-display text-lg font-bold text-[var(--ink-900)]">{fmt(data.money.biggestExpense.amount)}</p>
+                      <p className="font-body text-[12px] text-[var(--ink-400)]">{data.money.biggestExpense.category} · {data.money.biggestExpense.date}</p>
                     </div>
                   )}
                   {data.money.biggestIncome && (
                     <div className="rounded-[--radius-md] bg-clay-surface-alt p-3 clay-inset">
                       <p className="font-body text-[12px] text-semantic-green font-semibold">Biggest Income</p>
-                      <p className="font-display text-lg font-bold text-ink-900">{fmt(data.money.biggestIncome.amount)}</p>
-                      <p className="font-body text-[12px] text-ink-400">{data.money.biggestIncome.date}</p>
+                      <p className="font-display text-lg font-bold text-[var(--ink-900)]">{fmt(data.money.biggestIncome.amount)}</p>
+                      <p className="font-body text-[12px] text-[var(--ink-400)]">{data.money.biggestIncome.date}</p>
                     </div>
                   )}
                 </div>
               </Card>
 
               <Card level={1} className="p-5">
-                <p className="font-body text-[13px] font-semibold text-ink-500 uppercase tracking-[0.04em] mb-3">Expense by Category</p>
-                {data.money.expenseByCategory.length === 0 && <p className="font-body text-[13px] text-ink-400 italic">No expense data</p>}
+                <p className="font-body text-[13px] font-medium text-[var(--ink-500)] mb-3">Expense by Category</p>
+                {data.money.expenseByCategory.length === 0 && <p className="font-body text-[13px] text-[var(--ink-400)] italic">No expense data</p>}
                 {data.money.expenseByCategory.map((e: MoneyStatEntry) => (
                   <div key={e.category} className="flex items-center justify-between py-2 border-b border-clay-border last:border-0">
-                    <span className="font-body text-[14px] text-ink-900">{e.category}</span>
+                    <span className="font-body text-[14px] text-[var(--ink-900)]">{e.category}</span>
                     <span className="font-body text-[14px] font-semibold text-semantic-red">{fmt(e.amount)}</span>
                   </div>
                 ))}
               </Card>
 
               <Card level={1} className="p-5">
-                <p className="font-body text-[13px] font-semibold text-ink-500 uppercase tracking-[0.04em] mb-3">Income by Category</p>
-                {data.money.incomeByCategory.length === 0 && <p className="font-body text-[13px] text-ink-400 italic">No income data</p>}
+                <p className="font-body text-[13px] font-medium text-[var(--ink-500)] mb-3">Income by Category</p>
+                {data.money.incomeByCategory.length === 0 && <p className="font-body text-[13px] text-[var(--ink-400)] italic">No income data</p>}
                 {data.money.incomeByCategory.map((e: MoneyStatEntry) => (
                   <div key={e.category} className="flex items-center justify-between py-2 border-b border-clay-border last:border-0">
-                    <span className="font-body text-[14px] text-ink-900">{e.category}</span>
+                    <span className="font-body text-[14px] text-[var(--ink-900)]">{e.category}</span>
                     <span className="font-body text-[14px] font-semibold text-semantic-green">{fmt(e.amount)}</span>
                   </div>
                 ))}
@@ -231,25 +231,25 @@ export function StatisticsPage() {
               </div>
               {data.habit.mostConsistentHabit && (
                 <Card level={1} className="p-5">
-                  <p className="font-body text-[13px] text-ink-500">Most Consistent Habit</p>
-                  <p className="font-display text-xl font-bold text-ink-900">{data.habit.mostConsistentHabit.name}</p>
+                  <p className="font-body text-[13px] text-[var(--ink-500)]">Most Consistent Habit</p>
+                  <p className="font-display text-xl font-bold text-[var(--ink-900)]">{data.habit.mostConsistentHabit.name}</p>
                   <ProgressBar value={data.habit.mostConsistentHabit.completionRate} />
-                  <p className="font-body text-[13px] text-ink-500 mt-1">{data.habit.mostConsistentHabit.completionRate}% completion rate</p>
+                  <p className="font-body text-[13px] text-[var(--ink-500)] mt-1">{data.habit.mostConsistentHabit.completionRate}% completion rate</p>
                 </Card>
               )}
               {data.habit.habits.length > 0 && (
                 <div className="flex flex-col gap-2">
-                  <p className="font-body text-[13px] font-semibold text-ink-500 uppercase tracking-[0.04em]">All Habits</p>
+                  <p className="font-body text-[13px] font-medium text-[var(--ink-500)]">All Habits</p>
                   {data.habit.habits.map((h: HabitEntry, i: number) => (
                     <div key={i} className="rounded-[--radius-md] bg-clay-surface p-4 clay-l1">
                       <div className="flex items-center justify-between mb-2">
-                        <span className="font-body font-semibold text-[15px] text-ink-900">{h.name}</span>
-                        <span className="font-body text-[13px] text-ink-500">{h.completionRate}%</span>
+                        <span className="font-body font-semibold text-[15px] text-[var(--ink-900)]">{h.name}</span>
+                        <span className="font-body text-[13px] text-[var(--ink-500)]">{h.completionRate}%</span>
                       </div>
                       <ProgressBar value={h.completionRate} />
                       <div className="flex gap-4 mt-2">
-                        <span className="font-body text-[12px] text-ink-400">Best streak: {h.bestStreak}</span>
-                        <span className="font-body text-[12px] text-ink-400">Current: {h.currentStreak}</span>
+                        <span className="font-body text-[12px] text-[var(--ink-400)]">Best streak: {h.bestStreak}</span>
+                        <span className="font-body text-[12px] text-[var(--ink-400)]">Current: {h.currentStreak}</span>
                       </div>
                     </div>
                   ))}
@@ -273,18 +273,18 @@ export function StatisticsPage() {
               </div>
               {data.goal.goals.length > 0 && (
                 <div className="flex flex-col gap-2">
-                  <p className="font-body text-[13px] font-semibold text-ink-500 uppercase tracking-[0.04em]">All Goals</p>
+                  <p className="font-body text-[13px] font-medium text-[var(--ink-500)]">All Goals</p>
                   {data.goal.goals.map((g: GoalEntry, i: number) => (
                     <div key={i} className="rounded-[--radius-md] bg-clay-surface p-4 clay-l1">
                       <div className="flex items-center justify-between mb-2">
                         <div className="flex items-center gap-2">
-                          <span className="font-body font-semibold text-[15px] text-ink-900">{g.title}</span>
+                          <span className="font-body font-semibold text-[15px] text-[var(--ink-900)]">{g.title}</span>
                           <Badge variant={g.status === 'completed' ? 'success' : g.status === 'at_risk' ? 'danger' : 'default'}>{g.status}</Badge>
                         </div>
-                        <span className="font-body text-[13px] font-semibold text-ink-700">{g.progressPercent}%</span>
+                        <span className="font-body text-[13px] font-semibold text-[var(--ink-700)]">{g.progressPercent}%</span>
                       </div>
                       <ProgressBar value={g.progressPercent} />
-                      <p className="font-body text-[12px] text-ink-400 mt-1">Milestones: {g.completedMilestoneCount} / {g.milestoneCount}</p>
+                      <p className="font-body text-[12px] text-[var(--ink-400)] mt-1">Milestones: {g.completedMilestoneCount} / {g.milestoneCount}</p>
                     </div>
                   ))}
                 </div>
@@ -298,12 +298,12 @@ export function StatisticsPage() {
               {/* Longest Session */}
               {(data.time.longestSessionMinutes > 0 || data.activity.longestSessionMinutes > 0) && (
                 <Card level={1} className="p-5">
-                  <p className="font-body text-[12px] font-semibold uppercase tracking-[0.04em] text-ink-500">Longest Session</p>
+                  <p className="font-body text-[13px] font-medium text-[var(--ink-500)]">Longest Session</p>
                   <p className="font-display text-2xl font-bold text-blue-600 mt-1">
                     {Math.max(data.time.longestSessionMinutes, data.activity.longestSessionMinutes)}m
                   </p>
                   {data.activity.mostFrequentActivity && (
-                    <p className="font-body text-[13px] text-ink-400">Most frequent: {data.activity.mostFrequentActivity}</p>
+                    <p className="font-body text-[13px] text-[var(--ink-400)]">Most frequent: {data.activity.mostFrequentActivity}</p>
                   )}
                 </Card>
               )}
@@ -311,56 +311,56 @@ export function StatisticsPage() {
               {/* Biggest Expense */}
               {data.money.biggestExpense && (
                 <Card level={1} className="p-5">
-                  <p className="font-body text-[12px] font-semibold uppercase tracking-[0.04em] text-semantic-red">Biggest Expense</p>
+                  <p className="font-body text-[13px] font-medium text-semantic-red">Biggest Expense</p>
                   <p className="font-display text-2xl font-bold text-semantic-red mt-1">{fmt(data.money.biggestExpense.amount)}</p>
-                  <p className="font-body text-[13px] text-ink-400">{data.money.biggestExpense.category} · {data.money.biggestExpense.date}</p>
+                  <p className="font-body text-[13px] text-[var(--ink-400)]">{data.money.biggestExpense.category} · {data.money.biggestExpense.date}</p>
                 </Card>
               )}
 
               {/* Biggest Income */}
               {data.money.biggestIncome && (
                 <Card level={1} className="p-5">
-                  <p className="font-body text-[12px] font-semibold uppercase tracking-[0.04em] text-semantic-green">Biggest Income</p>
+                  <p className="font-body text-[13px] font-medium text-semantic-green">Biggest Income</p>
                   <p className="font-display text-2xl font-bold text-semantic-green mt-1">{fmt(data.money.biggestIncome.amount)}</p>
-                  <p className="font-body text-[13px] text-ink-400">{data.money.biggestIncome.date}</p>
+                  <p className="font-body text-[13px] text-[var(--ink-400)]">{data.money.biggestIncome.date}</p>
                 </Card>
               )}
 
               {/* Best Habit Streak */}
               {data.habit.bestStreak > 0 && (
                 <Card level={1} className="p-5">
-                  <p className="font-body text-[12px] font-semibold uppercase tracking-[0.04em] text-ink-500">Best Habit Streak</p>
-                  <p className="font-display text-2xl font-bold text-green-600 mt-1">{data.habit.bestStreak} days</p>
-                  {data.habit.bestStreakHabitName && <p className="font-body text-[13px] text-ink-400">{data.habit.bestStreakHabitName}</p>}
+                  <p className="font-body text-[13px] font-medium text-[var(--ink-500)]">Best Habit Streak</p>
+                  <p className="font-display text-2xl font-bold text-[var(--ink-900)] mt-1">{data.habit.bestStreak} days</p>
+                  {data.habit.bestStreakHabitName && <p className="font-body text-[13px] text-[var(--ink-400)]">{data.habit.bestStreakHabitName}</p>}
                 </Card>
               )}
 
               {/* Highest Goal Progress */}
               <Card level={1} className="p-5">
-                <p className="font-body text-[12px] font-semibold uppercase tracking-[0.04em] text-ink-500">Highest Goal Progress</p>
+                <p className="font-body text-[13px] font-medium text-[var(--ink-500)]">Highest Goal Progress</p>
                 {data.goal.goals.length > 0 ? (
                   <>
                     {(() => {
                       const sorted = [...data.goal.goals].sort((a, b) => b.progressPercent - a.progressPercent);
                       const top = sorted[0];
                       return <>
-                        <p className="font-display text-2xl font-bold text-ink-900 mt-1">{top.title}</p>
+                        <p className="font-display text-2xl font-bold text-[var(--ink-900)] mt-1">{top.title}</p>
                         <ProgressBar value={top.progressPercent} />
-                        <p className="font-body text-[13px] text-ink-500 mt-1">{top.progressPercent}% complete</p>
+                        <p className="font-body text-[13px] text-[var(--ink-500)] mt-1">{top.progressPercent}% complete</p>
                       </>;
                     })()}
                   </>
                 ) : (
-                  <p className="font-body text-[13px] text-ink-400 italic mt-2">No goals yet</p>
+                  <p className="font-body text-[13px] text-[var(--ink-400)] italic mt-2">No goals yet</p>
                 )}
               </Card>
 
               {/* Most Consistent Habit */}
               {data.habit.mostConsistentHabit && (
                 <Card level={1} className="p-5">
-                  <p className="font-body text-[12px] font-semibold uppercase tracking-[0.04em] text-ink-500">Most Consistent Habit</p>
-                  <p className="font-display text-2xl font-bold text-green-600 mt-1">{data.habit.mostConsistentHabit.name}</p>
-                  <p className="font-body text-[13px] text-ink-400">{data.habit.mostConsistentHabit.completionRate}% completion</p>
+                  <p className="font-body text-[13px] font-medium text-[var(--ink-500)]">Most Consistent Habit</p>
+                  <p className="font-display text-2xl font-bold text-[var(--ink-900)] mt-1">{data.habit.mostConsistentHabit.name}</p>
+                  <p className="font-body text-[13px] text-[var(--ink-400)]">{data.habit.mostConsistentHabit.completionRate}% completion</p>
                 </Card>
               )}
             </div>

@@ -6,6 +6,10 @@ import { WeekView } from '../components/planner/views/WeekView';
 import { MonthView } from '../components/planner/views/MonthView';
 import { EventForm } from '../components/planner/EventForm';
 import { fetchEvents, createEvent, updateEvent, deleteEvent, startEvent } from '../api/planner';
+import { Card } from '../components/ui/Card';
+import { Button } from '../components/ui/Button';
+import { EmptyState } from '../components/ui/EmptyState';
+import { CalendarOff } from 'lucide-react';
 import type { PlannerEvent, ViewRange, CreatePlannerEvent, UpdatePlannerEvent } from '../types/planner';
 
 const VIEW_LABELS: Record<ViewRange, string> = {
@@ -134,7 +138,7 @@ export default function PlannerPage() {
       {/* Toast */}
       {toast && (
         <div className={`fixed top-4 right-4 z-[100] clay-card px-5 py-3 rounded-2xl shadow-lg flex items-center gap-2 animate-in fade-in slide-in-from-top-2 duration-200 ${
-          toast.type === 'success' ? 'bg-clr-success-10 clr-success' : 'bg-clr-danger-10 clr-danger'
+          toast.type === 'success' ? 'bg-[var(--color-semantic-green)]/10 text-semantic-green' : 'bg-semantic-red/10 text-semantic-red'
         }`}>
           <span className="material-symbols-outlined text-lg" style={{ fontVariationSettings: "'FILL' 1" }}>
             {toast.type === 'success' ? 'check_circle' : 'error'}
@@ -148,22 +152,22 @@ export default function PlannerPage() {
         <div className="flex items-center gap-2">
           <button
             onClick={() => navigate('prev')}
-            className="clay-button w-10 h-10 flex items-center justify-center rounded-2xl bg-clr-surface-white dark:bg-clr-surface-container-high clr-text-secondary hover:scale-110 transition-transform focus-visible:outline-2 focus-visible:outline-clr-primary"
+            className="clay-button w-10 h-10 flex items-center justify-center rounded-2xl bg-clay-surface text-ink-500 hover:scale-110 transition-transform focus-visible:outline-2 focus-visible:outline-[var(--color-blue-500)]"
             aria-label="Previous"
           >
             <span className="material-symbols-outlined text-xl" style={{ fontVariationSettings: "'FILL' 1" }}>chevron_left</span>
           </button>
-          <h1 className="font-body text-lg font-semibold clr-text-primary min-w-[180px] text-center">{headerLabel()}</h1>
+          <h1 className="font-body text-lg font-semibold text-ink-900 min-w-[180px] text-center">{headerLabel()}</h1>
           <button
             onClick={() => navigate('next')}
-            className="clay-button w-10 h-10 flex items-center justify-center rounded-2xl bg-clr-surface-white dark:bg-clr-surface-container-high clr-text-secondary hover:scale-110 transition-transform focus-visible:outline-2 focus-visible:outline-clr-primary"
+            className="clay-button w-10 h-10 flex items-center justify-center rounded-2xl bg-clay-surface text-ink-500 hover:scale-110 transition-transform focus-visible:outline-2 focus-visible:outline-[var(--color-blue-500)]"
             aria-label="Next"
           >
             <span className="material-symbols-outlined text-xl" style={{ fontVariationSettings: "'FILL' 1" }}>chevron_right</span>
           </button>
           <button
             onClick={goToday}
-            className="clay-chip px-4 py-2 rounded-2xl bg-clr-primary-20 clr-text-primary font-body text-sm font-semibold hover:scale-105 transition-transform focus-visible:outline-2 focus-visible:outline-clr-primary"
+            className="clay-chip px-4 py-2 rounded-2xl bg-[var(--color-blue-500)]/15 text-ink-900 font-body text-sm font-semibold hover:scale-105 transition-transform focus-visible:outline-2 focus-visible:outline-[var(--color-blue-500)]"
           >
             Today
           </button>
@@ -176,10 +180,10 @@ export default function PlannerPage() {
               <button
                 key={key}
                 onClick={() => setViewRange(key)}
-                className={`px-4 py-2 rounded-xl font-body text-sm font-semibold transition-all focus-visible:outline-2 focus-visible:outline-clr-primary ${
+                className={`px-4 py-2 rounded-xl font-body text-sm font-semibold transition-all focus-visible:ring-2 focus-visible:ring-[var(--color-blue-500)] ${
                   viewRange === key
-                    ? 'bg-clr-primary clr-on-primary shadow-lg scale-[1.02]'
-                    : 'clr-text-secondary hover:clr-text-primary hover:bg-clr-surface-variant'
+                    ? 'bg-[var(--color-blue-500)] text-white shadow-lg scale-[1.02]'
+                    : 'text-ink-500 hover:text-ink-900 hover:bg-clay-surface'
                 }`}
               >
                 {label}
@@ -187,13 +191,12 @@ export default function PlannerPage() {
             ))}
           </div>
 
-          <button
+          <Button
             onClick={() => { setEditingEvent(null); setShowForm(true); }}
-            className="clay-button px-5 py-3 rounded-2xl bg-clr-primary clr-on-primary font-body text-sm font-semibold flex items-center gap-2 hover:scale-105 transition-transform shadow-lg focus-visible:outline-2 focus-visible:outline-white"
           >
             <span className="material-symbols-outlined text-lg" style={{ fontVariationSettings: "'FILL' 1" }}>add</span>
             Add Event
-          </button>
+          </Button>
         </div>
       </div>
 
@@ -201,20 +204,20 @@ export default function PlannerPage() {
       {hasEvents && (
         <div className="flex items-center gap-4 flex-wrap">
           <div className="flex items-center gap-2">
-            <span className="font-body text-sm clr-text-secondary">Planned</span>
-            <span className="font-body text-lg font-bold clr-primary">{planned}</span>
+            <span className="font-body text-sm text-ink-500">Planned</span>
+            <span className="font-body text-lg font-bold text-[var(--color-blue-500)]">{planned}</span>
           </div>
-          <div className="w-px h-6 bg-clr-surface-container-high" />
+          <div className="w-px h-6 bg-clay-surface" />
           <div className="flex items-center gap-2">
-            <span className="font-body text-sm clr-text-secondary">Completed</span>
-            <span className="font-body text-lg font-bold clr-success">{actual}</span>
+            <span className="font-body text-sm text-ink-500">Completed</span>
+            <span className="font-body text-lg font-bold text-semantic-green">{actual}</span>
           </div>
           {planned > 0 && (
             <>
-              <div className="w-px h-6 bg-clr-surface-container-high" />
+              <div className="w-px h-6 bg-clay-surface" />
               <div className="flex items-center gap-2">
-                <span className="font-body text-sm clr-text-secondary">Rate</span>
-                <span className="font-body text-lg font-bold clr-text-primary">{Math.round((actual / planned) * 100)}%</span>
+                <span className="font-body text-sm text-ink-500">Rate</span>
+                <span className="font-body text-lg font-bold text-ink-900">{Math.round((actual / planned) * 100)}%</span>
               </div>
             </>
           )}
@@ -230,8 +233,8 @@ export default function PlannerPage() {
               onClick={() => setStatusFilter(opt.key)}
               className={`px-3 py-1.5 rounded-2xl font-body text-xs font-semibold transition-all ${
                 statusFilter === opt.key
-                  ? 'bg-clr-primary clr-on-primary shadow-md'
-                  : 'clay-chip bg-clr-surface-container-high clr-text-secondary hover:clr-text-primary'
+                  ? 'bg-[var(--color-blue-500)] text-white shadow-md'
+                  : 'clay-chip bg-clay-surface text-ink-500 hover:text-ink-900'
               }`}
             >
               {opt.label}
@@ -242,41 +245,33 @@ export default function PlannerPage() {
       )}
 
       {/* Divider */}
-      <div className="h-px w-full bg-clr-surface-container-high" />
+      <div className="h-px w-full bg-clay-surface" />
 
       {/* Error state */}
       {error && (
-        <div className="clay-card p-[20px] flex items-center gap-3">
-          <span className="material-symbols-outlined clr-danger text-2xl">error</span>
-          <p className="font-body text-[15px] clr-danger">{error}</p>
-        </div>
+        <Card level={1} className="p-4 border border-[var(--color-semantic-red)]/30">
+          <div className="flex items-center gap-3">
+            <span className="material-symbols-outlined text-2xl text-semantic-red">error</span>
+            <p className="font-body text-[15px] text-semantic-red">{error}</p>
+          </div>
+        </Card>
       )}
 
       {/* Loading */}
       {loading && (
         <div className="flex items-center justify-center py-16">
-          <span className="material-symbols-outlined text-3xl clr-primary animate-spin">sync</span>
+          <span className="material-symbols-outlined text-3xl text-[var(--color-blue-500)] animate-spin">sync</span>
         </div>
       )}
 
       {/* Empty state */}
       {!loading && !error && !hasEvents && (
-        <div className="clay-card p-[32px] text-center">
-          <div className="w-16 h-16 mx-auto mb-4 rounded-2xl bg-clr-primary-10 flex items-center justify-center">
-            <span className="material-symbols-outlined text-3xl clr-primary" style={{ fontVariationSettings: "'FILL' 1" }}>calendar_month</span>
-          </div>
-          <h3 className="font-body text-[20px] font-semibold clr-text-primary">No events yet</h3>
-          <p className="font-body text-[14px] clr-text-secondary mt-2 mb-5">
-            Tap "Add Event" to schedule your first activity.
-          </p>
-          <button
-            onClick={() => { setEditingEvent(null); setShowForm(true); }}
-            className="clay-button bg-clr-primary clr-on-primary rounded-full px-6 py-3 font-body text-sm font-semibold inline-flex items-center gap-2 hover:scale-105 transition-transform"
-          >
-            <span className="material-symbols-outlined text-lg">add_circle</span>
-            Add Event
-          </button>
-        </div>
+        <EmptyState
+          icon={<CalendarOff className="size-8" />}
+          title="No events yet"
+          description="Tap Add Event to schedule your first activity."
+          action={<Button onClick={() => { setEditingEvent(null); setShowForm(true); }}>Add Event</Button>}
+        />
       )}
 
       {/* Calendar view */}
