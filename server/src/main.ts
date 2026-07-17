@@ -2,8 +2,12 @@ import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { LoggerInterceptor, LoggerService } from './common/logger';
 import helmet from 'helmet';
+import { runMigrations } from './scripts/run-migrations';
 
 async function bootstrap() {
+  // Run migrations before starting the app
+  await runMigrations();
+
   const app = await NestFactory.create(AppModule);
 
   app.use(helmet({
