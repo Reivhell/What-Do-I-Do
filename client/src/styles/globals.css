@@ -44,6 +44,7 @@
 
 /* ── Canonical clay tokens (plain vars for var(--x) references) ── */
 :root {
+<<<<<<< HEAD
   --clay-bg: #F4F7FB;
   --clay-surface: #FFFFFF;
   --clay-surface-alt: #FAFCFE;
@@ -73,6 +74,9 @@
 
   /* ── Shadow color tokens (swap in dark mode) ── */
   --clay-shadow-dark: rgba(163, 177, 199, 0.45);
+=======
+  --clay-shadow-dark: rgba(209, 217, 230, 0.5);
+>>>>>>> worktree-wf_76154838-1ed-5
   --clay-shadow-light: rgba(255, 255, 255, 0.9);
 }
 
@@ -163,9 +167,9 @@ body {
 
 /* ── Dark mode surface overrides ── */
 .dark {
-  --color-clay-bg: #1B222C;
-  --color-clay-surface: #232B37;
-  --color-clay-surface-alt: #1E2631;
+  --color-clay-bg: #1a1d23;
+  --color-clay-surface: #24272e;
+  --color-clay-surface-alt: #1e2631;
   --color-blue-500: #5B9EE8;
 }
 

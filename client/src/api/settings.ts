@@ -1,4 +1,5 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+<<<<<<< HEAD
 import type {
   UserProfile,
   UserPreferences,
@@ -9,18 +10,26 @@ import type {
   UpdateNotificationsInput,
   CreateCategoryInput,
 } from '@whatdo/shared';
+=======
+import type { UserSettings, SettingsUpdate, ThemeMode } from '@whatdo/shared';
+>>>>>>> worktree-wf_76154838-1ed-5
 
 const BASE = '/api/settings';
 
 async function request<T>(url: string, options?: RequestInit): Promise<T> {
   const res = await fetch(url, {
     headers: { 'Content-Type': 'application/json' },
+<<<<<<< HEAD
+=======
+    credentials: 'include',
+>>>>>>> worktree-wf_76154838-1ed-5
     ...options,
   });
   if (!res.ok) throw new Error(`Settings API error: ${res.status}`);
   return res.json();
 }
 
+<<<<<<< HEAD
 // ── GET hooks ──
 
 export function useProfile() {
@@ -124,8 +133,57 @@ export function useImport() {
     mutationFn: (data: { exportedAt: string; appVersion: string; data: Record<string, unknown[]> }) =>
       request<Record<string, { imported: number; skipped: number }>>(`${BASE}/import`, {
         method: 'POST',
+=======
+export function useSettings() {
+  return useQuery<UserSettings>({
+    queryKey: ['settings'],
+    queryFn: () => request<UserSettings>(BASE),
+  });
+}
+
+export function useUpdateSettings() {
+  const qc = useQueryClient();
+  return useMutation<UserSettings, Error, SettingsUpdate>({
+    mutationFn: (data) =>
+      request<UserSettings>(BASE, {
+        method: 'PATCH',
+>>>>>>> worktree-wf_76154838-1ed-5
         body: JSON.stringify(data),
       }),
     onSuccess: () => qc.invalidateQueries({ queryKey: ['settings'] }),
   });
 }
+<<<<<<< HEAD
+=======
+
+export function useTheme() {
+  return useQuery<{ theme: ThemeMode }>({
+    queryKey: ['settings', 'theme'],
+    queryFn: () => request<{ theme: ThemeMode }>(`${BASE}/theme`),
+  });
+}
+
+export function useUpdateTheme() {
+  const qc = useQueryClient();
+  return useMutation<{ theme: ThemeMode }, Error, ThemeMode>({
+    mutationFn: (theme) =>
+      request<{ theme: ThemeMode }>(`${BASE}/theme`, {
+        method: 'PATCH',
+        body: JSON.stringify({ theme }),
+      }),
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ['settings'] });
+      qc.invalidateQueries({ queryKey: ['settings', 'theme'] });
+    },
+  });
+}
+
+export function useResetSettings() {
+  const qc = useQueryClient();
+  return useMutation<UserSettings, Error, void>({
+    mutationFn: () =>
+      request<UserSettings>(BASE, { method: 'DELETE' }),
+    onSuccess: () => qc.invalidateQueries({ queryKey: ['settings'] }),
+  });
+}
+>>>>>>> worktree-wf_76154838-1ed-5

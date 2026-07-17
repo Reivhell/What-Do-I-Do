@@ -280,8 +280,13 @@ export function Dashboard() {
           </Card>
 
           {/* Productive Time */}
+<<<<<<< HEAD
           <Card level={1} className="flex items-center gap-5">
             <div className="w-16 h-16 bg-[var(--blue-50)] dark:bg-[var(--blue-500)]/10 rounded-full flex items-center justify-center clay-button">
+=======
+          <div className="clay-card p-[24px] flex items-center gap-5">
+            <div className="w-16 h-16 bg-blue-50 dark:bg-clr-primary-10 rounded-full flex items-center justify-center clay-l1">
+>>>>>>> worktree-wf_76154838-1ed-5
               <span
                 className="material-symbols-outlined text-[var(--blue-500)] text-3xl"
                 style={{ fontVariationSettings: "'FILL' 1" }}
@@ -304,8 +309,13 @@ export function Dashboard() {
           </Card>
 
           {/* Tasks Completed */}
+<<<<<<< HEAD
           <Card level={1} className="flex items-center gap-5">
             <div className="w-16 h-16 bg-[var(--semantic-green)]/10 dark:bg-[var(--semantic-green)]/10 rounded-full flex items-center justify-center clay-button text-[var(--semantic-green)]">
+=======
+          <div className="clay-card p-[24px] flex items-center gap-5">
+            <div className="w-16 h-16 bg-green-50 dark:bg-clr-success-10 rounded-full flex items-center justify-center clay-l1 clr-success">
+>>>>>>> worktree-wf_76154838-1ed-5
               <span
                 className="material-symbols-outlined text-3xl"
                 style={{ fontVariationSettings: "'FILL' 1" }}
@@ -327,8 +337,13 @@ export function Dashboard() {
           </Card>
 
           {/* Spend Today */}
+<<<<<<< HEAD
           <Card level={1} className="flex items-center gap-5">
             <div className="w-16 h-16 bg-[var(--semantic-red)]/10 dark:bg-[var(--semantic-red)]/10 rounded-full flex items-center justify-center clay-button text-[var(--semantic-red)]">
+=======
+          <div className="clay-card p-[24px] flex items-center gap-5">
+            <div className="w-16 h-16 bg-red-50 dark:bg-clr-danger-10 rounded-full flex items-center justify-center clay-l1 clr-danger">
+>>>>>>> worktree-wf_76154838-1ed-5
               <span
                 className="material-symbols-outlined text-3xl"
                 style={{ fontVariationSettings: "'FILL' 1" }}
@@ -404,10 +419,17 @@ export function Dashboard() {
                 {formatTimer(elapsed)}
               </div>
               <div className="flex items-center gap-4">
+<<<<<<< HEAD
                 <button className="w-12 h-12 rounded-full clay-button bg-[var(--clay-surface)] flex items-center justify-center text-[var(--blue-500)]">
                   <span className="material-symbols-outlined">info</span>
                 </button>
                 <button className="w-16 h-16 rounded-full clay-button bg-[var(--clay-surface)] flex items-center justify-center text-[var(--semantic-red)]">
+=======
+                <button className="w-12 h-12 rounded-full clay-l1 bg-clay-surface flex items-center justify-center clr-primary">
+                  <span className="material-symbols-outlined">info</span>
+                </button>
+                <button className="w-16 h-16 rounded-full clay-l1 bg-clay-surface flex items-center justify-center clr-danger">
+>>>>>>> worktree-wf_76154838-1ed-5
                   <span
                     className="material-symbols-outlined text-3xl"
                     style={{ fontVariationSettings: "'FILL' 1" }}
@@ -415,7 +437,11 @@ export function Dashboard() {
                     stop_circle
                   </span>
                 </button>
+<<<<<<< HEAD
                 <button className="clay-button bg-[var(--clay-surface)] rounded-full px-6 py-3 flex items-center gap-2 font-body text-[13px] leading-[18px] font-medium text-[var(--ink-900)]">
+=======
+                <button className="clay-l1 bg-clay-surface rounded-full px-6 py-3 flex items-center gap-2 font-[Plus Jakarta Sans] text-[13px] leading-[18px] font-medium clr-text-primary">
+>>>>>>> worktree-wf_76154838-1ed-5
                   <span className="material-symbols-outlined">swap_horiz</span>
                   Switch
                 </button>
@@ -674,6 +700,7 @@ export function Dashboard() {
                 { icon: "note_add", label: "Capture Note", color: "text-[var(--blue-700)]", path: "/inbox" },
                 { icon: "mail", label: "Open Inbox", color: "text-[var(--ink-900)]", path: "/inbox" },
               ].map((act, idx) => (
+<<<<<<< HEAD
                 <Button
                   key={idx}
                   variant="secondary"
@@ -684,6 +711,14 @@ export function Dashboard() {
                   <span className={`material-symbols-outlined text-2xl ${act.color}`} style={{ fontVariationSettings: "'FILL' 1" }}>{act.icon}</span>
                   <span className="font-body text-[11px] leading-[14px] font-semibold text-center text-[var(--ink-500)]">{act.label}</span>
                 </Button>
+=======
+                <button key={idx} onClick={() => navigate(act.path)} className="flex flex-col items-center gap-2 group">
+                  <div className={`clay-l2 w-full aspect-square max-w-[56px] flex items-center justify-center rounded-2xl bg-clay-surface ${act.color} group-hover:scale-110 transition-transform mx-auto`}>
+                    <span className="material-symbols-outlined text-xl" style={{ fontVariationSettings: "'FILL' 1" }}>{act.icon}</span>
+                  </div>
+                  <span className="font-[Plus Jakarta Sans] text-[11px] leading-[14px] font-semibold text-center clr-text-secondary">{act.label}</span>
+                </button>
+>>>>>>> worktree-wf_76154838-1ed-5
               ))}
             </div>
           </Card>

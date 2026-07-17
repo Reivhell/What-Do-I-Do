@@ -8,3 +8,4 @@ export { ProgressBar } from "./ProgressBar";
 export { Modal } from "./Modal";
 export { Toggle } from "./Toggle";
 export { EmptyState } from "./EmptyState";
+export { Select } from "./Select";

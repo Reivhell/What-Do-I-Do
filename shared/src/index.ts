@@ -115,6 +115,7 @@ export {
   WIDGET_TYPE_LABELS,
 } from './types/workspace';
 export type {
+<<<<<<< HEAD
   DashboardSummary,
   ActiveSession,
   TodayStats,
@@ -123,3 +124,12 @@ export type {
   TopInsight,
   StreakInfo,
 } from './types/dashboard';
+=======
+  UserSettings,
+  SettingsUpdate,
+  ThemeMode,
+  NotificationSettings,
+  PrivacySettings,
+  DisplaySettings,
+} from './types/settings';
+>>>>>>> worktree-wf_76154838-1ed-5
