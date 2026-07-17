@@ -9,13 +9,17 @@
   "scripts": {
     "dev": "concurrently -n server,client -c blue,green \"npm run dev -w server\" \"npm run dev -w client\"",
     "build": "npm run build -w shared && npm run build -w server && npm run build -w client",
-    "lint": "npm run lint -w server && npm run lint -w client",
-    "test": "npm run test -w server",
+    "lint": "npm run lint -w shared && npm run lint -w server && npm run lint -w client",
+    "test": "npm run test -w server && npm run test -w client",
+    "test:server": "npm run test -w server",
+    "test:client": "npm run test -w client",
+    "test:shared": "npm run test -w shared",
     "db:generate": "npm run db:generate -w server",
     "db:migrate": "npm run db:migrate -w server",
     "db:studio": "npm run db:studio -w server"
   },
   "devDependencies": {
+    "@types/jest": "^30.0.0",
     "concurrently": "^10.0.3",
     "typescript": "^6.0.3"
   },
@@ -25,5 +29,8 @@
     "esbuild@0.28.1": true,
     "better-sqlite3@12.11.1": true,
     "unrs-resolver@1.12.2": true
+  },
+  "dependencies": {
+    "pino": "^10.3.1"
   }
 }
