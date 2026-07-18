@@ -16,7 +16,7 @@ You will deploy **two separate services** from this single repository:
 
 ## 1. Deploying the API Server (`whatdo-server`)
 
-The API server runs NestJS with a SQLite database. Follow these steps to deploy it:
+The API server runs NestJS with a SQLite database. We build and deploy it using a multi-stage Dockerfile located at [server/Dockerfile](file:///home/sejel/Documents/what%20do%20i%20do/server/Dockerfile). This environment correctly compiles native C++ modules like `better-sqlite3` and `bcrypt` using alpine build tools.
 
 ### Steps:
 1. In the Railway Dashboard, click **New Project** -> **Deploy from GitHub repo**.
@@ -24,7 +24,9 @@ The API server runs NestJS with a SQLite database. Follow these steps to deploy 
 3. In the service card settings (cog icon):
    - **Service Name**: Set to `whatdo-server` (or similar).
    - **Root Directory**: Keep it as `/` (default).
-   - **Railway Config File**: Set to `/server/railway.toml` (or `/railway.toml`).
+   - **Dockerfile Path**: Set to `server/Dockerfile` (or `/server/Dockerfile`).
+     > [!IMPORTANT]
+     > This tells Railway to build the service using the Dockerfile inside `/server` with the root folder `/` as context (needed for monorepo workspaces resolution).
 4. **Volume Mount (Crucial for SQLite)**:
    - Go to the **Settings** tab of the server service.
    - Click **Add Volume**. Mount the volume at `/data` (e.g. size 1GB-10GB).
@@ -37,7 +39,7 @@ The API server runs NestJS with a SQLite database. Follow these steps to deploy 
      * `CORS_ORIGIN`: `https://your-frontend-client.up.railway.app` (your frontend service's public URL)
      * `JWT_SECRET`: A secure random string.
 
-Railway will automatically run migrations and start the NestJS backend. You can verify it by checking the service logs or visiting `https://your-server.up.railway.app/api/settings` (it should return a response).
+Railway will build the image, run database migrations automatically on startup, and launch the NestJS backend. You can verify it by checking the service logs or visiting `https://your-server.up.railway.app/api/settings`.
 
 ---
 
@@ -64,5 +66,5 @@ Railway will build the client using `npm run build -w client` (which automatical
 ## 🧩 How Config as Code works
 
 The repository includes configuration files in each directory:
-- [railway.toml](file:///home/sejel/Documents/what%20do%20i%20do/railway.toml) / [server/railway.toml](file:///home/sejel/Documents/what%20do%20i%20do/server/railway.toml): Tells Railway how to compile workspace dependencies and start NestJS.
+- [server/Dockerfile](file:///home/sejel/Documents/what%20do%20i%20do/server/Dockerfile): Defines the multi-stage Docker build environment to compile workspaces and run NestJS.
 - [client/railway.toml](file:///home/sejel/Documents/what%20do%20i%20do/client/railway.toml): Tells Railway how to compile Vite and use `serve` to handle Single Page Application (SPA) client-side routes.
