@@ -7,14 +7,9 @@ import type {
   HabitStats,
   GoalStats,
 } from '@whatdo/shared';
+import { request } from './client';
 
 const BASE = '/api/statistics';
-
-async function request<T>(url: string): Promise<T> {
-  const res = await fetch(url);
-  if (!res.ok) throw new Error(`Statistics API error: ${res.status}`);
-  return res.json();
-}
 
 function buildUrl(path: string, forceRefresh?: boolean): string {
   return `${BASE}${path}${forceRefresh ? '?forceRefresh=true' : ''}`;

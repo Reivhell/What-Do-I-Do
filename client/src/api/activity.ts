@@ -6,17 +6,9 @@ import type {
   UpdateActivityInput,
   ActivityHistoryFilter,
 } from '@whatdo/shared';
+import { request } from './client';
 
 const BASE = '/api/activity';
-
-async function request<T>(url: string, options?: RequestInit): Promise<T> {
-  const res = await fetch(url, {
-    headers: { 'Content-Type': 'application/json' },
-    ...options,
-  });
-  if (!res.ok) throw new Error(`Activity API error: ${res.status}`);
-  return res.json();
-}
 
 function buildHistoryParams(filters?: ActivityHistoryFilter): string {
   if (!filters) return '';
@@ -33,7 +25,7 @@ export function useActiveSession() {
   return useQuery<ActivitySession | null>({
     queryKey: ['activity', 'active'],
     queryFn: () => request(`${BASE}/active`),
-    refetchInterval: 30_000, // poll every 30s for timer accuracy
+    refetchInterval: 30_000,
   });
 }
 

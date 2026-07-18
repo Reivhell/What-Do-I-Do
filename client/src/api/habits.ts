@@ -8,17 +8,9 @@ import type {
   LogHabitInput,
   HabitWithLogs,
 } from '@whatdo/shared';
+import { request } from './client';
 
 const BASE = '/api/habits';
-
-async function request<T>(url: string, options?: RequestInit): Promise<T> {
-  const res = await fetch(url, {
-    headers: { 'Content-Type': 'application/json' },
-    ...options,
-  });
-  if (!res.ok) throw new Error(`Habits API error: ${res.status}`);
-  return res.json();
-}
 
 export function useHabitsList() {
   return useQuery<Habit[]>({

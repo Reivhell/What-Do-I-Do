@@ -23,7 +23,7 @@ import {
   BulkUpdateStatusDto,
   CreateSubtaskDto,
   UpdateSubtaskDto,
-} from './dto';
+} from './dto/task.dto';
 
 const DEFAULT_USER_ID = 'default';
 

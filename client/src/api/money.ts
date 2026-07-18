@@ -6,20 +6,9 @@ import type {
   Budget, CreateBudgetInput, UpdateBudgetInput,
   MoneySummary,
 } from '@whatdo/shared';
+import { request } from './client';
 
 const BASE = '/api/money';
-
-async function request<T>(url: string, opts?: RequestInit): Promise<T> {
-  const res = await fetch(url, {
-    headers: { 'Content-Type': 'application/json' },
-    ...opts,
-  });
-  if (!res.ok) {
-    const err = await res.json().catch(() => ({ message: res.statusText }));
-    throw new Error(err.message || `Request failed: ${res.status}`);
-  }
-  return res.json();
-}
 
 // ── Summary ──
 
@@ -74,11 +63,16 @@ export function useDeleteAccount() {
 
 // ── Transactions ──
 
-export function useTransactions(accountId?: string) {
-  const params = accountId ? `?accountId=${accountId}` : '';
+export function useTransactions(accountId?: string, limit = 50, offset = 0) {
+  const params = new URLSearchParams();
+  if (accountId) params.set('accountId', accountId);
+  params.set('limit', String(limit));
+  params.set('offset', String(offset));
+  const qs = params.toString() ? `?${params.toString()}` : '';
+
   return useQuery<Transaction[]>({
-    queryKey: ['money', 'transactions', accountId],
-    queryFn: () => request(`${BASE}/transactions${params}`),
+    queryKey: ['money', 'transactions', accountId, limit, offset],
+    queryFn: () => request(`${BASE}/transactions${qs}`),
   });
 }
 
@@ -90,7 +84,7 @@ export function useCreateTransaction() {
         method: 'POST',
         body: JSON.stringify(data),
       }),
-    onSuccess: () => qc.invalidateQueries({ queryKey: ['money'] }),
+    onSuccess: () => qc.invalidateQueries({ queryKey: ['money', 'transactions'] }),
   });
 }
 
@@ -102,7 +96,7 @@ export function useUpdateTransaction() {
         method: 'PATCH',
         body: JSON.stringify(data),
       }),
-    onSuccess: () => qc.invalidateQueries({ queryKey: ['money'] }),
+    onSuccess: () => qc.invalidateQueries({ queryKey: ['money', 'transactions'] }),
   });
 }
 
@@ -111,7 +105,7 @@ export function useDeleteTransaction() {
   return useMutation({
     mutationFn: (id: string) =>
       request<void>(`${BASE}/transactions/${id}`, { method: 'DELETE' }),
-    onSuccess: () => qc.invalidateQueries({ queryKey: ['money'] }),
+    onSuccess: () => qc.invalidateQueries({ queryKey: ['money', 'transactions'] }),
   });
 }
 

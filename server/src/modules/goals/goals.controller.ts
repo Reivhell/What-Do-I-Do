@@ -9,7 +9,7 @@ import {
   ParseUUIDPipe,
 } from '@nestjs/common';
 import { GoalsService } from './goals.service';
-import { CreateGoalDto, UpdateGoalDto, CreateMilestoneDto, UpdateMilestoneDto, ScheduleMilestoneDto } from './dto';
+import { CreateGoalDto, UpdateGoalDto, CreateMilestoneDto, UpdateMilestoneDto, ScheduleMilestoneDto } from './dto/goal.dto';
 
 const DEFAULT_USER_ID = 'default';
 

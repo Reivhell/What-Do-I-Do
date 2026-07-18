@@ -6,18 +6,9 @@ import type {
   UpdateProfileInput, UpdatePreferencesInput, UpdateNotificationsInput,
   ExportData, ImportResult,
 } from '@whatdo/shared';
+import { request } from './client';
 
 const BASE = '/api/settings';
-
-async function request<T>(url: string, options?: RequestInit): Promise<T> {
-  const res = await fetch(url, {
-    headers: { 'Content-Type': 'application/json' },
-    credentials: 'include',
-    ...options,
-  });
-  if (!res.ok) throw new Error(`Settings API error: ${res.status}`);
-  return res.json();
-}
 
 export function useSettings() {
   return useQuery<UserSettings>({
@@ -69,8 +60,6 @@ export function useResetSettings() {
   });
 }
 
-// ── Legacy per-section endpoints (keep until Settings.tsx is refactored) ──
-
 export function useProfile() {
   return useQuery<UserProfile>({
     queryKey: ['settings', 'profile'],
@@ -86,10 +75,7 @@ export function useUpdateProfile() {
         method: 'PATCH',
         body: JSON.stringify(data),
       }),
-    onSuccess: () => {
-      qc.invalidateQueries({ queryKey: ['settings'] });
-      qc.invalidateQueries({ queryKey: ['settings', 'profile'] });
-    },
+    onSuccess: () => qc.invalidateQueries({ queryKey: ['settings', 'profile'] }),
   });
 }
 
@@ -108,10 +94,7 @@ export function useUpdatePreferences() {
         method: 'PATCH',
         body: JSON.stringify(data),
       }),
-    onSuccess: () => {
-      qc.invalidateQueries({ queryKey: ['settings'] });
-      qc.invalidateQueries({ queryKey: ['settings', 'preferences'] });
-    },
+    onSuccess: () => qc.invalidateQueries({ queryKey: ['settings', 'preferences'] }),
   });
 }
 

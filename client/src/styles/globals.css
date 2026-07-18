@@ -77,13 +77,53 @@
 }
 
 .dark {
-  --clay-bg: #1B222C;
-  --clay-surface: #232B37;
-  --clay-surface-alt: #1E2631;
-  --blue-500: #5B9EE8;
+  /* ── Onyx backgrounds ── */
+  --color-clay-bg: #0C0D12;
+  --color-clay-surface: #14161C;
+  --color-clay-surface-alt: #1A1D24;
+  --clay-bg: #0C0D12;
+  --clay-surface: #14161C;
+  --clay-surface-alt: #1A1D24;
 
-  --clay-shadow-dark: rgba(0, 0, 0, 0.55);
-  --clay-shadow-light: rgba(255, 255, 255, 0.05);
+  /* ── Candy Blue accent (bright, vibrant) ── */
+  --color-blue-50: #00284D;
+  --color-blue-100: #003366;
+  --color-blue-300: #0077CC;
+  --color-blue-500: #0095FF;
+  --color-blue-700: #33ADFF;
+  --blue-50: #00284D;
+  --blue-100: #003366;
+  --blue-200: #004080;
+  --blue-300: #0077CC;
+  --blue-400: #0088E0;
+  --blue-500: #0095FF;
+  --blue-600: #1AA3FF;
+  --blue-700: #33ADFF;
+  --blue-900: #80CCFF;
+
+  /* ── Light ink on dark onyx (fixes contrast bug) ── */
+  --color-ink-900: #E8ECF0;
+  --color-ink-500: #9AA4B0;
+  --color-ink-300: #5D6775;
+  --ink-300: #5D6775;
+  --ink-400: #6A7585;
+  --ink-500: #9AA4B0;
+  --ink-600: #B0BAC8;
+  --ink-700: #C8D0DC;
+  --ink-900: #E8ECF0;
+
+  /* ── Brighter semantic colors for dark bg ── */
+  --color-semantic-green: #34D399;
+  --color-semantic-red: #FF6B6B;
+  --color-semantic-amber: #FFB347;
+  --semantic-green: #34D399;
+  --semantic-red: #FF6B6B;
+  --semantic-amber: #FFB347;
+
+  /* ── Shadow tokens for onyx depth ── */
+  --clay-shadow-dark: rgba(0, 0, 0, 0.7);
+  --clay-shadow-light: rgba(255, 255, 255, 0.03);
+  --clay-border: var(--ink-300);
 }
 
 /* ── Base Styles ── */
@@ -126,8 +166,8 @@ body {
 
 .dark .clay-inset {
   box-shadow:
-    inset 3px 3px 6px rgba(0, 0, 0, 0.40),
-    inset -3px -3px 6px rgba(255, 255, 255, 0.03);
+    inset 3px 3px 6px rgba(0, 0, 0, 0.50),
+    inset -3px -3px 6px rgba(255, 255, 255, 0.02);
 }
 
 /* ── Clay surface/button helpers (re-added: referenced by pages/components) ── */
@@ -157,17 +197,12 @@ body {
 
 .dark .clay-card-inset {
   box-shadow:
-    inset 3px 3px 6px rgba(0, 0, 0, 0.40),
-    inset -3px -3px 6px rgba(255, 255, 255, 0.03);
+    inset 3px 3px 6px rgba(0, 0, 0, 0.50),
+    inset -3px -3px 6px rgba(255, 255, 255, 0.02);
 }
 
-/* ── Dark mode surface overrides ── */
-.dark {
-  --color-clay-bg: #1a1d23;
-  --color-clay-surface: #24272e;
-  --color-clay-surface-alt: #1e2631;
-  --color-blue-500: #5B9EE8;
-}
+/* ── Onyx Dark surface overrides (unified) ── */
+/* All dark mode tokens consolidated above */
 
 /* ── ProgressRing (clay tokens via CSS, SVG attrs can't resolve var()) ── */
 .progress-ring-track {
@@ -235,8 +270,8 @@ body {
 .hover\:clr-primary:hover { color: var(--blue-500); }
 .clr-text-primary { color: var(--ink-900); }
 
-.dark .dark\:bg-clr-surface-variant { background-color: #2a3341; }
-.dark .dark\:hover\:bg-clr-surface-variant:hover { background-color: #2a3341; }
+.dark .dark\:bg-clr-surface-variant { background-color: var(--clay-surface-alt); }
+.dark .dark\:hover\:bg-clr-surface-variant:hover { background-color: var(--clay-surface-alt); }
 
 /* ── Safe area helpers ── */
 .safe-bottom {

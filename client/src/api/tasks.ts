@@ -11,17 +11,9 @@ import type {
   CreateSubtaskInput,
   UpdateSubtaskInput,
 } from '@whatdo/shared';
+import { request } from './client';
 
 const BASE = '/api/tasks';
-
-async function request<T>(url: string, options?: RequestInit): Promise<T> {
-  const res = await fetch(url, {
-    headers: { 'Content-Type': 'application/json' },
-    ...options,
-  });
-  if (!res.ok) throw new Error(`Tasks API error: ${res.status}`);
-  return res.json();
-}
 
 // ── Query hooks ──
 export function useTasksList(view?: TaskView) {

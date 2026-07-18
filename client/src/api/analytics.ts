@@ -1,12 +1,7 @@
 import { useQuery } from '@tanstack/react-query';
+import { request } from './client';
 
 const BASE = '/api/analytics';
-
-async function request<T>(url: string): Promise<T> {
-  const res = await fetch(url);
-  if (!res.ok) throw new Error(`Analytics API error: ${res.status}`);
-  return res.json();
-}
 
 export interface AnalyticsSummary {
   scores: {

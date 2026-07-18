@@ -6,20 +6,9 @@ import type {
   CreateAnnotationInput,
   UpdateAnnotationInput,
 } from '@whatdo/shared';
+import { request } from './client';
 
 const BASE = '/api/life-log';
-
-async function request<T>(url: string, opts?: RequestInit): Promise<T> {
-  const res = await fetch(url, {
-    headers: { 'Content-Type': 'application/json' },
-    ...opts,
-  });
-  if (!res.ok) {
-    const err = await res.json().catch(() => ({ message: res.statusText }));
-    throw new Error(err.message || `Request failed: ${res.status}`);
-  }
-  return res.json();
-}
 
 // ── Timeline ──
 

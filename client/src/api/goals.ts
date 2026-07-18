@@ -9,17 +9,9 @@ import type {
   ScheduleMilestoneInput,
   LinkedItem,
 } from '@whatdo/shared';
+import { request } from './client';
 
 const BASE = '/api/goals';
-
-async function request<T>(url: string, options?: RequestInit): Promise<T> {
-  const res = await fetch(url, {
-    headers: { 'Content-Type': 'application/json' },
-    ...options,
-  });
-  if (!res.ok) throw new Error(`Goals API error: ${res.status}`);
-  return res.json();
-}
 
 export interface GoalWithMilestones extends Goal {
   milestones: Milestone[];
@@ -63,14 +55,6 @@ export function useDeleteGoal() {
   return useMutation({
     mutationFn: (id: string) => request<Goal>(`${BASE}/${id}`, { method: 'DELETE' }),
     onSuccess: () => qc.invalidateQueries({ queryKey: ['goals'] }),
-  });
-}
-
-export function useMilestones(goalId: string) {
-  return useQuery<Milestone[]>({
-    queryKey: ['milestones', goalId],
-    queryFn: () => request(`${BASE}/${goalId}/milestones`),
-    enabled: !!goalId,
   });
 }
 

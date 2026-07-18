@@ -6,17 +6,9 @@ import type {
   UpdateCaptureInput,
   ConvertCaptureInput,
 } from '@whatdo/shared';
+import { request } from './client';
 
 const BASE = '/api/inbox';
-
-async function request<T>(url: string, options?: RequestInit): Promise<T> {
-  const res = await fetch(url, {
-    headers: { 'Content-Type': 'application/json' },
-    ...options,
-  });
-  if (!res.ok) throw new Error(`Inbox API error: ${res.status}`);
-  return res.json();
-}
 
 export function useInboxList(status?: CaptureStatus, q?: string) {
   const params = new URLSearchParams();
@@ -45,7 +37,7 @@ export function useUpdateCapture() {
   const qc = useQueryClient();
   return useMutation({
     mutationFn: ({ id, ...input }: UpdateCaptureInput & { id: string }) =>
-      request<CaptureItem[]>(`${BASE}/${id}`, {
+      request<CaptureItem>(`${BASE}/${id}`, {
         method: 'PATCH',
         body: JSON.stringify(input),
       }),
@@ -57,7 +49,7 @@ export function useArchiveCapture() {
   const qc = useQueryClient();
   return useMutation({
     mutationFn: (id: string) =>
-      request<CaptureItem[]>(`${BASE}/${id}/archive`, { method: 'POST' }),
+      request<CaptureItem>(`${BASE}/${id}/archive`, { method: 'POST' }),
     onSuccess: () => qc.invalidateQueries({ queryKey: ['inbox'] }),
   });
 }
@@ -66,7 +58,7 @@ export function useConvertCapture() {
   const qc = useQueryClient();
   return useMutation({
     mutationFn: ({ id, targetType }: { id: string } & ConvertCaptureInput) =>
-      request<CaptureItem[]>(`${BASE}/${id}/convert`, {
+      request<CaptureItem>(`${BASE}/${id}/convert`, {
         method: 'POST',
         body: JSON.stringify({ targetType }),
       }),
@@ -78,7 +70,7 @@ export function useDeleteCapture() {
   const qc = useQueryClient();
   return useMutation({
     mutationFn: (id: string) =>
-      request<CaptureItem[]>(`${BASE}/${id}`, { method: 'DELETE' }),
+      request<CaptureItem>(`${BASE}/${id}`, { method: 'DELETE' }),
     onSuccess: () => qc.invalidateQueries({ queryKey: ['inbox'] }),
   });
 }

@@ -13,7 +13,7 @@ import {
   CreatePresetDto,
   UpdatePresetDto,
   ActivatePresetDto,
-} from './dto';
+} from './dto/workspace.dto';
 
 const DEFAULT_USER_ID = 'default';
 
