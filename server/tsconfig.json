@@ -14,5 +14,9 @@
     "types": ["jest", "node"]
   },
   "include": ["src"],
+<<<<<<< HEAD
   "exclude": ["node_modules", "dist", "**/*.spec.ts", "**/*.test.ts", "**/*.spec.js", "**/*.test.js"]
+=======
+  "exclude": ["node_modules", "dist"]
+>>>>>>> dev
 }

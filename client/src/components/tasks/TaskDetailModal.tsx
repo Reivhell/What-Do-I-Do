@@ -6,7 +6,7 @@ import {
 } from 'lucide-react';
 import { Badge, Input, Modal } from '../ui';
 import { useUpdateTask, useDeleteTask, useArchiveTask, useCreateSubtask, useUpdateSubtask, useDeleteSubtask } from '../../api/tasks';
-import type { Task, Subtask, TaskStatus, TaskPriority } from '../../types/tasks';
+import type { Task, Subtask, TaskStatus, TaskPriority } from '@whatdo/shared';
 import { formatDate, formatDateLong } from '../../lib/dateUtils';
 
 interface TaskDetailModalProps {
@@ -37,6 +37,8 @@ export function TaskDetailModal({ task, open, onClose, onSchedule }: TaskDetailM
   const [description, setDescription] = useState('');
   const [status, setStatus] = useState<TaskStatus>('inbox');
   const [priority, setPriority] = useState<TaskPriority>('medium');
+  const [category, setCategory] = useState('');
+  const [project, setProject] = useState('');
   const [dueDate, setDueDate] = useState('');
   const [isDirty, setIsDirty] = useState(false);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
@@ -55,6 +57,8 @@ export function TaskDetailModal({ task, open, onClose, onSchedule }: TaskDetailM
       setDescription(task.description || '');
       setStatus(task.status);
       setPriority(task.priority ?? 'medium');
+      setCategory(task.category ?? '');
+      setProject(task.project ?? '');
       setDueDate(task.dueDate || '');
       setIsDirty(false);
     }
@@ -231,7 +235,7 @@ export function TaskDetailModal({ task, open, onClose, onSchedule }: TaskDetailM
                 <label className="flex items-center gap-3 flex-1 cursor-pointer">
                   <input
                     type="checkbox"
-                    checked={subtask.completed}
+                    checked={subtask.isCompleted}
                     onChange={() => updateSubtask.mutate({ id: subtask.id, isCompleted: !subtask.isCompleted })}
                     className="size-4 rounded border-ink-300 text-blue-500"
                   />

@@ -10,7 +10,7 @@ import { TaskDetailModal } from './TaskDetailModal';
 import { ScheduleTaskModal } from './ScheduleTaskModal';
 import { TaskQuickAdd } from './TaskQuickAdd';
 import { useTasksList, useUpdateTask, useDeleteTask, useArchiveTask, useBulkUpdateTaskStatus, useScheduleTask } from '../../api/tasks';
-import type { Task, TaskStatus, TaskView } from '../../types/tasks';
+import type { Task, TaskStatus, TaskView } from '@whatdo/shared';
 import { formatDate, isToday, isOverdue } from '../../lib/dateUtils';
 
 interface TaskListProps {
@@ -77,7 +77,7 @@ export function TaskList({ view = 'inbox', onTaskClick, onViewChange }: TaskList
   };
 
   const handleBulkComplete = () => {
-    bulkUpdate.mutate({ ids: Array.from(selectedIds), status: 'completed' });
+    bulkUpdate.mutate({ taskIds: Array.from(selectedIds), status: 'completed' });
     setSelectedIds(new Set());
   };
 

@@ -2,7 +2,7 @@ import { useState, type FormEvent } from 'react';
 import { Plus, Loader2 } from 'lucide-react';
 import { Card } from '../ui';
 import { useCreateTask } from '../../api/tasks';
-import type { CreateTaskInput } from '../../types/tasks';
+import type { CreateTaskInput } from '@whatdo/shared';
 
 interface TaskQuickAddProps {
   defaultView?: string;

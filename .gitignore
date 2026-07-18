@@ -61,3 +61,8 @@ yarn-error.log*
 pnpm-debug.log*
 server/logs/
 
+
+# Playwright E2E
+e2e/node_modules/
+e2e/test-results/
+e2e/playwright-report/

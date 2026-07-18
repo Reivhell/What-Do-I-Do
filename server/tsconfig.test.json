@@ -6,4 +6,8 @@
     "noEmit": true
   },
   "include": ["src", "test"]
+<<<<<<< HEAD
 }
+=======
+}
+>>>>>>> dev
