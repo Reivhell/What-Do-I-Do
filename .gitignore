@@ -30,9 +30,10 @@ mobile/local.properties
 .superpowers/
 .agent/
 .impeccable/
-.serena/
+.serena
 graphify-out/
 Workspace.md
+CLAUDE.md
 
 # IDE / Editors
 .vscode/
