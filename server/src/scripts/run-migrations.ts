@@ -3,8 +3,6 @@ import Database from 'better-sqlite3';
 import * as fs from 'fs';
 import * as path from 'path';
 
-const __filename = require.main!.filename;
-const __dirname = path.dirname(__filename);
 
   const dbPath = process.env.DATABASE_PATH || path.join(process.cwd(), 'what-do-i-do.db');
   const migrationsDir = path.join(process.cwd(), 'src/drizzle/migrations');

@@ -1,0 +1,8 @@
+# Railway Configuration for the React Vite Frontend Client
+[build]
+builder = "NIXPACKS"
+buildCommand = "npm run build -w shared && npm run build -w client"
+
+[deploy]
+startCommand = "npx serve -s client/dist"
+restartPolicyType = "ON_FAILURE"

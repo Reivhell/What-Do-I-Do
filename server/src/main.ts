@@ -48,8 +48,8 @@ async function bootstrap() {
   const logger = app.get(LoggerService);
   app.useGlobalInterceptors(app.get(LoggerInterceptor));
 
-  const port = process.env.SERVER_PORT || 3000;
-  const host = process.env.SERVER_HOST || 'localhost';
+  const port = process.env.SERVER_PORT || process.env.PORT || 3000;
+  const host = process.env.SERVER_HOST || process.env.HOST || (process.env.NODE_ENV === 'production' ? '0.0.0.0' : 'localhost');
   await app.listen(port, host);
   logger.log(`🚀 Server running on http://${host}:${port}`, 'Bootstrap');
 }

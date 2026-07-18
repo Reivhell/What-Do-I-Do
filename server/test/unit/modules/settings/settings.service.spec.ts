@@ -1,6 +1,5 @@
 import { Test } from '@nestjs/testing';
 import { SettingsService } from '../../../../src/modules/settings/settings.service';
-<<<<<<< HEAD
 import { DRIZZLE } from '../../../../src/common/database/drizzle.provider';
 import { BackupService } from '../../../../src/common/backup/backup.service';
 import { schema } from '../../../../src/drizzle';
@@ -71,22 +70,11 @@ describe('SettingsService', () => {
   let db: ReturnType<typeof createMockDb>;
 
   const userId = 'user-1';
-=======
-import { BackupService } from '../../../../src/common/backup/backup.service';
-import { DRIZZLE } from '../../../../src/common/database/drizzle.provider';
-
-const mockDb = { insert: jest.fn(), select: jest.fn(), query: {} };
-const mockBackup = { getConfig: jest.fn(() => ({})), backup: jest.fn() };
-
-describe('SettingsService', () => {
-  let service: SettingsService;
->>>>>>> dev
 
   beforeAll(async () => {
     const module = await Test.createTestingModule({
       providers: [
         SettingsService,
-<<<<<<< HEAD
         { provide: DRIZZLE, useValue: createMockDb() },
         { provide: BackupService, useValue: { getConfig: jest.fn(), updateConfig: jest.fn(), backup: jest.fn() } },
       ],
@@ -237,16 +225,5 @@ describe('SettingsService', () => {
       expect(db.delete).toHaveBeenCalledWith(schema.categoryDefinitions);
       expect(result).toEqual([{ id: categoryId }]);
     });
-=======
-        { provide: DRIZZLE, useValue: mockDb },
-        { provide: BackupService, useValue: mockBackup },
-      ],
-    }).compile();
-    service = module.get(SettingsService);
-  });
-
-  it('should be defined', () => {
-    expect(service).toBeDefined();
->>>>>>> dev
   });
 });
