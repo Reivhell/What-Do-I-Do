@@ -16,6 +16,9 @@ export interface Task {
   notes?: string;
   linkedGoalId?: string;
   scheduledEventId?: string;
+  category?: string;
+  project?: string;
+  energyEstimate?: number;
   createdAt: string;
   updatedAt: string;
   subtasks?: Subtask[];

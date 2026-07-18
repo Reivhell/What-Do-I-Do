@@ -6,7 +6,7 @@ import {
 } from 'lucide-react';
 import { Badge, Input, Modal } from '../ui';
 import { useUpdateTask, useDeleteTask, useArchiveTask, useCreateSubtask, useUpdateSubtask, useDeleteSubtask } from '../../api/tasks';
-import type { Task, Subtask, TaskStatus, TaskPriority } from '../../types/tasks';
+import type { Task, Subtask, TaskStatus, TaskPriority } from '@whatdo/shared';
 import { formatDate, formatDateLong } from '../../lib/dateUtils';
 
 interface TaskDetailModalProps {

@@ -3,7 +3,7 @@ import { X, Calendar, Clock, Loader2 } from 'lucide-react';
 import { Card, Button, Input } from '../ui';
 import { Modal } from '../ui/Modal';
 import { useScheduleTask } from '../../api/tasks';
-import type { Task } from '../../types/tasks';
+import type { Task } from '@whatdo/shared';
 
 interface ScheduleTaskModalProps {
   task: Pick<Task, 'id' | 'title'>;

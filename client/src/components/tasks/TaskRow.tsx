@@ -6,7 +6,7 @@ import {
 } from 'lucide-react';
 import { Badge } from '../ui';
 import { useUpdateTask, useDeleteTask, useArchiveTask, useUpdateSubtask } from '../../api/tasks';
-import type { Task, Subtask, TaskStatus, TaskPriority } from '../../types/tasks';
+import type { Task, Subtask, TaskStatus, TaskPriority } from '@whatdo/shared';
 import { formatDate, isOverdue, isToday } from '../../lib/dateUtils';
 
 interface TaskRowProps {

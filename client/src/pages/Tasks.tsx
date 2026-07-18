@@ -2,7 +2,7 @@ import { useSearchParams } from 'react-router-dom';
 import { ListChecks, Plus } from 'lucide-react';
 import { TaskList } from '../components/tasks/TaskList';
 import { Button, Card } from '../components/ui';
-import type { TaskView } from '../types/tasks';
+import type { TaskView } from '@whatdo/shared';
 
 export function TasksPage() {
   const [searchParams, setSearchParams] = useSearchParams();
