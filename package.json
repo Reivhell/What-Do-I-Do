@@ -22,7 +22,7 @@
   "devDependencies": {
     "@types/jest": "^30.0.0",
     "concurrently": "^10.0.3",
-    "typescript": "^6.0.3"
+    "typescript": "^5.9.2"
   },
   "allowScripts": {
     "esbuild@0.18.20": true,
@@ -31,7 +31,5 @@
     "better-sqlite3@12.11.1": true,
     "unrs-resolver@1.12.2": true
   },
-  "dependencies": {
-    "pino": "^10.3.1"
-  }
+  "dependencies": {}
 }

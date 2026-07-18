@@ -1,6 +1,6 @@
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { MemoryRouter } from 'react-router-dom';
-import { render, type RenderOptions } from '@testing-library/react';
+import { render, type RenderOptions, type RenderResult } from '@testing-library/react';
 import { ThemeProvider } from '../providers';
 import { type ReactElement } from 'react';
 
@@ -17,7 +17,7 @@ interface CustomRenderOptions extends Omit<RenderOptions, 'wrapper'> {
   initialEntries?: string[];
 }
 
-function customRender(ui: ReactElement, options?: CustomRenderOptions) {
+function customRender(ui: ReactElement, options?: CustomRenderOptions): RenderResult & { queryClient: QueryClient } {
   const queryClient = createTestQueryClient();
   const { initialEntries, ...renderOptions } = options ?? {};
 
