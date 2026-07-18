@@ -222,6 +222,46 @@ body {
   background: var(--color-ink-500);
 }
 
+/* ── Color utilities (referenced by Sidebar.tsx — map to design tokens) ── */
+.clr-primary { color: var(--blue-500); }
+.bg-clr-primary { background-color: var(--blue-500); }
+.clr-on-primary { color: #FFFFFF; }
+.clr-text-secondary { color: var(--ink-500); }
+.clr-on-surface-variant { color: var(--ink-500); }
+.bg-clr-surface { background-color: var(--clay-surface); }
+.bg-clr-surface-container-high { background-color: var(--blue-50); }
+.bg-clr-background { background-color: var(--clay-bg); }
+.clr-on-surface { color: var(--ink-900); }
+.hover\:clr-primary:hover { color: var(--blue-500); }
+.clr-text-primary { color: var(--ink-900); }
+
+.dark .dark\:bg-clr-surface-variant { background-color: #2a3341; }
+.dark .dark\:hover\:bg-clr-surface-variant:hover { background-color: #2a3341; }
+
+/* ── Safe area helpers ── */
+.safe-bottom {
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+}
+.safe-top {
+  padding-top: env(safe-area-inset-top, 0px);
+}
+
+/* ── Content max-width container (full screen support) ── */
+.content-container {
+  max-width: 1440px;
+  width: 100%;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* ── Responsive utility: hide scrollbar but keep scroll ── */
+.scrollable-x {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+}
+.scrollable-x::-webkit-scrollbar { display: none; }
+
 /* ── Utility: tap target minimum 44x44 ── */
 .tap-target {
   min-width: 44px;

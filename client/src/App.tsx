@@ -172,8 +172,8 @@ function AppRoutes() {
 
   return (
     <Routes>
-      <Route path="/" element={<Dashboard />} />
       <Route element={<AppShell />}>
+        <Route path="/" element={<Dashboard />} />
         <Route path="/inbox" element={<InboxPage />} />
         <Route path="/activity" element={<ActivityTrackerPage />} />
         <Route path="/planner" element={<PlannerPage />} />

@@ -23,77 +23,112 @@ const navItems: NavItem[] = [
   { label: "Workspace", path: "/workspace", icon: "view_quilt" },
 ];
 
-export function Sidebar() {
+interface SidebarProps {
+  isOpen?: boolean;
+  onClose?: () => void;
+}
+
+export function Sidebar({ isOpen, onClose }: SidebarProps) {
   const location = useLocation();
 
   const isActive = (path: string) =>
     path === "/" ? location.pathname === "/" : location.pathname.startsWith(path);
 
   return (
-    <aside className="w-[230px] h-screen fixed left-0 top-0 rounded-r-[32px] flex flex-col py-6 px-4 gap-2 z-50 overflow-y-auto bg-clay-surface clay-l2 max-lg:hidden">
-      {/* Logo */}
-      <div className="mb-6 px-4">
-        <h1 className="font-display text-[24px] leading-[32px] font-bold clr-primary flex items-center gap-2">
-          <span className="material-symbols-outlined text-3xl">check_circle</span>
-          What Do I Do
-        </h1>
-        <p className="font-body text-[12px] leading-[16px] font-medium clr-text-secondary">Productivity Tracker</p>
-      </div>
+    <>
+      {/* Overlay backdrop — tablet only */}
+      {isOpen && onClose && (
+        <div
+          className="fixed inset-0 z-40 bg-black/30 lg:hidden"
+          onClick={onClose}
+          aria-hidden="true"
+        />
+      )}
 
-      {/* Nav */}
-      <nav className="flex-1 space-y-1">
-        {navItems.map((item) => {
-          const active = isActive(item.path);
-          return (
-            <Link
-              key={item.path}
-              to={item.path}
-              className={`flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-200 font-body text-[13px] leading-[18px] font-medium ${
-                active
-                  ? "bg-clr-primary clr-on-primary shadow-lg scale-[1.02]"
-                  : "clr-on-surface-variant hover:clr-primary dark:hover:text-white hover:bg-clr-surface-container-high dark:hover:bg-clr-surface-variant"
-              }`}
+      <aside
+        className={`
+          w-[230px] h-screen fixed left-0 top-0 rounded-r-[32px] flex flex-col py-6 px-4 gap-2 z-50 overflow-y-auto bg-clay-surface clay-l2
+          transition-transform duration-300 ease-out
+          max-lg:fixed max-lg:left-0 max-lg:top-0 max-lg:bottom-0 max-lg:rounded-r-[32px] max-lg:z-50
+          ${onClose ? "lg:translate-x-0" : ""}
+          ${isOpen ? "translate-x-0" : "-translate-x-full lg:translate-x-0"}
+          max-md:hidden
+        `}
+      >
+        {/* Logo */}
+        <div className="mb-6 px-4 flex items-center justify-between">
+          <h1 className="font-display text-[24px] leading-[32px] font-bold clr-primary flex items-center gap-2">
+            <span className="material-symbols-outlined text-3xl">check_circle</span>
+            What Do I Do
+          </h1>
+          {onClose && (
+            <button
+              onClick={onClose}
+              className="lg:hidden tap-target clr-text-secondary hover:clr-primary"
+              aria-label="Close sidebar"
             >
-              <span className="material-symbols-outlined" style={active ? { fontVariationSettings: "'FILL' 1" } : {}}>
-                {item.icon}
+              <span className="material-symbols-outlined">close</span>
+            </button>
+          )}
+        </div>
+
+        {/* Nav */}
+        <nav className="flex-1 space-y-1">
+          {navItems.map((item) => {
+            const active = isActive(item.path);
+            return (
+              <Link
+                key={item.path}
+                to={item.path}
+                onClick={onClose}
+                className={`flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-200 font-body text-[13px] leading-[18px] font-medium ${
+                  active
+                    ? "bg-clr-primary clr-on-primary shadow-lg scale-[1.02]"
+                    : "clr-on-surface-variant hover:clr-primary dark:hover:text-white hover:bg-clr-surface-container-high dark:hover:bg-clr-surface-variant"
+                }`}
+              >
+                <span className="material-symbols-outlined" style={active ? { fontVariationSettings: "'FILL' 1" } : {}}>
+                  {item.icon}
+                </span>
+                {item.label}
+              </Link>
+            );
+          })}
+        </nav>
+
+        {/* Footer */}
+        <div className="mt-auto space-y-4">
+          <Link
+            to="/settings"
+            onClick={onClose}
+            className={`flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-200 font-body text-[13px] leading-[18px] font-medium ${
+              location.pathname === "/settings"
+                ? "bg-clr-primary clr-on-primary shadow-lg scale-[1.02]"
+                : "clr-on-surface-variant hover:clr-primary dark:hover:text-white hover:bg-clr-surface-container-high dark:hover:bg-clr-surface-variant"
+            }`}
+          >
+            <span className="material-symbols-outlined">settings</span>
+            Settings
+          </Link>
+
+          <div className="clay-card p-5 relative overflow-hidden bg-gradient-to-br from-white to-[var(--clay-surface-alt)] dark:from-[var(--clay-surface)] dark:to-[var(--clay-surface-alt)]">
+            <div className="relative z-10">
+              <span className="material-symbols-outlined clr-primary text-2xl mb-2" style={{ fontVariationSettings: "'FILL' 1" }}>
+                stars
               </span>
-              {item.label}
-            </Link>
-          );
-        })}
-      </nav>
-
-      {/* Footer */}
-      <div className="mt-auto space-y-4">
-        <Link
-          to="/settings"
-          className={`flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-200 font-body text-[13px] leading-[18px] font-medium ${
-            location.pathname === "/settings"
-              ? "bg-clr-primary clr-on-primary shadow-lg scale-[1.02]"
-              : "clr-on-surface-variant hover:clr-primary dark:hover:text-white hover:bg-clr-surface-container-high dark:hover:bg-clr-surface-variant"
-          }`}
-        >
-          <span className="material-symbols-outlined">settings</span>
-          Settings
-        </Link>
-
-        <div className="clay-card p-5 relative overflow-hidden bg-gradient-to-br from-white to-[var(--clay-surface-alt)] dark:from-[var(--clay-surface)] dark:to-[var(--clay-surface-alt)]">
-          <div className="relative z-10">
-            <span className="material-symbols-outlined clr-primary text-2xl mb-2" style={{ fontVariationSettings: "'FILL' 1" }}>
-              stars
-            </span>
-            <h4 className="font-display text-[16px] leading-[24px] font-semibold clr-text-primary">Keep it up!</h4>
-            <p className="font-body text-[12px] leading-[16px] font-medium clr-text-secondary mt-1">
-              You're doing great today.
-            </p>
-          </div>
-          <div className="absolute bottom-0 left-0 w-full h-8 opacity-20 pointer-events-none">
-            <svg className="w-full h-full clr-primary fill-current" viewBox="0 0 100 20">
-              <path d="M0 20V10C20 0 30 20 50 10C70 0 80 20 100 10V20H0Z" />
-            </svg>
+              <h4 className="font-display text-[16px] leading-[24px] font-semibold clr-text-primary">Keep it up!</h4>
+              <p className="font-body text-[12px] leading-[16px] font-medium clr-text-secondary mt-1">
+                You're doing great today.
+              </p>
+            </div>
+            <div className="absolute bottom-0 left-0 w-full h-8 opacity-20 pointer-events-none">
+              <svg className="w-full h-full clr-primary fill-current" viewBox="0 0 100 20">
+                <path d="M0 20V10C20 0 30 20 50 10C70 0 80 20 100 10V20H0Z" />
+              </svg>
+            </div>
           </div>
         </div>
-      </div>
-    </aside>
+      </aside>
+    </>
   );
 }

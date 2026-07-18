@@ -1,7 +1,6 @@
 import { useState, useEffect } from "react";
 import { useTheme } from "../providers";
 import { Link, useNavigate } from "react-router-dom";
-import { Sidebar } from "../components/layout";
 import { TopInsightWidget } from "../components/dashboard/TopInsightWidget";
 import { useDashboardSummary } from "../api/dashboard";
 import { Card, Button } from "../components/ui";
@@ -99,39 +98,31 @@ export function Dashboard() {
   // ── Loading skeleton ──
   if (isLoading) {
     return (
-      <div className="flex min-h-screen">
-        <Sidebar />
-        <main className="ml-[230px] p-8 flex-1 bg-[var(--clay-bg)] text-[var(--ink-900)]">
-          <header className="flex items-center justify-between w-full mb-10 gap-[16px] h-20">
-            <div className="flex-1 max-w-xl">
-              <div className="relative clay-card-inset rounded-full flex items-center px-6 py-3 animate-pulse">
-                <div className="h-4 w-full bg-[var(--ink-300)] rounded" />
-              </div>
+      <>
+        <header className="flex items-center justify-between w-full mb-10 gap-[16px] h-20">
+          <div className="flex-1 max-w-xl">
+            <div className="relative clay-card-inset rounded-full flex items-center px-6 py-3 animate-pulse">
+              <div className="h-4 w-full bg-[var(--ink-300)] rounded" />
             </div>
-          </header>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-            <StatSkeleton />
-            <StatSkeleton />
-            <StatSkeleton />
-            <StatSkeleton />
           </div>
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
-            {Array.from({ length: 4 }).map((_, i) => (
-              <div key={i} className="clay-card p-[24px] lg:col-span-3 h-48 animate-pulse" />
-            ))}
-          </div>
-        </main>
-      </div>
+        </header>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+          <StatSkeleton />
+          <StatSkeleton />
+          <StatSkeleton />
+          <StatSkeleton />
+        </div>
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+          {Array.from({ length: 4 }).map((_, i) => (
+            <div key={i} className="clay-card p-[24px] lg:col-span-3 h-48 animate-pulse" />
+          ))}
+        </div>
+      </>
     );
   }
 
   return (
-    <div className="flex min-h-screen">
-      {/* ── Sidebar ── */}
-      <Sidebar />
-
-      {/* ── Main Content ── */}
-      <main className="ml-[230px] p-8 flex-1 bg-[var(--clay-bg)] text-[var(--ink-900)]">
+    <>
         {/* ── Error Banner ── */}
         {isError && (
           <div className="mb-6 px-6 py-4 rounded-2xl clay-card flex items-center gap-3 text-[var(--semantic-red)] bg-[var(--semantic-red)]/10">
@@ -689,7 +680,6 @@ export function Dashboard() {
           </Card>
 
         </div>
-      </main>
-    </div>
+    </>
   );
 }
