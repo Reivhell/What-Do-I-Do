@@ -1,5 +1,5 @@
 import { sqliteTable, text, integer, index, uniqueIndex } from 'drizzle-orm/sqlite-core';
-import { users } from './users';
+import { users } from './users.js'
 import { randomUUID } from 'crypto';
 import { sql } from 'drizzle-orm';
 

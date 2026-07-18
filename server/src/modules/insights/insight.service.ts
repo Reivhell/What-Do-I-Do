@@ -1,6 +1,6 @@
 import { Injectable, Inject } from '@nestjs/common';
-import { DRIZZLE } from '../../common/database/drizzle.provider';
-import { schema, DbInstance } from '../../drizzle';
+import { DRIZZLE } from '../../common/database/drizzle.provider.js'
+import { schema, DbInstance } from '../../drizzle/index.js'
 import { eq, and, desc, sql, inArray } from 'drizzle-orm';
 
 export type InsightType = 'time' | 'habit' | 'productivity' | 'money' | 'task' | 'goal';

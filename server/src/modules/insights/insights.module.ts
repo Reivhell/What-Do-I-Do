@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
-import { InsightService } from './insight.service';
-import { InsightController } from './insight.controller';
-import { DatabaseModule } from '../../common/database/database.module';
+import { InsightService } from './insight.service.js'
+import { InsightController } from './insight.controller.js'
+import { DatabaseModule } from '../../common/database/database.module.js'
 
 @Module({
   imports: [DatabaseModule],

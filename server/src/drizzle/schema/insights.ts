@@ -1,6 +1,6 @@
 import { sqliteTable, text, integer, uniqueIndex } from 'drizzle-orm/sqlite-core';
-import { users } from './users';
-import { analyticsSnapshots } from './analytics';
+import { users } from './users.js'
+import { analyticsSnapshots } from './analytics.js'
 import { randomUUID } from 'crypto';
 
 export const insights = sqliteTable('insights', {

@@ -1,7 +1,7 @@
 import { Injectable, Inject } from '@nestjs/common';
-import { DRIZZLE } from '../../common/database/drizzle.provider';
-import type { DbInstance } from '../../drizzle';
-import { schema } from '../../drizzle';
+import { DRIZZLE } from '../../common/database/drizzle.provider.js'
+import type { DbInstance } from '../../drizzle/index.js'
+import { schema } from '../../drizzle/index.js'
 import { eq, and } from 'drizzle-orm';
 import { randomUUID } from 'crypto';
 

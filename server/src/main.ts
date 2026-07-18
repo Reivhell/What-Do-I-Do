@@ -1,8 +1,8 @@
 import { NestFactory } from '@nestjs/core';
-import { AppModule } from './app.module';
-import { LoggerInterceptor, LoggerService } from './common/logger';
+import { AppModule } from './app.module.js'
+import { LoggerInterceptor, LoggerService } from './common/logger/index.js'
 import helmet from 'helmet';
-import { runMigrations } from './scripts/run-migrations';
+import { runMigrations } from './scripts/run-migrations.js'
 
 async function bootstrap() {
   // Run migrations before starting the app

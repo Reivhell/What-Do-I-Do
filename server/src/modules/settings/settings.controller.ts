@@ -13,7 +13,7 @@ import {
   HttpCode,
   HttpStatus,
 } from '@nestjs/common';
-import { SettingsService } from './settings.service';
+import { SettingsService } from './settings.service.js'
 import * as bcrypt from 'bcrypt';
 
 // Temp user ID for single-user mode — will be replaced with app-lock auth

@@ -1,6 +1,6 @@
 import { Global, Module } from '@nestjs/common';
-import { BackupService } from './backup.service';
-import { BackupScheduler } from './backup.scheduler';
+import { BackupService } from './backup.service.js'
+import { BackupScheduler } from './backup.scheduler.js'
 
 @Global()
 @Module({

@@ -1,11 +1,11 @@
 import { Injectable, Inject, NotFoundException, BadRequestException } from '@nestjs/common';
-import { DRIZZLE } from '../../common/database/drizzle.provider';
-import { schema } from '../../drizzle';
-import type { DbInstance } from '../../drizzle';
+import { DRIZZLE } from '../../common/database/drizzle.provider.js'
+import { schema } from '../../drizzle/index.js'
+import type { DbInstance } from '../../drizzle/index.js'
 import { eq, and, isNull, like, gte, lte, sql } from 'drizzle-orm';
 import { randomUUID } from 'crypto';
-import { StatisticsService } from '../statistics/statistics.service';
-import { AchievementsEventGateway } from '../achievements/achievements.gateway';
+import { StatisticsService } from '../statistics/statistics.service.js'
+import { AchievementsEventGateway } from '../achievements/achievements.gateway.js'
 
 @Injectable()
 export class ActivityTrackerService {

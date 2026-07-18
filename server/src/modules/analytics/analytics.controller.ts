@@ -1,6 +1,6 @@
 import { Controller, Get, Query } from '@nestjs/common';
-import { AnalyticsService, ReviewQuery, RangeQuery, TrendQuery } from './analytics.service';
-import { SnapshotService } from './snapshot.service';
+import { AnalyticsService, ReviewQuery, RangeQuery, TrendQuery } from './analytics.service.js'
+import { SnapshotService } from './snapshot.service.js'
 
 const DEFAULT_USER_ID = 'default';
 

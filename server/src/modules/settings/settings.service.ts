@@ -1,8 +1,8 @@
 import { Injectable, Inject, BadRequestException, NotFoundException } from '@nestjs/common';
-import { DRIZZLE } from '../../common/database/drizzle.provider';
-import { BackupService } from '../../common/backup/backup.service';
-import { schema } from '../../drizzle';
-import type { DbInstance } from '../../drizzle';
+import { DRIZZLE } from '../../common/database/drizzle.provider.js'
+import { BackupService } from '../../common/backup/backup.service.js'
+import { schema } from '../../drizzle/index.js'
+import type { DbInstance } from '../../drizzle/index.js'
 import { eq, and, gt } from 'drizzle-orm';
 import { randomUUID } from 'crypto';
 import { z } from 'zod';

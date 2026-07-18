@@ -3,8 +3,8 @@ import {
   Body, Param, Query, ParseUUIDPipe, Res,
 } from '@nestjs/common';
 import { Response } from 'express';
-import { LifeLogService } from './life-log.service';
-import { CreateAnnotationDto, UpdateAnnotationDto } from './dto/life-log.dto';
+import { LifeLogService } from './life-log.service.js'
+import { CreateAnnotationDto, UpdateAnnotationDto } from './dto/life-log.dto.js'
 
 const DEFAULT_USER_ID = 'default';
 

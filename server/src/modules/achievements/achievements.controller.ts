@@ -1,8 +1,8 @@
 import {
   Controller, Get, Post, Body, Param, ParseUUIDPipe,
 } from '@nestjs/common';
-import { AchievementsService } from './achievements.service';
-import { EvaluateEventDto, AchievementWithProgress } from './dto/achievements.dto';
+import { AchievementsService } from './achievements.service.js'
+import { EvaluateEventDto, AchievementWithProgress } from './dto/achievements.dto.js'
 
 const DEFAULT_USER_ID = 'default';
 

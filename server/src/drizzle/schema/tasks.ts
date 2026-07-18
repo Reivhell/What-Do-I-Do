@@ -1,7 +1,7 @@
 import { sqliteTable, text, integer, index } from 'drizzle-orm/sqlite-core';
-import { users } from './users';
-import { goals } from './goals';
-import { plannerEvents } from './planner';
+import { users } from './users.js'
+import { goals } from './goals.js'
+import { plannerEvents } from './planner.js'
 import { randomUUID } from 'crypto';
 
 // 05. Tasks

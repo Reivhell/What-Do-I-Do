@@ -1,6 +1,6 @@
 // server/src/modules/achievements/seed.ts
-import { achievementDefinitions } from '../../drizzle/schema/achievements';
-import type { DbInstance } from '../../drizzle';
+import { achievementDefinitions } from '../../drizzle/schema/achievements.js'
+import type { DbInstance } from '../../drizzle/index.js'
 import { randomUUID } from 'crypto';
 
 export const ACHIEVEMENT_SEEDS = [

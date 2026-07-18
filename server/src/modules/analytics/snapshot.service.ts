@@ -1,8 +1,8 @@
 import { Injectable, Inject } from '@nestjs/common';
-import { DRIZZLE } from '../../common/database/drizzle.provider';
-import { schema, DbInstance } from '../../drizzle';
+import { DRIZZLE } from '../../common/database/drizzle.provider.js'
+import { schema, DbInstance } from '../../drizzle/index.js'
 import { eq, and, isNull, gte, lt, sql, count, sum, avg } from 'drizzle-orm';
-import { ScoreCalculator, ScoreInput } from './score-calculator';
+import { ScoreCalculator, ScoreInput } from './score-calculator.js'
 
 /**
  * Generates analytics_snapshots — pre-computed heavy aggregations.

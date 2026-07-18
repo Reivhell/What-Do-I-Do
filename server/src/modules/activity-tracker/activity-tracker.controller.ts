@@ -1,5 +1,5 @@
 import { Controller, Get, Post, Patch, Delete, Body, Param, Query, ParseUUIDPipe } from '@nestjs/common';
-import { ActivityTrackerService } from './activity-tracker.service';
+import { ActivityTrackerService } from './activity-tracker.service.js'
 
 const DEFAULT_USER_ID = 'default';
 

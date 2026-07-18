@@ -1,5 +1,5 @@
 import { Injectable, Logger, OnModuleInit } from '@nestjs/common';
-import { BackupService } from './backup.service';
+import { BackupService } from './backup.service.js'
 
 /**
  * Daily automated DB snapshot. Mirrors AnalyticsScheduler: in-process node-cron,

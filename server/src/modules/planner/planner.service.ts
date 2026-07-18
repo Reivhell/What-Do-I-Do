@@ -1,11 +1,11 @@
 import { Injectable, Inject, forwardRef } from '@nestjs/common';
-import { DRIZZLE } from '../../common/database/drizzle.provider';
-import { schema } from '../../drizzle';
-import type { DbInstance } from '../../drizzle';
+import { DRIZZLE } from '../../common/database/drizzle.provider.js'
+import { schema } from '../../drizzle/index.js'
+import type { DbInstance } from '../../drizzle/index.js'
 import { eq, and, sql } from 'drizzle-orm';
 import { randomUUID } from 'crypto';
-import { ActivityTrackerService } from '../activity-tracker/activity-tracker.service';
-import { AchievementsEventGateway } from '../achievements/achievements.gateway';
+import { ActivityTrackerService } from '../activity-tracker/activity-tracker.service.js'
+import { AchievementsEventGateway } from '../achievements/achievements.gateway.js'
 
 export type PlannerStatus = 'scheduled' | 'in_progress' | 'completed' | 'missed' | 'cancelled';
 export type SourceType = 'manual' | 'task' | 'habit' | 'goal_milestone';

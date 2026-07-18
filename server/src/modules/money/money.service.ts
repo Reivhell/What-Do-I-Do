@@ -1,18 +1,18 @@
 import { Injectable, NotFoundException, BadRequestException } from '@nestjs/common';
 import { Inject } from '@nestjs/common';
-import { DRIZZLE } from '../../common/database/drizzle.provider';
-import { schema } from '../../drizzle';
-import type { DbInstance } from '../../drizzle';
+import { DRIZZLE } from '../../common/database/drizzle.provider.js'
+import { schema } from '../../drizzle/index.js'
+import type { DbInstance } from '../../drizzle/index.js'
 import { eq, and, desc, sql, gte, lte } from 'drizzle-orm';
 import { randomUUID } from 'crypto';
-import { StatisticsService } from '../statistics/statistics.service';
-import { AchievementsEventGateway } from '../achievements/achievements.gateway';
+import { StatisticsService } from '../statistics/statistics.service.js'
+import { AchievementsEventGateway } from '../achievements/achievements.gateway.js'
 import {
   CreateAccountDto, UpdateAccountDto,
   CreateTransactionDto, UpdateTransactionDto,
   CreateRecurringBillDto, UpdateRecurringBillDto,
   CreateBudgetDto, UpdateBudgetDto,
-} from './dto/money.dto';
+} from './dto/money.dto.js'
 
 @Injectable()
 export class MoneyService {

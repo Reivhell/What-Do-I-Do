@@ -1,5 +1,5 @@
 import { sqliteTable, text, integer, index } from 'drizzle-orm/sqlite-core';
-import { users } from './users';
+import { users } from './users.js'
 import { randomUUID } from 'crypto';
 
 // 02. Inbox / Capture

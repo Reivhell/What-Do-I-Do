@@ -9,7 +9,7 @@ import {
   Query,
   ParseUUIDPipe,
 } from '@nestjs/common';
-import { PlannerService, PlannerStatus, ViewRange } from './planner.service';
+import { PlannerService, PlannerStatus, ViewRange } from './planner.service.js'
 
 const DEFAULT_USER_ID = 'default';
 

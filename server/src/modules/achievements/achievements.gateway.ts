@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { AchievementsService } from './achievements.service';
+import { AchievementsService } from './achievements.service.js'
 
 @Injectable()
 export class AchievementsEventGateway {

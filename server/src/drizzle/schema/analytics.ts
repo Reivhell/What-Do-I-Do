@@ -1,5 +1,5 @@
 import { sqliteTable, text, real, uniqueIndex } from 'drizzle-orm/sqlite-core';
-import { users } from './users';
+import { users } from './users.js'
 import { randomUUID } from 'crypto';
 
 // 10. Analytics — cache table for pre-computed heavy aggregations

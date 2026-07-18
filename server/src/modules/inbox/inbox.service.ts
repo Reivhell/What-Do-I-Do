@@ -1,14 +1,14 @@
 import { Injectable, Inject, NotFoundException, BadRequestException } from '@nestjs/common';
-import { DRIZZLE } from '../../common/database/drizzle.provider';
-import { schema } from '../../drizzle';
-import type { DbInstance } from '../../drizzle';
+import { DRIZZLE } from '../../common/database/drizzle.provider.js'
+import { schema } from '../../drizzle/index.js'
+import type { DbInstance } from '../../drizzle/index.js'
 import { eq, and } from 'drizzle-orm';
 import { randomUUID } from 'crypto';
-import { TasksService } from '../tasks/tasks.service';
-import { PlannerService } from '../planner/planner.service';
-import { HabitsService } from '../habits/habits.service';
-import { GoalsService } from '../goals/goals.service';
-import { MoneyService } from '../money/money.service';
+import { TasksService } from '../tasks/tasks.service.js'
+import { PlannerService } from '../planner/planner.service.js'
+import { HabitsService } from '../habits/habits.service.js'
+import { GoalsService } from '../goals/goals.service.js'
+import { MoneyService } from '../money/money.service.js'
 
 export type CaptureSource = 'manual' | 'voice' | 'share_intent';
 export type CaptureStatus = 'unprocessed' | 'processed' | 'archived';

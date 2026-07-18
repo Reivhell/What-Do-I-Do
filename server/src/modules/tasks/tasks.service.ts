@@ -1,11 +1,11 @@
 import { Injectable, Inject, forwardRef } from '@nestjs/common';
-import { DRIZZLE } from '../../common/database/drizzle.provider';
-import { schema } from '../../drizzle';
-import type { DbInstance } from '../../drizzle';
+import { DRIZZLE } from '../../common/database/drizzle.provider.js'
+import { schema } from '../../drizzle/index.js'
+import type { DbInstance } from '../../drizzle/index.js'
 import { eq, and, inArray, sql, desc, asc } from 'drizzle-orm';
 import { randomUUID } from 'crypto';
-import { PlannerService } from '../planner/planner.service';
-import { StatisticsService } from '../statistics/statistics.service';
+import { PlannerService } from '../planner/planner.service.js'
+import { StatisticsService } from '../statistics/statistics.service.js'
 
 export type TaskStatus = 'inbox' | 'active' | 'completed' | 'archived';
 export type TaskPriority = 'low' | 'medium' | 'high';

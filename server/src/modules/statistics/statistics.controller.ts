@@ -1,5 +1,5 @@
 import { Controller, Get, Query } from '@nestjs/common';
-import { StatisticsService } from './statistics.service';
+import { StatisticsService } from './statistics.service.js'
 
 const DEFAULT_USER_ID = 'default';
 

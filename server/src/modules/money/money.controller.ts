@@ -2,13 +2,13 @@ import {
   Controller, Get, Post, Patch, Delete,
   Body, Param, Query, ParseUUIDPipe,
 } from '@nestjs/common';
-import { MoneyService } from './money.service';
+import { MoneyService } from './money.service.js'
 import {
   CreateAccountDto, UpdateAccountDto,
   CreateTransactionDto, UpdateTransactionDto,
   CreateRecurringBillDto, UpdateRecurringBillDto,
   CreateBudgetDto, UpdateBudgetDto,
-} from './dto/money.dto';
+} from './dto/money.dto.js'
 
 const DEFAULT_USER_ID = 'default';
 

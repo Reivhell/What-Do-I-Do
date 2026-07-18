@@ -1,8 +1,8 @@
 import { Module, forwardRef } from '@nestjs/common';
-import { GoalsController } from './goals.controller';
-import { GoalsService } from './goals.service';
-import { PlannerModule } from '../planner/planner.module';
-import { AchievementsModule } from '../achievements/achievements.module';
+import { GoalsController } from './goals.controller.js'
+import { GoalsService } from './goals.service.js'
+import { PlannerModule } from '../planner/planner.module.js'
+import { AchievementsModule } from '../achievements/achievements.module.js'
 
 @Module({
   imports: [forwardRef(() => PlannerModule), AchievementsModule],

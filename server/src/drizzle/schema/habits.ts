@@ -1,8 +1,8 @@
 import { sqliteTable, text, integer, uniqueIndex, index } from 'drizzle-orm/sqlite-core';
-import { users } from './users';
-import { plannerEvents } from './planner';
-import { activitySessions } from './activity-tracker';
-import { goals } from './goals';
+import { users } from './users.js'
+import { plannerEvents } from './planner.js'
+import { activitySessions } from './activity-tracker.js'
+import { goals } from './goals.js'
 import { randomUUID } from 'crypto';
 
 export const habits = sqliteTable('habits', {

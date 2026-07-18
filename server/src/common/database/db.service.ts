@@ -1,6 +1,6 @@
 import { Injectable, Inject } from '@nestjs/common';
-import { DRIZZLE } from './drizzle.provider';
-import type { DbInstance } from '../../drizzle';
+import { DRIZZLE } from './drizzle.provider.js'
+import type { DbInstance } from '../../drizzle/index.js'
 
 @Injectable()
 export class DbService {

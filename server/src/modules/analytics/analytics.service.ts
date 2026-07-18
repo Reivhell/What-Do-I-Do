@@ -1,6 +1,6 @@
 import { Injectable, Inject } from '@nestjs/common';
-import { DRIZZLE } from '../../common/database/drizzle.provider';
-import { schema, DbInstance } from '../../drizzle';
+import { DRIZZLE } from '../../common/database/drizzle.provider.js'
+import { schema, DbInstance } from '../../drizzle/index.js'
 import { eq, and, gte, lte, desc, sql } from 'drizzle-orm';
 
 export interface ReviewQuery {

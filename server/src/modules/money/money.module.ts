@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
-import { MoneyController } from './money.controller';
-import { MoneyService } from './money.service';
-import { AchievementsModule } from '../achievements/achievements.module';
+import { MoneyController } from './money.controller.js'
+import { MoneyService } from './money.service.js'
+import { AchievementsModule } from '../achievements/achievements.module.js'
 
 @Module({
   imports: [AchievementsModule],

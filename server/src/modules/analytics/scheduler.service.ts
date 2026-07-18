@@ -1,6 +1,6 @@
 import { Injectable, Logger, OnModuleInit } from '@nestjs/common';
-import { SnapshotService } from './snapshot.service';
-import { InsightService } from '../insights/insight.service';
+import { SnapshotService } from './snapshot.service.js'
+import { InsightService } from '../insights/insight.service.js'
 
 /**
  * Scheduled job runner for analytics snapshot generation.

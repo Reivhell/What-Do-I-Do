@@ -1,6 +1,6 @@
 import { sqliteTable, text, integer, real } from 'drizzle-orm/sqlite-core';
-import { users } from './users';
-import { plannerEvents } from './planner';
+import { users } from './users.js'
+import { plannerEvents } from './planner.js'
 import { randomUUID } from 'crypto';
 
 export const goals = sqliteTable('goals', {

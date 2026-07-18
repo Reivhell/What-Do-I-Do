@@ -1,5 +1,5 @@
 import { sqliteTable, text, uniqueIndex } from 'drizzle-orm/sqlite-core';
-import { users } from './users';
+import { users } from './users.js'
 import { randomUUID } from 'crypto';
 
 export const statisticsCache = sqliteTable('statistics_cache', {

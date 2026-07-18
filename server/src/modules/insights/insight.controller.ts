@@ -1,5 +1,5 @@
 import { Controller, Get, Post, Param, Query, Body } from '@nestjs/common';
-import { InsightService, InsightType } from './insight.service';
+import { InsightService, InsightType } from './insight.service.js'
 
 const DEFAULT_USER_ID = 'default';
 

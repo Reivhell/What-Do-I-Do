@@ -1,10 +1,10 @@
 import { Injectable, Inject } from '@nestjs/common';
-import { DRIZZLE } from '../../common/database/drizzle.provider';
-import { schema } from '../../drizzle';
-import type { DbInstance } from '../../drizzle';
+import { DRIZZLE } from '../../common/database/drizzle.provider.js'
+import { schema } from '../../drizzle/index.js'
+import type { DbInstance } from '../../drizzle/index.js'
 import { eq, and, sql } from 'drizzle-orm';
 import { randomUUID } from 'crypto';
-import { AchievementWithProgress } from './dto/achievements.dto';
+import { AchievementWithProgress } from './dto/achievements.dto.js'
 
 @Injectable()
 export class AchievementsService {

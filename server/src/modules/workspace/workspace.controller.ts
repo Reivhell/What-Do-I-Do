@@ -8,12 +8,12 @@ import {
   Param,
   ParseUUIDPipe,
 } from '@nestjs/common';
-import { WorkspaceService, LayoutPreset, WidgetConfigItem } from './workspace.service';
+import { WorkspaceService, LayoutPreset, WidgetConfigItem } from './workspace.service.js'
 import {
   CreatePresetDto,
   UpdatePresetDto,
   ActivatePresetDto,
-} from './dto/workspace.dto';
+} from './dto/workspace.dto.js'
 
 const DEFAULT_USER_ID = 'default';
 

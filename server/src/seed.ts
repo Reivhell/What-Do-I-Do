@@ -1,8 +1,8 @@
-import { getDb } from './drizzle';
+import { getDb } from './drizzle/index.js'
 import { randomUUID } from 'crypto';
 import { eq } from 'drizzle-orm';
-import { users } from './drizzle/schema/users';
-import { userProfiles, userPreferences, notificationSettings } from './drizzle/schema/settings';
+import { users } from './drizzle/schema/users.js'
+import { userProfiles, userPreferences, notificationSettings } from './drizzle/schema/settings.js'
 
 async function seed() {
   const db = getDb();

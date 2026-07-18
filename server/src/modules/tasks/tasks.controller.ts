@@ -15,7 +15,7 @@ import {
   TaskPriority,
   TaskView,
   ScheduleTaskInput,
-} from './tasks.service';
+} from './tasks.service.js'
 import {
   CreateTaskDto,
   UpdateTaskDto,
@@ -23,7 +23,7 @@ import {
   BulkUpdateStatusDto,
   CreateSubtaskDto,
   UpdateSubtaskDto,
-} from './dto/task.dto';
+} from './dto/task.dto.js'
 
 const DEFAULT_USER_ID = 'default';
 

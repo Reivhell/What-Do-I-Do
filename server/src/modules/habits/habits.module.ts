@@ -1,10 +1,10 @@
 import { Module, forwardRef } from '@nestjs/common';
-import { HabitsController } from './habits.controller';
-import { HabitsService } from './habits.service';
-import { PlannerModule } from '../planner/planner.module';
-import { ActivityTrackerModule } from '../activity-tracker/activity-tracker.module';
-import { GoalsModule } from '../goals/goals.module';
-import { AchievementsModule } from '../achievements/achievements.module';
+import { HabitsController } from './habits.controller.js'
+import { HabitsService } from './habits.service.js'
+import { PlannerModule } from '../planner/planner.module.js'
+import { ActivityTrackerModule } from '../activity-tracker/activity-tracker.module.js'
+import { GoalsModule } from '../goals/goals.module.js'
+import { AchievementsModule } from '../achievements/achievements.module.js'
 
 @Module({
   imports: [

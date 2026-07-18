@@ -9,10 +9,10 @@ import {
   Query,
   ParseUUIDPipe,
 } from '@nestjs/common';
-import { InboxService, CaptureStatus } from './inbox.service';
-import { CreateCaptureDto } from './dto/create-capture.dto';
-import { UpdateCaptureDto } from './dto/update-capture.dto';
-import { ConvertCaptureDto } from './dto/convert-capture.dto';
+import { InboxService, CaptureStatus } from './inbox.service.js'
+import { CreateCaptureDto } from './dto/create-capture.dto.js'
+import { UpdateCaptureDto } from './dto/update-capture.dto.js'
+import { ConvertCaptureDto } from './dto/convert-capture.dto.js'
 
 const DEFAULT_USER_ID = 'default';
 

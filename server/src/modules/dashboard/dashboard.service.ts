@@ -1,11 +1,11 @@
 import { Injectable, Inject } from '@nestjs/common';
-import { DRIZZLE } from '../../common/database/drizzle.provider';
-import { schema, DbInstance } from '../../drizzle';
+import { DRIZZLE } from '../../common/database/drizzle.provider.js'
+import { schema, DbInstance } from '../../drizzle/index.js'
 import { eq, and, gte, lte, desc, asc, sql } from 'drizzle-orm';
-import { ActivityTrackerService } from '../activity-tracker/activity-tracker.service';
-import { PlannerService } from '../planner/planner.service';
-import { AnalyticsService } from '../analytics/analytics.service';
-import { InsightService } from '../insights/insight.service';
+import { ActivityTrackerService } from '../activity-tracker/activity-tracker.service.js'
+import { PlannerService } from '../planner/planner.service.js'
+import { AnalyticsService } from '../analytics/analytics.service.js'
+import { InsightService } from '../insights/insight.service.js'
 import type {
   DashboardSummary,
   ActiveSession,

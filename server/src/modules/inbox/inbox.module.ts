@@ -1,11 +1,11 @@
 import { Module } from '@nestjs/common';
-import { InboxController } from './inbox.controller';
-import { InboxService } from './inbox.service';
-import { TasksModule } from '../tasks/tasks.module';
-import { PlannerModule } from '../planner/planner.module';
-import { HabitsModule } from '../habits/habits.module';
-import { GoalsModule } from '../goals/goals.module';
-import { MoneyModule } from '../money/money.module';
+import { InboxController } from './inbox.controller.js'
+import { InboxService } from './inbox.service.js'
+import { TasksModule } from '../tasks/tasks.module.js'
+import { PlannerModule } from '../planner/planner.module.js'
+import { HabitsModule } from '../habits/habits.module.js'
+import { GoalsModule } from '../goals/goals.module.js'
+import { MoneyModule } from '../money/money.module.js'
 
 @Module({
   imports: [TasksModule, PlannerModule, HabitsModule, GoalsModule, MoneyModule],

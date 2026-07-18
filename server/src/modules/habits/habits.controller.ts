@@ -9,8 +9,8 @@ import {
   Query,
   ParseUUIDPipe,
 } from '@nestjs/common';
-import { HabitsService } from './habits.service';
-import { CreateHabitDto, UpdateHabitDto, LogHabitDto, HabitResponse, HabitLogResponse } from './dto/habit.dto';
+import { HabitsService } from './habits.service.js'
+import { CreateHabitDto, UpdateHabitDto, LogHabitDto, HabitResponse, HabitLogResponse } from './dto/habit.dto.js'
 
 const DEFAULT_USER_ID = 'default';
 
